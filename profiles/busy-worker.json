@@ -1,0 +1,17 @@
+{
+  "id": "busy-worker",
+  "version": "1.0",
+  "label": { "ja": "多忙な勤労者プロファイル", "ko": "바쁜 직장인 프로필" },
+  "purpose": "능력 제약이 아니라 시간 제약. 「읽으면 알 수 있다」가 통하지 않는 조건에서 정보 구조를 본다.",
+  "claims": "인내 예산 8클릭/2분을 초과한 시점에 강제 종료한 결과다.",
+  "does_not_claim": "실제 이용자의 평균 체류시간을 재현했다고 주장하지 않는다. 예산값은 우리가 정한 것이다.",
+  "lexicon": null,
+  "viewport": { "width": 375, "height": 667, "zoom": 1.0 },
+  "observation": { "dom_text": true, "screenshot": true },
+  "tools": { "find_in_page": true, "site_search": true, "back_limit": null },
+  "patience": { "clicks": 8, "seconds": 120 },
+  "variants": [
+    { "suffix": "a", "patience": { "clicks": 6, "seconds": 90 } },
+    { "suffix": "b", "patience": { "clicks": 10, "seconds": 150 } }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "profile": "senior-70s@1.0",
+  "viewport": {
+    "width": 640,
+    "height": 400
+  },
+  "results": [
+    {
+      "id": "shinjuku",
+      "name": "新宿区",
+      "url": "https://www.city.shinjuku.lg.jp/",
+      "ok": true,
+      "status": 200,
+      "ms": 3175,
+      "title": "新宿区",
+      "elements": 270,
+      "elements_in_viewport": 9,
+      "text_chars": 874,
+      "masked": 5,
+      "masked_in_controls": 2,
+      "masked_words": [
+        "パブリック・コメント",
+        "アクセシビリティ",
+        "リリース"
+      ]
+    },
+    {
+      "id": "minato",
+      "name": "港区",
+      "url": "https://www.city.minato.tokyo.jp/",
+      "ok": true,
+      "status": 200,
+      "ms": 2395,
+      "title": "港区ホームページ／トップページ",
+      "elements": 78,
+      "elements_in_viewport": 9,
+      "text_chars": 3043,
+      "masked": 7,
+      "masked_in_controls": 3,
+      "masked_words": [
+        "リンク",
+        "サイト"
+      ]
+    },
+    {
+      "id": "hamamatsu",
+      "name": "浜松市",
+      "url": "https://www.city.hamamatsu.shizuoka.jp/",
+      "ok": true,
+      "status": 200,
+      "ms": 2464,
+      "title": "浜松市公式ホームページ",
+      "elements": 222,
+      "elements_in_viewport": 67,
+      "text_chars": 1838,
+      "masked": 18,
+      "masked_in_controls": 10,
+      "masked_words": [
+        "ネット",
+        "ユニバーサルデザイン",
+        "ハザードマップ",
+        "サイト",
+        "タスク",
+        "アクセシビリティ"
+      ]
+    },
+    {
+      "id": "oizumi",
+      "name": "群馬県大泉町",
+      "url": "https://www.town.oizumi.gunma.jp/",
+      "ok": true,
+      "status": 200,
+      "ms": 1955,
+      "title": "大泉町公式トップページ",
+      "elements": 93,
+      "elements_in_viewport": 15,
+      "text_chars": 2858,
+      "masked": 12,
+      "masked_in_controls": 6,
+      "masked_words": [
+        "サイト",
+        "ダウンロード",
+        "アクセシビリティ",
+        "コンテンツ"
+      ]
+    },
+    {
+      "id": "shibuya",
+      "name": "渋谷区",
+      "url": "https://www.city.shibuya.tokyo.jp/",
+      "ok": true,
+      "status": 200,
+      "ms": 2663,
+      "title": "渋谷区公式サイト | 渋谷区ポータル",
+      "elements": 69,
+      "elements_in_viewport": 23,
+      "text_chars": 967,
+      "masked": 13,
+      "masked_in_controls": 6,
+      "masked_words": [
+        "リアルタイム",
+        "ツール",
+        "ログイン",
+        "サイト",
+        "アクセシビリティ"
+      ]
+    }
+  ]
+}

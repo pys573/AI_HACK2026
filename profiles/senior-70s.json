@@ -1,0 +1,23 @@
+{
+  "id": "senior-70s",
+  "version": "1.0",
+  "label": { "ja": "高齢者制約プロファイル", "ko": "고령자 제약 프로필" },
+  "purpose": "카타카나 외래어 장벽 + 화면 정보량 감소. 행정 사이트의 「ダウンロード」「ログイン」이 여기서 사라진다.",
+  "claims": "国立国語研究所 外来語定着度調査で60歳以上の理解率が30%未満の語をマスクした状態での探索結果である。",
+  "does_not_claim": "실재하는 70대의 행동을 재현했다고 주장하지 않는다. 조사는 2002-2004년 시행이며, 당시의 60세 이상 코호트를 반영한다.",
+  "lexicon": {
+    "cohort": "senior",
+    "mask_below": 30,
+    "partial_below": null,
+    "unknown": "keep",
+    "source": "NINJAL 外来語定着度調査 (CC BY 4.0)"
+  },
+  "viewport": { "width": 1280, "height": 800, "zoom": 2.0 },
+  "observation": { "dom_text": true, "screenshot": true },
+  "tools": { "find_in_page": false, "site_search": false, "back_limit": 3 },
+  "patience": { "clicks": 15, "seconds": 480 },
+  "variants": [
+    { "suffix": "a", "patience": { "clicks": 12 }, "entry": "top" },
+    { "suffix": "b", "patience": { "clicks": 18 }, "entry": "search_referral" }
+  ]
+}

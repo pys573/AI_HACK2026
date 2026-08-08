@@ -1,0 +1,17 @@
+{
+  "id": "smartphone-novice",
+  "version": "1.0",
+  "label": { "ja": "スマートフォン不慣れプロファイル", "ko": "스마트폰 초보 프로필" },
+  "purpose": "가장 강한 제약. DOM 텍스트를 아예 차단하고 스크린샷만 준다 — 시각 탐색만으로 태스크가 되는가.",
+  "claims": "화면에 보이는 것(스크린샷)만으로 조작했을 때의 결과다. 접근성 트리·숨은 텍스트는 사용하지 않았다.",
+  "does_not_claim": "실재하는 초보 사용자의 인지 과정을 재현했다고 주장하지 않는다.",
+  "lexicon": { "cohort": "senior", "mask_below": 20, "partial_below": null, "unknown": "keep" },
+  "viewport": { "width": 375, "height": 667, "zoom": 1.5 },
+  "observation": { "dom_text": false, "screenshot": true },
+  "tools": { "find_in_page": false, "site_search": false, "back_limit": 3 },
+  "patience": { "clicks": 12, "seconds": 300 },
+  "variants": [
+    { "suffix": "a", "patience": { "clicks": 10 } },
+    { "suffix": "b", "patience": { "clicks": 14 } }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ai-user-testing",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=25" },
+  "scripts": {
+    "lexicon:build": "node lexicon/src/gairaigo.ts",
+    "lexicon:test": "node lexicon/src/mask.test.ts",
+    "probe": "node agent/src/probe.ts"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
+}

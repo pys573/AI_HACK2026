@@ -1,0 +1,17 @@
+{
+  "id": "resident-n3",
+  "version": "1.0",
+  "label": { "ja": "日本語N3相当・外国人住民プロファイル", "ko": "외국인 주민 N3 프로필" },
+  "purpose": "다국어 패리티 측정. 영어 페이지의 '존재'가 아니라 '같은 답에 도달하는가'를 본다.",
+  "claims": "스마트폰 뷰포트·일본어 입력 제약 하의 탐색 결과다.",
+  "does_not_claim": "JLPT N3 보유자의 행동을 재현했다고 주장하지 않는다. 한자·행정용어 난이도 사전은 v1.0에 미탑재다 (§TODO).",
+  "lexicon": null,
+  "viewport": { "width": 375, "height": 667, "zoom": 1.0 },
+  "observation": { "dom_text": true, "screenshot": true },
+  "tools": { "find_in_page": false, "site_search": true, "site_search_input": "latin_only", "back_limit": 5 },
+  "patience": { "clicks": 20, "seconds": 600 },
+  "variants": [
+    { "suffix": "a", "language_preference": "en" },
+    { "suffix": "b", "language_preference": "ja" }
+  ]
+}

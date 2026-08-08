@@ -1,0 +1,67 @@
+{
+  "built_at_note": "재빌드해도 동일 (입력이 고정 CSV)",
+  "source": {
+    "name": "国立国語研究所「外来語定着度調査」",
+    "url": "https://mmsrv.ninjal.ac.jp/gairaigo_yoron/",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "survey_words": 405,
+    "respondents": "1語あたり750〜2118人",
+    "population": "全国16歳以上の男女個人",
+    "sampling": "層化二段無作為抽出法",
+    "method": "調査員による個別面接聴取法",
+    "period": "2002-11 〜 2004-08 (平成14年11月〜平成16年8月)",
+    "definitions": {
+      "recognition": "「見聞きしたことがある」と答えた人の比率",
+      "comprehension": "「意味が分かる」と答えた人の比率（「何となく分かる」は含まない）",
+      "usage": "「自分で使ったことがある」と答えた人の比率"
+    }
+  },
+  "entries": 398,
+  "surveys_total": 405,
+  "words_surveyed_multiple_times": 7,
+  "senior_comprehension_under_10": 155,
+  "senior_comprehension_under_30": 274,
+  "largest_senior_gap": [
+    {
+      "word": "ネット",
+      "gap": 36.5
+    },
+    {
+      "word": "リニューアル",
+      "gap": 34.9
+    },
+    {
+      "word": "チョイス",
+      "gap": 34.8
+    },
+    {
+      "word": "ネットオークション",
+      "gap": 34.3
+    },
+    {
+      "word": "ディスク",
+      "gap": 32.7
+    },
+    {
+      "word": "ダウンロード",
+      "gap": 32.4
+    },
+    {
+      "word": "サプリメント",
+      "gap": 31
+    },
+    {
+      "word": "シミュレーション",
+      "gap": 30.5
+    },
+    {
+      "word": "マニュアル",
+      "gap": 30.4
+    },
+    {
+      "word": "プログラム",
+      "gap": 30.1
+    }
+  ]
+}

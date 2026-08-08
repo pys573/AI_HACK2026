@@ -1,0 +1,14 @@
+{
+  "id": "control",
+  "version": "1.0",
+  "label": { "ja": "対照群（制約なし）", "ko": "대조군" },
+  "purpose": "제약이 원인이라는 것을 증명하기 위한 기준선. 좌우 분할 데모의 왼쪽.",
+  "claims": "제약을 걸지 않은 동일 모델·동일 미션의 결과다.",
+  "does_not_claim": "이것이 '평균적인 사용자'라고 주장하지 않는다. 상한선일 뿐이다.",
+  "lexicon": null,
+  "viewport": { "width": 1280, "height": 800, "zoom": 1.0 },
+  "observation": { "dom_text": true, "screenshot": true },
+  "tools": { "find_in_page": true, "site_search": true, "back_limit": null },
+  "patience": { "clicks": 30, "seconds": 900 },
+  "variants": []
+}
