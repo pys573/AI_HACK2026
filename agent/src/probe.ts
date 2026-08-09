@@ -47,21 +47,24 @@ async function run(url: string, profileId: string) {
     console.log(`     viewport ${JSON.stringify(viewportFor(p))} (zoom ${p.viewport.zoom}x)`);
 
     const raw = await observe(page, p.observation.screenshot);
-    const { obs, trace } = constrain(raw, p);
+    const { obs, trace, visible } = constrain(raw, p);
 
     console.log(`\n[R8] 관측 → 제약 파이프라인`);
     console.log(`     제목        : ${raw.title}`);
     console.log(`     조작요소    : ${raw.elements.length}개 (뷰포트 내 ${raw.elements.filter((e) => e.in_viewport).length}개)`);
-    console.log(`     본문        : ${raw.text.length}자`);
+    console.log(`     본문        : 전체 ${raw.text.length}자 (화면 안 ${raw.text_viewport.length}자)`);
     console.log(`     스크린샷    : ${raw.screenshot ? `${Math.round(raw.screenshot.length / 1024)}KB` : "없음"}`);
 
     console.log(`\n[제약] ${p.id} v${p.version} — ${p.label.ja}`);
     console.log(`     마스킹      : ${trace.masked_words.length}건 (그중 링크·버튼 라벨 안 ${trace.masked_in_controls}건)`);
     console.log(`     본문 차단   : ${trace.dom_text_withheld ? "예 (스크린샷만)" : "아니오"}`);
 
+    console.log(`     화면 밖 제거: ${trace.elements_total - trace.elements_in_viewport}개 → 에이전트가 받는 것 ${trace.elements_in_viewport}개`);
+
     // 라벨이 실제로 훼손됐는지 — 여기가 안 되면 제품이 없다.
-    const changed = raw.elements
-      .map((e, i) => ({ before: e.name, after: obs.elements[i].name }))
+    // constrain()이 번호를 0부터 다시 매기므로 obs.elements[i]의 원본은 visible[i]다.
+    const changed = obs.elements
+      .map((e, i) => ({ before: visible[i]?.name ?? "", after: e.name }))
       .filter((x) => x.before !== x.after);
 
     console.log(`\n[before → after] 라벨이 바뀐 조작요소 ${changed.length}개`);

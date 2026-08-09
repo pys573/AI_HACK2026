@@ -29,8 +29,19 @@ export type Element = {
 export type RawObservation = {
   url: string;
   title: string;
-  /** 화면에 실제로 보이는 텍스트 */
+  /**
+   * 페이지 전체 텍스트. **에이전트에게 가지 않는다.**
+   * judge()가 「거기에 도달했는가」를 재는 데만 쓴다 — 판정은 제약 전의 원본을 봐야 한다.
+   */
   text: string;
+  /**
+   * ★ 지금 화면에 실제로 보이는 텍스트. 에이전트가 받는 것은 이쪽이다.
+   *
+   * 전체 본문을 주면서 조작요소만 뷰포트로 자르면, 에이전트는 「본문에는 보이는데
+   * 누를 수 없는」 상태에 빠져 같은 자리를 맴돈다. 그건 제약의 효과가 아니라
+   * 우리 관측이 앞뒤가 안 맞아서 생긴 잡음이다. 측정하려는 것에 잡음을 섞지 않는다.
+   */
+  text_viewport: string;
   elements: Element[];
   screenshot: Buffer | null;
   scroll: { y: number; height: number };
@@ -76,8 +87,32 @@ const EXTRACT = `() => {
       in_viewport: r.top < vh && r.bottom > 0 && r.left < vw && r.right > 0,
     });
   }
+  // 화면에 보이는 텍스트만 따로 모은다.
+  // Range로 텍스트 노드 자체의 위치를 잰다 — 부모 요소 박스로 재면 긴 단락이
+  // 화면 밖에서도 통째로 「보인다」가 되어버린다.
+  const seen = [];
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    const s = (node.nodeValue || '').replace(/\\s+/g, ' ').trim();
+    if (!s) continue;
+    const parent = node.parentElement;
+    if (!parent) continue;
+    if (parent.closest('script, style, noscript, [aria-hidden="true"]')) continue;
+    const pcs = getComputedStyle(parent);
+    if (pcs.display === 'none' || pcs.visibility === 'hidden' || pcs.opacity === '0') continue;
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    const tr = range.getBoundingClientRect();
+    if (tr.width < 1 && tr.height < 1) continue;
+    // 한 줄이라도 걸치면 포함한다. 오차는 「더 보여주는」 쪽으로 낸다 (절대규칙 2).
+    if (!(tr.top < vh && tr.bottom > 0 && tr.left < vw && tr.right > 0)) continue;
+    seen.push(s);
+  }
+
   return {
     text: (document.body.innerText || '').replace(/\\n{3,}/g, '\\n\\n').trim(),
+    text_viewport: seen.join('\\n'),
     elements: out,
     scroll: { y: Math.round(window.scrollY), height: Math.round(document.body.scrollHeight) },
   };
@@ -88,6 +123,7 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
   // 함수 객체 자체가 직렬화 대상이 되어 undefined가 돌아온다.
   const r = (await page.evaluate(`(${EXTRACT})()`)) as {
     text: string;
+    text_viewport: string;
     elements: Element[];
     scroll: { y: number; height: number };
   };
@@ -95,6 +131,7 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
     url: page.url(),
     title: await page.title(),
     text: r.text,
+    text_viewport: r.text_viewport,
     elements: r.elements,
     scroll: r.scroll,
     screenshot: withScreenshot ? await page.screenshot({ type: "png" }) : null,
