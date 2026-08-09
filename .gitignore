@@ -1,2 +1,25 @@
 node_modules/
+.env
+.env.local
+.DS_Store
+
+# 実行成果物（大きい・再生成可能）
+agent/data/runs/
+agent/data/screenshots/
+web/.next/
+web/out/
+web/node_modules/
+
+# ワークツリー
+.claude/worktrees/
+
 *.log
+
+# ── 非公開の内部文書 ──────────────────────────────────────────
+# 公開リポジトリにはエンジニアリング文書（README.md / docs/ / 各 README）のみを載せる。
+# 以下は作業用のメモであり、公開しない。
+# 既に追跡されているものは `git rm --cached <file>` で外すこと。
+AI User testing.md
+FINDINGS.md
+CLAUDE.md
+개발계획.md
