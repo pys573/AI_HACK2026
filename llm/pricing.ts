@@ -17,8 +17,8 @@ export type ModelPrice = {
   /** 100만 토큰당 USD */
   input_per_m: number;
   output_per_m: number;
-  /** 덱 게재 품질 스코어 (10점 만점) */
-  quality: number;
+  /** 덱 게재 품질 스코어 (10점 만점). /models 응답에는 없다 */
+  quality?: number;
   provider: string;
 };
 

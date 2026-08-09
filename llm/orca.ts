@@ -9,9 +9,13 @@
  *   다만 W0 시점에 의존성을 늘리면 5개 워크트리 전부가 설치를 기다린다.
  *   fetch는 Node 25에 내장이고 빌드 스텝도 없다. SDK 전환 여부는 B-1에서 판단한다.
  *
- * ⚠️ 이 파일의 응답 파싱은 **아직 실물로 검증되지 않았다.**
- *   키를 받는 즉시 `node llm/smoke.ts`로 확인하고, 실제 응답 형태에 맞춰 고친다.
- *   추측한 필드를 실측이라고 부르지 않는다.
+ * ✅ 2026-08-09 실물 확인 (`npm run orca:smoke`):
+ *   - `/models` 182개, 그중 161개가 `pricing.{prompt,completion}_per_million`을 준다
+ *     → 라이브 가격표를 만들 수 있다. 이게 ⑥「実測原価」의 근거다
+ *   - 응답 본문·헤더에 **원가 필드가 없다.** 토큰 수 × 라이브 단가로 계산해야 한다
+ *   - 응답의 `model`에는 **벤더 접두사가 없다** (요청 anthropic/claude-opus-5 → 응답 claude-opus-5)
+ *   - `route` 필드도 응답에 없다 → 어느 모델로 갔는지는 `model`로만 안다
+ *   - `orcarouter/auto`는 실제로 라우팅한다 (사소한 프롬프트 → qwen3.7-plus)
  */
 
 import type { CostRecord, LlmRequest, LlmResponse } from "../core/types.ts";
@@ -34,6 +38,11 @@ export function setLivePrices(p: Record<string, ModelPrice> | null): void {
 
 export function prices(): Record<string, ModelPrice> {
   return livePrices ?? FALLBACK_PRICES;
+}
+
+/** 지금 쓰고 있는 게 라이브 가격표인가. cost_source를 정하는 근거다 */
+export function usingLivePrices(): boolean {
+  return livePrices !== null;
 }
 
 export class OrcaError extends Error {
@@ -65,6 +74,60 @@ export async function listModels(): Promise<unknown> {
   return JSON.parse(body);
 }
 
+/** 라이브 가격표를 마지막으로 받아온 시각. 덱에 「料金は1分ごとに更新」이라 적혀 있다 */
+export let livePricesFetchedAt: string | null = null;
+
+/**
+ * `/models`에서 가격표를 만든다. **⑥의 「実測原価」가 여기서 나온다.**
+ *
+ * 2026-08-09 실측 응답 형태:
+ *   { id: "anthropic/claude-opus-5",
+ *     pricing: { prompt: "0.0000050000", completion: "0.0000250000",
+ *                prompt_per_million: "5.000000", completion_per_million: "25.000000" } }
+ *   182개 중 177개가 pricing을 가진다.
+ */
+export async function fetchLivePrices(): Promise<Record<string, ModelPrice>> {
+  const j = (await listModels()) as { data?: Array<Record<string, any>> };
+  const out: Record<string, ModelPrice> = {};
+
+  for (const m of j.data ?? []) {
+    const p = m?.pricing;
+    if (!p) continue;
+    const input = Number(p.prompt_per_million ?? Number(p.prompt) * 1e6);
+    const output = Number(p.completion_per_million ?? Number(p.completion) * 1e6);
+    if (!Number.isFinite(input) || !Number.isFinite(output)) continue;
+
+    const price: ModelPrice = { input_per_m: input, output_per_m: output, provider: m.owned_by ?? "" };
+    out[m.id] = price;
+
+    // ⚠️ chat/completions 응답의 model에는 벤더 접두사가 없다
+    //    (요청 "anthropic/claude-opus-5" → 응답 "claude-opus-5").
+    //    접두사 없는 형태로도 찾을 수 있게 별칭을 건다.
+    //    서로 다른 벤더가 같은 뒷이름을 쓰면 먼저 온 쪽이 이긴다 —
+    //    그래서 조회는 항상 「요청한 전체 ID」를 먼저 본다.
+    const bare = String(m.id).split("/").pop();
+    if (bare && !(bare in out)) out[bare] = price;
+  }
+
+  livePricesFetchedAt = new Date().toISOString();
+  return out;
+}
+
+/** 프로세스당 1회만 받아온다. 실패하면 폴백 표로 계속 간다 (실행이 죽는 것보다 낫다) */
+let livePricesPromise: Promise<void> | null = null;
+export function ensureLivePrices(): Promise<void> {
+  if (!livePricesPromise) {
+    livePricesPromise = fetchLivePrices()
+      .then((p) => setLivePrices(p))
+      .catch(() => {
+        // 가격표를 못 받은 것은 치명적이지 않다. 다만 cost_source가 "table"이 되고,
+        // 그 실행의 원가는 「実測」이라고 말할 수 없게 된다
+        setLivePrices(null);
+      });
+  }
+  return livePricesPromise;
+}
+
 /**
  * 응답에서 원가를 뽑는다.
  *
@@ -75,7 +138,8 @@ export async function listModels(): Promise<unknown> {
 function extractCost(
   json: Record<string, any>,
   res: Response,
-  model: string,
+  returnedModel: string,
+  requestedModel: string,
   promptTokens: number,
   completionTokens: number,
 ): { cost_usd: number; cost_source: "api" | "table" } {
@@ -90,9 +154,29 @@ function extractCost(
     const n = typeof c === "string" ? Number(c.replace(/^\$/, "")) : c;
     if (typeof n === "number" && Number.isFinite(n)) return { cost_usd: n, cost_source: "api" };
   }
-  const est = estimateCost(model, promptTokens, completionTokens, prices());
+
+  // 조회 순서: 요청한 전체 ID → 응답이 준 이름 → 접두사를 붙여본 이름.
+  // 요청 ID를 먼저 보는 이유는 접두사 없는 별칭이 벤더 간에 충돌할 수 있어서다.
+  // orcarouter/* 는 라우터 별칭이라 가격이 없다 — 실제로 돌린 모델로 매겨야 한다.
+  const table = prices();
+  const isAlias = (m: string) => m.startsWith("orcarouter/");
+  const keys = [
+    isAlias(requestedModel) ? null : requestedModel,
+    returnedModel,
+    returnedModel.includes("/") ? null : Object.keys(table).find((k) => k.endsWith(`/${returnedModel}`)),
+  ].filter((k): k is string => typeof k === "string");
+
+  for (const k of keys) {
+    const est = estimateCost(k, promptTokens, completionTokens, table);
+    if (est !== null) {
+      // 라이브 가격표(=/models)로 계산했으면 실측 원가로 취급한다.
+      // 리포에 박아둔 폴백 표로 계산했으면 그건 추정치다.
+      return { cost_usd: est, cost_source: usingLivePrices() ? "api" : "table" };
+    }
+  }
+
   // 모르는 모델을 0원으로 세지 않는다. 0으로 세면 절감률이 거짓말이 된다.
-  return { cost_usd: est ?? Number.NaN, cost_source: "table" };
+  return { cost_usd: Number.NaN, cost_source: "table" };
 }
 
 export type CompleteOptions = {
@@ -161,7 +245,7 @@ export async function complete(req: LlmRequest, opts: CompleteOptions = {}): Pro
       const cached: number =
         json?.usage?.prompt_tokens_details?.cached_tokens ?? json?.usage?.cached_tokens ?? 0;
 
-      const { cost_usd, cost_source } = extractCost(json, res, usedModel, pt, ct);
+      const { cost_usd, cost_source } = extractCost(json, res, usedModel, model, pt, ct);
 
       const cost: CostRecord = {
         step_type: req.step_type,

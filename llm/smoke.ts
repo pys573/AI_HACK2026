@@ -7,22 +7,22 @@
  *   node llm/smoke.ts
  */
 
-import { complete, listModels, OrcaError } from "./orca.ts";
+import { complete, fetchLivePrices, livePricesFetchedAt, OrcaError, prices, setLivePrices, usingLivePrices } from "./orca.ts";
 
 const line = (s: string) => console.log(s);
 
-line("── 1. GET /models ─────────────────────────────");
+line("── 1. GET /models → 라이브 가격표 ──────────────");
 try {
-  const models = (await listModels()) as { data?: Array<Record<string, unknown>> };
-  const list = models.data ?? [];
-  line(`✓ ${list.length}개 모델`);
-  // 가격 필드가 있는지 확인한다. 있으면 ⑥의 「実測原価」를 라이브 가격으로 계산할 수 있다.
-  const sample = list[0];
-  if (sample) line(`  샘플 키: ${Object.keys(sample).join(", ")}`);
-  const priced = list.filter((m) => JSON.stringify(m).match(/pric|cost/i));
-  line(`  가격 정보를 가진 모델: ${priced.length}개 ${priced.length ? "← 라이브 가격표 사용 가능" : "← 폴백 표 사용"}`);
+  const live = await fetchLivePrices();
+  setLivePrices(live);
+  const n = Object.keys(live).filter((k) => k.includes("/")).length;
+  line(`✓ 가격을 가진 모델 ${n}개 (취득 ${livePricesFetchedAt})`);
+  const opus = prices()["anthropic/claude-opus-5"];
+  if (opus) line(`  claude-opus-5: in $${opus.input_per_m}/M · out $${opus.output_per_m}/M`);
+  line(`  → 이후 원가는 cost_source "api" (実測原価)로 기록된다`);
 } catch (e) {
   line(`✗ ${e instanceof Error ? e.message : String(e)}`);
+  line(`  → 폴백 표로 계속한다. 그 실행의 원가는 실측이라 부를 수 없다`);
 }
 
 line("\n── 2. POST /chat/completions (orcarouter/auto) ─");
