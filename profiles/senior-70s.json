@@ -6,6 +6,7 @@
   "claims": "国立国語研究所 外来語定着度調査で60歳以上の理解率が30%未満の語をマスクした状態での探索結果である。",
   "does_not_claim": "실재하는 70대의 행동을 재현했다고 주장하지 않는다. 조사는 2002-2004년 시행이며, 당시의 60세 이상 코호트를 반영한다.",
   "lexicon": {
+    "kind": "comprehension_rate",
     "cohort": "senior",
     "mask_below": 30,
     "partial_below": null,
