@@ -1,8 +1,9 @@
 # 末尾スラッシュだとシンボリックリンクに一致しない。
 # ワークツリーでは node_modules を本体から symlink しているため、スラッシュを付けない。
 node_modules
-.env
-.env.local
+# service_role key が漏れると RLS を丸ごと迂回される。ひな形以外はすべて無視する
+.env*
+!.env.example
 .DS_Store
 
 # 実行成果物（大きい・再生成可能）
