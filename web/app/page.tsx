@@ -17,7 +17,7 @@ import { Honesty } from "@/components/Honesty";
  * 데이터는 전부 public/demo/*.json — 실제 실행 결과다 (public/demo/README.md 참조).
  */
 export default function Page() {
-  const { control, senior, moment, mission } = loadDemo();
+  const { control, senior, matched, moment, mission } = loadDemo();
 
   return (
     <main className="min-h-dvh">
@@ -108,7 +108,7 @@ export default function Page() {
           </>
         }
       >
-        <Honesty control={control} senior={senior} />
+        <Honesty control={control} senior={senior} matched={matched} />
       </Section>
 
       <footer className="border-t border-line-soft">

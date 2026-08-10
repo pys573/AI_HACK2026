@@ -296,12 +296,66 @@ function findMoment(ct: RunTrace, st: RunTrace): MomentView {
   return null;
 }
 
+/**
+ * ★ 「제약 때문에 실패」와 「예산이 짧아서 실패」를 분리하는 실행.
+ *
+ * 이게 없으면 우리 주장의 가장 큰 구멍이 열려 있다 —
+ * 「제약이 아니라 그냥 클릭 예산을 적게 줘서 실패한 것 아닌가」.
+ *
+ * 인내 예산만 대조군과 같게 맞춘 프로필로 한 번 더 돌렸다.
+ * 이 실행에서 화면에 띄우는 숫자는 전부 trace에 그대로 있는 값이다.
+ *
+ * ⚠️ profile json이 아니라 trace만 읽는다. profiles/는 E 소유라
+ *    web 워크트리에 사본을 두지 않기 위해서다.
+ */
+export type MatchedView = {
+  runId: string;
+  profileId: string;
+  profileVersion: string;
+  outcome: string;
+  outcomeJa: string;
+  reached: boolean;
+  /** 예산을 다 썼으므로(gave_up_clicks) 이 값이 곧 주어진 예산이다 */
+  clicks: number;
+  seconds: number;
+  steps: number;
+  /** 여기에 걸린 게 아니라는 증거. 상한이 아니라 예산이 먼저 바닥났다 */
+  maxSteps: number;
+  /** 우리 쪽 잡음으로 버려진 스텝. 숨기면 이 실험의 신뢰도가 사라진다 */
+  discardedSteps: number;
+  totalUsd: number;
+} | null;
+
+function loadMatched(): MatchedView {
+  let t: RunTrace;
+  try {
+    t = readTrace("senior-70s-patient.json");
+  } catch {
+    return null; // 실험 트레이스가 없어도 화면은 뜬다
+  }
+  return {
+    runId: t.run_id,
+    profileId: t.profile_id,
+    profileVersion: t.profile_version,
+    outcome: t.verdict.outcome,
+    outcomeJa: OUTCOME_JA[t.verdict.outcome] ?? t.verdict.outcome,
+    reached: t.verdict.reached,
+    clicks: t.verdict.clicks,
+    seconds: t.verdict.seconds,
+    steps: t.steps.length,
+    maxSteps: t.mission.max_steps,
+    discardedSteps: t.steps.filter((s) => !s.action_ok).length,
+    totalUsd: t.cost.total_usd,
+  };
+}
+
 export function loadDemo() {
   const ct = readTrace("control.json");
   const st = readTrace("senior-70s.json");
   return {
     control: toRunView(ct),
     senior: toRunView(st),
+    matched: loadMatched(),
     moment: findMoment(ct, st),
     mission: {
       intentJa: ct.mission.intent_ja,

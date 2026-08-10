@@ -1,4 +1,4 @@
-import type { RunView } from "@/lib/data";
+import type { MatchedView, RunView } from "@/lib/data";
 import { Badge } from "./ui";
 
 /**
@@ -8,7 +8,15 @@ import { Badge } from "./ui";
  *    일본어인 senior-70s.claims 만 그대로 인용하고, 나머지는 여기서 일본어로 쓴다.
  *    E(profiles 소유)가 ja 필드를 넣어주면 그대로 갈아끼운다.
  */
-export function Honesty({ control, senior }: { control: RunView; senior: RunView }) {
+export function Honesty({
+  control,
+  senior,
+  matched,
+}: {
+  control: RunView;
+  senior: RunView;
+  matched: MatchedView;
+}) {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       {/* 主張すること */}
@@ -23,6 +31,28 @@ export function Honesty({ control, senior }: { control: RunView; senior: RunView
             </code>
             に全部書いてあり、同じファイルで誰でも再現できます。
           </li>
+          {/* ★ 이 항목은 원래 「主張しないこと」에 있었다. 실험을 돌려서 옮겨왔다 */}
+          {matched && !matched.reached && (
+            <li>
+              <strong className="text-fg">
+                「予算が短かったから失敗した」のではありません。
+              </strong>
+              忍耐の予算だけを対照群とそろえた実行（
+              <code className="mx-1 font-mono text-xs">
+                {matched.profileId} v{matched.profileVersion}
+              </code>
+              ）を別に行いました。
+              <span className="mt-1.5 block rounded-lg border border-line bg-surface-2 p-3 text-xs leading-relaxed">
+                対照群と同じ {matched.clicks} クリックを
+                <strong className="text-fg">1回も残さず使い切って</strong>、
+                {matched.seconds} 秒かけても届きませんでした（{matched.steps} 手／上限
+                {matched.maxSteps} 手）。
+                <br />
+                対照群は同じ予算のうち {control.clicks} クリック・{control.seconds} 秒で
+                <strong className="text-clear">終わっています</strong>。
+              </span>
+            </li>
+          )}
           <li>
             隠した語には必ず根拠の数字と出典が付きます。
             <span className="mt-1 block text-xs text-fg-dim">{senior.claimsJa}</span>
@@ -51,13 +81,21 @@ export function Honesty({ control, senior }: { control: RunView; senior: RunView
             実行ごとに迷い方は変わります。
           </li>
           <li>
-            <strong className="text-fg">忍耐の予算は同じではありません。</strong>
-            対照群は {control.patience.clicks} クリック /{" "}
-            {control.patience.seconds} 秒、制約側は {senior.patience.clicks} クリック /{" "}
-            {senior.patience.seconds} 秒。
-            「制約のせいで失敗した」と「予算が短くて失敗した」を分けるには、
-            予算をそろえた実行が別に要ります。
+            <strong className="text-fg">この2実行だけで比べると予算が違います。</strong>
+            左の対照群は {control.patience.clicks} クリック / {control.patience.seconds} 秒、
+            制約側は {senior.patience.clicks} クリック / {senior.patience.seconds} 秒です。
+            予算をそろえた実行は別に行っていますが（左の項目）、
+            <strong className="text-fg">この画面の再生とスクリーンショットはそろえる前のもの</strong>
+            です。
           </li>
+          {matched && matched.discardedSteps > 0 && (
+            <li>
+              <strong className="text-fg">こちら側の取りこぼしもゼロではありません。</strong>
+              予算をそろえた実行の {matched.steps} 手のうち {matched.discardedSteps} 手は、
+              AIの応答が形式を満たさず、こちらが操作に変換できませんでした。
+              サイトのせいではなくツールのノイズです。数に入れたまま公開しています。
+            </li>
+          )}
           <li>
             <strong className="text-fg">サイトの品質評価ではありません。</strong>
             アクセシビリティの合否判定でも、監査でもありません。
