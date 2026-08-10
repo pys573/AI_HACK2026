@@ -1,0 +1,152 @@
+{
+  "built_at_note": "재빌드해도 동일 (입력이 고정 PDF 텍스트 레이어)",
+  "source": {
+    "name": "「やさしい日本語 書き換え例」(『生活・仕事ガイドブック』別冊)",
+    "publisher": "出入国在留管理庁 · 文化庁",
+    "url": "https://www.bunka.go.jp/seisaku/kokugo_nihongo/kyoiku/92484001.html",
+    "pdf_url": "https://www.bunka.go.jp/seisaku/kokugo_nihongo/kyoiku/pdf/92484001_02.pdf",
+    "license": "文部科学省ウェブサイト利用規約（政府標準利用規約 第2.0版）— CC BY 4.0 互換",
+    "license_url": "https://www.mext.go.jp/b_menu/1343445.htm",
+    "attribution": "出典：文化庁ウェブサイト（https://www.bunka.go.jp/）",
+    "surveyed": "2020-08",
+    "published": "2020-08",
+    "entries_in_source": 134,
+    "nature": "理解率の調査ではなく、行政が「そのまま使うと伝わらない」と判定して書き換えを指定した用語の一覧である。"
+  },
+  "extraction": {
+    "from": "vendor/bunkacho_yasashii_nihongo_kakikae.bbox.xml",
+    "command": "pdftotext -bbox bunkacho_yasashii_nihongo_kakikae.pdf bunkacho_yasashii_nihongo_kakikae.bbox.xml",
+    "tool": "poppler pdftotext 26.07.0",
+    "note": "列のx座標と文字サイズ（ルビ6.1pt / 本文12.19pt）で分離。行単位の解析では語彙と意味が混ざる。"
+  },
+  "entries": 134,
+  "surfaces": 149,
+  "surface_max_len": 15,
+  "multi_surface_entries": [
+    {
+      "no": 19,
+      "term": "管理費（共益費）",
+      "surfaces": [
+        "管理費",
+        "共益費"
+      ]
+    },
+    {
+      "no": 56,
+      "term": "敷金（保証金）",
+      "surfaces": [
+        "敷金",
+        "保証金"
+      ]
+    },
+    {
+      "no": 57,
+      "term": "自治会・町内会",
+      "surfaces": [
+        "自治会",
+        "町内会"
+      ]
+    },
+    {
+      "no": 67,
+      "term": "社会保険・労働保険",
+      "surfaces": [
+        "社会保険",
+        "労働保険"
+      ]
+    },
+    {
+      "no": 86,
+      "term": "第１号被保険者",
+      "surfaces": [
+        "第１号被保険者",
+        "第1号被保険者"
+      ]
+    },
+    {
+      "no": 87,
+      "term": "第３号被保険者",
+      "surfaces": [
+        "第３号被保険者",
+        "第3号被保険者"
+      ]
+    },
+    {
+      "no": 89,
+      "term": "第２号被保険者",
+      "surfaces": [
+        "第２号被保険者",
+        "第2号被保険者"
+      ]
+    },
+    {
+      "no": 102,
+      "term": "日本留学試験（EJU）",
+      "surfaces": [
+        "日本留学試験",
+        "EJU"
+      ]
+    },
+    {
+      "no": 103,
+      "term": "乳幼児健診（乳幼児健康診査）",
+      "surfaces": [
+        "乳幼児健診",
+        "乳幼児健康診査"
+      ]
+    },
+    {
+      "no": 105,
+      "term": "妊婦健診（妊婦健康診査）",
+      "surfaces": [
+        "妊婦健診",
+        "妊婦健康診査"
+      ]
+    },
+    {
+      "no": 112,
+      "term": "母親教室・父親教室",
+      "surfaces": [
+        "母親教室",
+        "父親教室"
+      ]
+    },
+    {
+      "no": 114,
+      "term": "ファミリー・サポート・センター",
+      "surfaces": [
+        "ファミリー・サポート・センター",
+        "ファミリーサポートセンター"
+      ]
+    },
+    {
+      "no": 117,
+      "term": "放課後児童クラブ（学童保育）",
+      "surfaces": [
+        "放課後児童クラブ",
+        "学童保育"
+      ]
+    },
+    {
+      "no": 118,
+      "term": "防災訓練・避難訓練",
+      "surfaces": [
+        "防災訓練",
+        "避難訓練"
+      ]
+    },
+    {
+      "no": 125,
+      "term": "薬局・ドラッグストア",
+      "surfaces": [
+        "薬局",
+        "ドラッグストア"
+      ]
+    }
+  ],
+  "limitations": [
+    "134語のみ。収録外の行政用語はマスクしない（根拠がないため通過させる）。",
+    "個人の理解度の測定値ではないため、理解率%は持たない。閾値による調整はできない。",
+    "表記の一致で判定するため、収録語が長い語の一部として現れた場合も一致する（例：「大家」／「大家族」）。"
+  ]
+}
