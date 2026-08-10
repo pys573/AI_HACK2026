@@ -50,12 +50,25 @@ export type Judgement = {
 export async function judge(mission: Mission, raw: RawObservation): Promise<Judgement> {
   const key = keyMatch(mission.id, raw);
 
-  const r = await complete({
-    step_type: "judge",
+  const base = {
+    step_type: "judge" as const,
     system: JUDGE_SYSTEM,
     user: judgeUser(mission, raw.url, raw.title, raw.text),
     schema: JUDGE_SCHEMA,
-  });
+  };
+
+  // 심판 모델이 JSON 대신 「未到達\n\n現在のページは…」처럼 산문을 뱉는 일이 실제로 있었다.
+  // decide()와 같은 이유로 한 번만 다시 묻는다. 여기서 던지면 실행 전체의 계측이 날아간다.
+  let r;
+  try {
+    r = await complete(base);
+  } catch (e) {
+    if (!(e instanceof Error) || !e.message.includes("JSON")) throw e;
+    r = await complete({
+      ...base,
+      system: `${JUDGE_SYSTEM}\n\n出力はJSONオブジェクトのみ。前置きも説明も付けないでください。`,
+    });
+  }
 
   const p = (r.parsed ?? {}) as { reached?: unknown; reason_ja?: unknown };
   const llm = p.reached === true;

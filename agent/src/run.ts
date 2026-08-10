@@ -125,10 +125,18 @@ export type RunOptions = {
   headless?: boolean;
   /** 도메인당 최소 요청 간격. 절대규칙 6 — 기본 4초에서 낮추지 않는다 */
   delayMs?: number;
+  /**
+   * 미션의 스텝 상한을 실험용으로 덮어쓴다.
+   * 「인내 예산이 짧아서 실패한 게 아니냐」를 확인하려면 예산만 늘려도 소용없다.
+   * 스텝 상한에 먼저 걸리면 그건 사이트가 아니라 우리 계측 장치가 만든 결과다.
+   * ★ 덮어쓴 값은 trace.mission.max_steps에 그대로 남는다. 숨기지 않는다.
+   */
+  maxSteps?: number;
 };
 
 export async function runOnce(opts: RunOptions): Promise<RunTrace> {
   const mission = loadMission(opts.missionId);
+  if (opts.maxSteps) mission.max_steps = opts.maxSteps;
   const profile = loadProfile(opts.profileId);
   const variant = opts.variant ?? 0;
   const runId = `${mission.id}__${profile.id}__v${variant}__${Date.now()}`;
@@ -208,8 +216,8 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         const d = await decide(mission, obs, profile, history);
         action = d.action;
         failStreak = 0;
-        stepCalls.push(d.cost);
-        allCalls.push(d.cost);
+        stepCalls.push(...d.costs);
+        allCalls.push(...d.costs);
 
         const r = await act(page, action, raw, visible, profile, origin, rl, backsUsed);
         actOk = r.ok;
@@ -288,18 +296,37 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     // 루프가 도달 없이 끝났으면, 놓친 도달이 없는지 마지막으로 한 번만 본다.
     if (outcome !== "reached" && outcome !== "error") {
       const raw = await observe(page, false);
-      const j = await judge(mission, raw);
-      if (j.cost) allCalls.push(j.cost);
-      keyHit = j.key_match;
-      llmHit = j.llm_match;
-      disagreed = j.disagreed;
-      if (j.reached) {
-        outcome = "reached";
-        verdictReason = j.reason_ja;
-      } else if (!verdictReason) {
-        verdictReason = j.reason_ja;
+      // ★ 심판이 죽어도 그때까지의 계측은 반드시 남긴다.
+      //   40스텝을 다 돌고 마지막 1회 호출이 형식을 어겼다는 이유로 실행 전체를 버린 적이 있다.
+      //   스텝 기록이 이 도구의 본체다. 판정은 그 위에 붙는 해석일 뿐이다.
+      try {
+        const j = await judge(mission, raw);
+        if (j.cost) allCalls.push(j.cost);
+        keyHit = j.key_match;
+        llmHit = j.llm_match;
+        disagreed = j.disagreed;
+        if (j.reached) {
+          outcome = "reached";
+          verdictReason = j.reason_ja;
+        } else if (!verdictReason) {
+          verdictReason = j.reason_ja;
+        }
+      } catch (e) {
+        // 키 대조는 LLM을 안 쓰므로 심판이 죽어도 살아 있다. 그것만 남기고,
+        // LLM 판정은 「하지 않았다」를 명시한다. 미도달로 위장하지 않는다.
+        keyHit = keyMatch(mission.id, raw);
+        llmHit = false;
+        disagreed = false;
+        verdictReason = `審判の呼び出しに失敗したため、AI判定なし（キー照合のみ）: ${e instanceof Error ? e.message.slice(0, 120) : String(e)}`;
+        console.log(`  ⚠️ 심판 실패 — 스텝 기록은 보존한다: ${verdictReason}`);
       }
     }
+  } catch (e) {
+    // 여기까지 온 스텝 기록은 이미 계측 결과다. 예외 하나로 통째로 버리지 않는다.
+    // outcome을 "error"로 남겨서, 이 실행을 이탈률 통계에 섞지 않도록 표시한다.
+    outcome = "error";
+    verdictReason = `実行が中断した: ${e instanceof Error ? e.message.slice(0, 200) : String(e)}`;
+    console.error(`\n  ⚠️ 실행 중단 — ${steps.length}스텝까지의 기록은 저장한다\n     ${verdictReason}`);
   } finally {
     await browser?.close();
   }
@@ -340,14 +367,17 @@ if (!missionId) {
   process.exit(1);
 }
 
+const maxSteps = process.env.MAX_STEPS ? Number(process.env.MAX_STEPS) : undefined;
+
 const mission = loadMission(missionId);
 const profile = loadProfile(profileId);
 console.log(`\n▶ ${mission.site_name} / ${mission.id}`);
 console.log(`  프로필 : ${profile.id} v${profile.version} — ${profile.label.ja}`);
 console.log(`  용무   : ${mission.intent_ja}`);
-console.log(`  예산   : ${profile.patience.clicks}클릭 / ${profile.patience.seconds}초\n`);
+console.log(`  예산   : ${profile.patience.clicks}클릭 / ${profile.patience.seconds}초`);
+console.log(`  스텝상한: ${maxSteps ?? mission.max_steps}${maxSteps ? " (MAX_STEPS로 덮어씀)" : ""}\n`);
 
-const t = await runOnce({ missionId, profileId, headless: process.env.HEADED !== "1" });
+const t = await runOnce({ missionId, profileId, maxSteps, headless: process.env.HEADED !== "1" });
 
 console.log(`\n── 결과 ─────────────────────────────────`);
 console.log(`  outcome  : ${t.verdict.outcome}  (到達 ${t.verdict.reached ? "○" : "×"})`);

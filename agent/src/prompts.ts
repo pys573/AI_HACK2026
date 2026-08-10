@@ -34,12 +34,17 @@ export const DECIDE_SYSTEM = [
 ].join("\n");
 
 /** LLM이 낼 수 있는 수. 프로필이 허용하지 않는 종류는 **목록에 넣지 않는다.** */
-export function actionSchema(p: Profile): Record<string, unknown> {
+export function allowedKinds(p: Profile): string[] {
   const kinds = ["click", "scroll", "give_up"];
   if (p.tools.find_in_page) kinds.push("find_in_page");
   if (p.tools.site_search) kinds.push("site_search");
   // back은 back_limit가 0이 아닌 한 사람이면 누구나 할 수 있다
   if (p.tools.back_limit === null || p.tools.back_limit > 0) kinds.push("back");
+  return kinds;
+}
+
+export function actionSchema(p: Profile): Record<string, unknown> {
+  const kinds = allowedKinds(p);
 
   return {
     type: "object",
