@@ -208,8 +208,8 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         const d = await decide(mission, obs, profile, history);
         action = d.action;
         failStreak = 0;
-        stepCalls.push(d.cost);
-        allCalls.push(d.cost);
+        stepCalls.push(...d.costs);
+        allCalls.push(...d.costs);
 
         const r = await act(page, action, raw, visible, profile, origin, rl, backsUsed);
         actOk = r.ok;
