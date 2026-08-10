@@ -6,7 +6,7 @@
     "node": ">=25"
   },
   "scripts": {
-    "lexicon:build": "node lexicon/src/gairaigo.ts",
+    "lexicon:build": "node lexicon/src/gairaigo.ts && node lexicon/src/yasashii.ts",
     "lexicon:test": "node lexicon/src/mask.test.ts",
     "probe": "node agent/src/probe.ts",
     "sitecheck": "node agent/src/sitecheck.ts",

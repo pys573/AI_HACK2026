@@ -5,8 +5,18 @@
  * 근거 없이 가리거나, 근거가 있는데 안 가리거나, 둘 다 데모를 죽인다.
  */
 
-import { mask, evidence, loadLexicon, MASK_CHAR, type MaskPolicy } from "./mask.ts";
+import {
+  mask,
+  evidence,
+  plainJapanese,
+  loadLexicon,
+  loadDesignated,
+  MASK_CHAR,
+  type RatePolicy,
+  type ListPolicy,
+} from "./mask.ts";
 import { normalize, waregkiToIso } from "./gairaigo.ts";
+import { surfacesOf, EXPECTED_ENTRIES } from "./yasashii.ts";
 
 let pass = 0;
 let fail = 0;
@@ -41,11 +51,18 @@ function eq(actual: unknown, expected: unknown, label: string) {
 
 const lex = loadLexicon();
 
-/** 고령자 프로필의 기본 정책. profiles/ 의 스펙과 같은 값이어야 한다. */
-const SENIOR: MaskPolicy = {
+/** 고령자 프로필의 기본 정책. profiles/senior-70s.json 의 스펙과 같은 값이어야 한다. */
+const SENIOR: RatePolicy = {
   cohort: "senior",
   mask_below: 30,
   partial_below: null,
+  unknown: "keep",
+};
+
+/** 외국인 주민 프로필의 정책. profiles/resident-n3.json 의 스펙과 같은 값이어야 한다. */
+const N3: ListPolicy = {
+  kind: "designated_list",
+  list: "yasashii-kakikae-2020",
   unknown: "keep",
 };
 
@@ -156,11 +173,98 @@ section("6. 비카타카나는 절대 건드리지 않는다");
   const src = "転入届の手続きは住民課の窓口で受け付けます。ABC123";
   const r = mask(src, SENIOR, lex);
   eq(r.text, src, "한자·가나·영숫자는 원문 그대로");
-  eq(r.stats.katakana_tokens, 0, "카타카나 토큰 0");
+  eq(r.stats.scanned, 0, "카타카나 토큰 0");
 }
 
 // ────────────────────────────────────────────────────────────────
-section("7. 데모 출력 — 화면에 나갈 문장");
+section("7. 명단 코퍼스 — 書き換え例가 그대로 들어와 있는가");
+
+const list = loadDesignated();
+
+eq(EXPECTED_ENTRIES, 134, "원본 수록 134어");
+{
+  const nos = new Set([...list.bySurface.values()].map((e) => e.no));
+  eq(nos.size, 134, `항목 ${nos.size}어 — 129면 카타카나 표제어가 빠진 것이다`);
+}
+// 파싱 함정 ①: 「確定申告」은 PDF 안에서 確定 + 申告 두 덩어리로 쪼개져 있다.
+eq(list.bySurface.get("確定申告")?.no, 16, "한자 덩어리가 이어붙어 있다 (確定申告)");
+// 파싱 함정 ②: 意味의 첫 덩어리가 語彙에 딸려오면 「育児休業子」가 된다.
+eq(list.bySurface.get("育児休業")?.term, "育児休業", "意味 첫 글자가 딸려오지 않는다");
+ok(!list.bySurface.has("育児休業子"), "育児休業子 같은 잡종 표제어가 없다");
+// 파싱 함정 ③: 카타카나 표제어에는 루비가 없어 교대 패턴이 깨진다.
+for (const w of ["オーバーステイ", "ケアマネジャー", "ハザードマップ", "ハローワーク"]) {
+  ok(list.bySurface.has(w), `카타카나 표제어 ${w}`);
+}
+ok(list.bySurface.has("ファミリー・サポート・センター"), "카타카나 표제어 ファミリー・サポート・センター");
+// 意味는 「대신 뭐라고 쓰라는 건가」의 답이다. 비어 있으면 리포트가 아무 제안도 못 한다.
+ok(list.bySurface.get("転入届")!.meaning.length > 10, "転入届에 やさしい日本語 설명이 붙어 있다");
+
+// ────────────────────────────────────────────────────────────────
+section("8. 표기 파생 — 원본 표기 그대로는 어느 사이트에도 없다");
+
+eq(surfacesOf("管理費（共益費）"), ["管理費", "共益費"], "괄호 별칭을 둘로");
+eq(surfacesOf("（賃貸契約の）更新料"), ["更新料"], "앞머리 괄호는 한정어라 버린다");
+eq(surfacesOf("自治会・町内会"), ["自治会", "町内会"], "中黒 열거는 분리");
+eq(
+  surfacesOf("ファミリー・サポート・センター"),
+  ["ファミリー・サポート・センター", "ファミリーサポートセンター"],
+  "카타카나어 내부의 中黒은 열거가 아니다 — 쪼개지 않고 표기 흔들림만 흡수",
+);
+// 「自動車税」는 이 항목이 지정한 말이 아니다. 긴 표제어를 빌미로 짧고 흔한 말을 가리면 과잉 마스킹이다.
+eq(
+  surfacesOf("自動車税／軽自動車税種別割"),
+  ["軽自動車税種別割"],
+  "같은 항목 안의 부분문자열은 버린다 (과소 마스킹 방향)",
+);
+
+// ────────────────────────────────────────────────────────────────
+section("9. 명단 마스킹 — 근거는 %가 아니라 「지정되었다」");
+
+{
+  const r = mask("転入届の手続きは住民課の窓口です。", N3, list);
+  eq(r.text, `${MASK_CHAR.repeat(3)}の手続きは住民課の窓口です。`, "転入届 마스킹");
+  eq(r.hits[0].basis, "designated_list", "근거 종류 = 명단");
+  eq(r.hits[0].comprehension, null, "명단에는 이해율이 없다 — 지어내지 않는다");
+  eq(r.hits[0].listing?.no, 97, "원본 番号가 붙는다");
+}
+{
+  // 최장일치. 「国民健康保険」이 「健康保険」이나 「保険」에서 끊기면 근거가 짧은 쪽으로 바뀐다.
+  const r = mask("国民健康保険と介護保険", N3, list);
+  eq(
+    r.hits.map((h) => h.entry),
+    ["国民健康保険", "介護保険"],
+    "긴 표제어가 이긴다",
+  );
+}
+{
+  // 미수록어는 통과. 「住民異動届」은 이 명단에 없다 (절대규칙 2).
+  const src = "住民異動届と印鑑登録の窓口";
+  const r = mask(src, N3, list);
+  ok(r.text.startsWith("住民異動届"), "미수록어 住民異動届는 통과");
+  eq(r.stats.masked, 0, "근거 없는 마스킹 0건");
+}
+{
+  // ASCII 표기는 낱말 경계를 요구한다. 아니면 URL·식별자 안에서 터진다.
+  eq(mask("日本留学試験（EJU）", N3, list).stats.masked, 2, "EJU는 단독으로 서면 마스킹");
+  eq(mask("PROJECT_EJUKAI", N3, list).stats.masked, 0, "낱말 안의 EJU는 히트가 아니다");
+}
+{
+  // 정책이 서로 새지 않는가. 명단 정책은 카타카나 이해율을 보지 않는다.
+  const r = mask("ダウンロードとログイン", N3, list);
+  eq(r.stats.masked, 0, "명단에 없는 외래어는 명단 정책이 건드리지 않는다");
+}
+{
+  // 모든 히트에 근거가 붙는가. 근거 없는 히트는 버그다 (CLAUDE.md 코드 규약).
+  const r = mask("確定申告と年末調整と特別徴収と源泉徴収", N3, list);
+  eq(r.stats.masked, 4, "4건 마스킹");
+  ok(
+    r.hits.every((h) => evidence(h).includes("収録語 No.") && plainJapanese(h) !== null),
+    "모든 히트에 出典·番号·言い換え이 붙는다",
+  );
+}
+
+// ────────────────────────────────────────────────────────────────
+section("10. 데모 출력 — 화면에 나갈 문장");
 
 {
   const src = "オンライン申請の手引きはこちらからダウンロードできます。ログインが必要です。";
@@ -172,6 +276,18 @@ section("7. 데모 출력 — 화면에 나갈 문장");
   }
   ok(r.stats.masked === 2, "ダウンロード·ログイン 2건 마스킹");
   ok(r.text.includes("オンライン申請"), "オンライン(53.0%)은 남는다 — 전부 가리는 게 아니다");
+}
+{
+  const src = "転入届は住民異動届の一種です。国民健康保険の加入もあわせて確定申告に必要です。";
+  const r = mask(src, N3, list);
+  console.log(`\n    원문 : ${src}`);
+  console.log(`    N3   : ${r.text}`);
+  for (const h of r.hits) {
+    console.log(`           └ ${evidence(h)}`);
+    console.log(`             → ${plainJapanese(h)}`);
+  }
+  ok(r.stats.masked === 3, "転入届·国民健康保険·確定申告 3건 마스킹");
+  ok(r.text.includes("住民異動届"), "미수록 住民異動届는 남는다 — 이건 과소평가다");
 }
 
 done();
