@@ -1,0 +1,1183 @@
+{
+  "_note": "★ 이건 실제로 캡처한 페이지다(목업 아님). 2026-08-11 · resident-n3 뷰포트 375x667 · Chrome(system) · 읽기 전용 1페이지씩.\n  마스킹 결과는 여기 담지 않는다 — build-sample-n3.ts 가 실제 mask() 를 돌려서 만든다. 어휘가 바뀌면 픽스처도 따라간다.",
+  "_captured_at": "2026-08-11",
+  "_profile": "resident-n3 v1.1 (viewport 375x667, zoom 1)",
+  "pages": [
+    {
+      "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+      "title": "住所変更の届出：新宿区",
+      "scroll_y": 0,
+      "text": "ホーム\nくらし\n観光・文化\n早引きメニュー\nテーマから探す\n新宿区ホーム\nくらし\n戸籍・住民票・印鑑登録・マイナンバーカード\n住所変更の届出\n住所変更の届出\nくらし\n戸籍・住民票・印鑑登録・マイナンバーカード\n日本語\n日本語\nEnglish\n한국어\n简体中文\n質問にお答えします！",
+      "elements": [
+        {
+          "index": 0,
+          "role": "link",
+          "name": "本文へ",
+          "in_viewport": false
+        },
+        {
+          "index": 1,
+          "role": "link",
+          "name": "サイトマップ",
+          "in_viewport": false
+        },
+        {
+          "index": 2,
+          "role": "link",
+          "name": "アクセス等",
+          "in_viewport": false
+        },
+        {
+          "index": 3,
+          "role": "link",
+          "name": "問い合わせ",
+          "in_viewport": false
+        },
+        {
+          "index": 4,
+          "role": "link",
+          "name": "携帯サイト",
+          "in_viewport": false
+        },
+        {
+          "index": 5,
+          "role": "link",
+          "name": "新宿区 SHINJUKU CITY",
+          "in_viewport": true
+        },
+        {
+          "index": 6,
+          "role": "input",
+          "name": "検索",
+          "in_viewport": false
+        },
+        {
+          "index": 7,
+          "role": "link",
+          "name": "検索の方法",
+          "in_viewport": false
+        },
+        {
+          "index": 8,
+          "role": "link",
+          "name": "標準",
+          "in_viewport": false
+        },
+        {
+          "index": 9,
+          "role": "link",
+          "name": "拡大",
+          "in_viewport": false
+        },
+        {
+          "index": 10,
+          "role": "link",
+          "name": "音声読み上げ",
+          "in_viewport": false
+        },
+        {
+          "index": 11,
+          "role": "link",
+          "name": "Language",
+          "in_viewport": false
+        },
+        {
+          "index": 12,
+          "role": "link",
+          "name": "ホーム",
+          "in_viewport": true
+        },
+        {
+          "index": 13,
+          "role": "link",
+          "name": "くらし",
+          "in_viewport": true
+        },
+        {
+          "index": 14,
+          "role": "link",
+          "name": "観光・文化",
+          "in_viewport": true
+        },
+        {
+          "index": 15,
+          "role": "link",
+          "name": "産業・ビジネス",
+          "in_viewport": false
+        },
+        {
+          "index": 16,
+          "role": "link",
+          "name": "防災・防犯",
+          "in_viewport": false
+        },
+        {
+          "index": 17,
+          "role": "link",
+          "name": "その他区政情報",
+          "in_viewport": false
+        },
+        {
+          "index": 18,
+          "role": "link",
+          "name": "テーマから探す",
+          "in_viewport": true
+        },
+        {
+          "index": 19,
+          "role": "link",
+          "name": "お手続きの情報・窓口案内",
+          "in_viewport": false
+        },
+        {
+          "index": 20,
+          "role": "link",
+          "name": "施設案内・利用予約",
+          "in_viewport": false
+        },
+        {
+          "index": 21,
+          "role": "link",
+          "name": "新宿行政手続きナビ",
+          "in_viewport": false
+        },
+        {
+          "index": 22,
+          "role": "link",
+          "name": "新宿区ホーム",
+          "in_viewport": true
+        },
+        {
+          "index": 23,
+          "role": "link",
+          "name": "くらし",
+          "in_viewport": true
+        },
+        {
+          "index": 24,
+          "role": "link",
+          "name": "戸籍・住民票・印鑑登録・マイナンバーカード",
+          "in_viewport": true
+        },
+        {
+          "index": 25,
+          "role": "link",
+          "name": "住民票等の証明・住所変更の届出",
+          "in_viewport": false
+        },
+        {
+          "index": 26,
+          "role": "link",
+          "name": "3・4・5月期における転入・転出の手続きについて",
+          "in_viewport": false
+        },
+        {
+          "index": 27,
+          "role": "link",
+          "name": "住民記録の届出",
+          "in_viewport": false
+        },
+        {
+          "index": 28,
+          "role": "link",
+          "name": "転入届（新宿区外から引越ししてきたとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 29,
+          "role": "link",
+          "name": "転入届【マイナンバーカード（個人番号カード）を利用して転入するとき】",
+          "in_viewport": false
+        },
+        {
+          "index": 30,
+          "role": "link",
+          "name": "転出届（新宿区外に引越しするとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 31,
+          "role": "link",
+          "name": "転出届 【マイナンバーカード（個人番号カード）を利用して転出するとき】",
+          "in_viewport": false
+        },
+        {
+          "index": 32,
+          "role": "link",
+          "name": "転居届（新宿区内で引越ししたとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 33,
+          "role": "link",
+          "name": "世帯変更届（世帯主が変わったとき、世帯を分けたり、一緒にしたりしたとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 34,
+          "role": "link",
+          "name": "転出届（マイナポータルで手続きをするとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 35,
+          "role": "link",
+          "name": "スマートフォン等から住所変更の届出書・住民票等の請求書の作成ができます",
+          "in_viewport": false
+        },
+        {
+          "index": 36,
+          "role": "link",
+          "name": "戸籍・住民票・印鑑登録・マイナンバーカード",
+          "in_viewport": true
+        },
+        {
+          "index": 37,
+          "role": "link",
+          "name": "電子申請サービス",
+          "in_viewport": false
+        },
+        {
+          "index": 38,
+          "role": "link",
+          "name": "保険・年金・税金",
+          "in_viewport": false
+        },
+        {
+          "index": 39,
+          "role": "link",
+          "name": "出産・子ども・教育",
+          "in_viewport": false
+        },
+        {
+          "index": 40,
+          "role": "link",
+          "name": "福祉・介護",
+          "in_viewport": false
+        },
+        {
+          "index": 41,
+          "role": "link",
+          "name": "健康・医療・衛生",
+          "in_viewport": false
+        },
+        {
+          "index": 42,
+          "role": "link",
+          "name": "ごみ・資源・環境",
+          "in_viewport": false
+        },
+        {
+          "index": 43,
+          "role": "link",
+          "name": "住まい",
+          "in_viewport": false
+        },
+        {
+          "index": 44,
+          "role": "link",
+          "name": "まちづくり・都市計画",
+          "in_viewport": false
+        },
+        {
+          "index": 45,
+          "role": "link",
+          "name": "道路・交通・自転車",
+          "in_viewport": false
+        },
+        {
+          "index": 46,
+          "role": "link",
+          "name": "みどり・河川・公園",
+          "in_viewport": false
+        },
+        {
+          "index": 47,
+          "role": "link",
+          "name": "地域共生・区民活動",
+          "in_viewport": false
+        },
+        {
+          "index": 48,
+          "role": "link",
+          "name": "多文化共生・国際交流",
+          "in_viewport": false
+        },
+        {
+          "index": 49,
+          "role": "link",
+          "name": "消費生活・相談",
+          "in_viewport": false
+        },
+        {
+          "index": 50,
+          "role": "link",
+          "name": "社会保障・税番号（マイナンバー）制度",
+          "in_viewport": false
+        },
+        {
+          "index": 51,
+          "role": "link",
+          "name": "本ホームページについて",
+          "in_viewport": false
+        },
+        {
+          "index": 52,
+          "role": "link",
+          "name": "本ホームページの使い方",
+          "in_viewport": false
+        },
+        {
+          "index": 53,
+          "role": "link",
+          "name": "個人情報の取り扱い",
+          "in_viewport": false
+        },
+        {
+          "index": 54,
+          "role": "link",
+          "name": "ウェブアクセシビリティ方針",
+          "in_viewport": false
+        },
+        {
+          "index": 55,
+          "role": "link",
+          "name": "ページの先頭へ",
+          "in_viewport": false
+        },
+        {
+          "index": 56,
+          "role": "link",
+          "name": "新宿区のロゴ",
+          "in_viewport": false
+        },
+        {
+          "index": 57,
+          "role": "link",
+          "name": "受付時間",
+          "in_viewport": false
+        },
+        {
+          "index": 58,
+          "role": "link",
+          "name": "交通アクセス",
+          "in_viewport": false
+        },
+        {
+          "index": 59,
+          "role": "button",
+          "name": "Verify DigiCert TLS certificate for this site",
+          "in_viewport": false
+        },
+        {
+          "index": 60,
+          "role": "div",
+          "name": "質問にお答えします！ AIスタッフを閉じる",
+          "in_viewport": true
+        },
+        {
+          "index": 61,
+          "role": "div",
+          "name": "AIスタッフを閉じる",
+          "in_viewport": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+      "title": "住所変更の届出：新宿区",
+      "scroll_y": 600,
+      "text": "住所変更の届出\n3・4・5月期における転入・転出の手続きについて\n転入届【マイナンバーカード（個人番号カード）を利用して転入するとき】\n転居届（新宿区内で引越ししたとき）\n転出届（マイナポータルで手続きをするとき）\nくらし\n戸籍・住民票・印鑑登録・マイナンバーカード\n電子申請サービス\n保険・年金・税金\n出産・子ども・教育\n福祉・介護\n健康・医療・衛生\nごみ・資源・環境\n住まい\nまちづくり・都市計画\n道路・交通・自転車\nみどり・河川・公園\n地域共生・区民活動\n多文化共生・国際交流\n消費生活・相談\n社会保障・税番号（マイナンバー）制度\n日本語\n日本語\nEnglish\n한국어\n简体中文\n質問にお答えします！",
+      "elements": [
+        {
+          "index": 0,
+          "role": "link",
+          "name": "本文へ",
+          "in_viewport": false
+        },
+        {
+          "index": 1,
+          "role": "link",
+          "name": "サイトマップ",
+          "in_viewport": false
+        },
+        {
+          "index": 2,
+          "role": "link",
+          "name": "アクセス等",
+          "in_viewport": false
+        },
+        {
+          "index": 3,
+          "role": "link",
+          "name": "問い合わせ",
+          "in_viewport": false
+        },
+        {
+          "index": 4,
+          "role": "link",
+          "name": "携帯サイト",
+          "in_viewport": false
+        },
+        {
+          "index": 5,
+          "role": "link",
+          "name": "新宿区 SHINJUKU CITY",
+          "in_viewport": false
+        },
+        {
+          "index": 6,
+          "role": "input",
+          "name": "検索",
+          "in_viewport": false
+        },
+        {
+          "index": 7,
+          "role": "link",
+          "name": "検索の方法",
+          "in_viewport": false
+        },
+        {
+          "index": 8,
+          "role": "link",
+          "name": "標準",
+          "in_viewport": false
+        },
+        {
+          "index": 9,
+          "role": "link",
+          "name": "拡大",
+          "in_viewport": false
+        },
+        {
+          "index": 10,
+          "role": "link",
+          "name": "音声読み上げ",
+          "in_viewport": false
+        },
+        {
+          "index": 11,
+          "role": "link",
+          "name": "Language",
+          "in_viewport": false
+        },
+        {
+          "index": 12,
+          "role": "link",
+          "name": "ホーム",
+          "in_viewport": false
+        },
+        {
+          "index": 13,
+          "role": "link",
+          "name": "くらし",
+          "in_viewport": false
+        },
+        {
+          "index": 14,
+          "role": "link",
+          "name": "観光・文化",
+          "in_viewport": false
+        },
+        {
+          "index": 15,
+          "role": "link",
+          "name": "産業・ビジネス",
+          "in_viewport": false
+        },
+        {
+          "index": 16,
+          "role": "link",
+          "name": "防災・防犯",
+          "in_viewport": false
+        },
+        {
+          "index": 17,
+          "role": "link",
+          "name": "その他区政情報",
+          "in_viewport": false
+        },
+        {
+          "index": 18,
+          "role": "link",
+          "name": "テーマから探す",
+          "in_viewport": false
+        },
+        {
+          "index": 19,
+          "role": "link",
+          "name": "お手続きの情報・窓口案内",
+          "in_viewport": false
+        },
+        {
+          "index": 20,
+          "role": "link",
+          "name": "施設案内・利用予約",
+          "in_viewport": false
+        },
+        {
+          "index": 21,
+          "role": "link",
+          "name": "新宿行政手続きナビ",
+          "in_viewport": false
+        },
+        {
+          "index": 22,
+          "role": "link",
+          "name": "新宿区ホーム",
+          "in_viewport": false
+        },
+        {
+          "index": 23,
+          "role": "link",
+          "name": "くらし",
+          "in_viewport": false
+        },
+        {
+          "index": 24,
+          "role": "link",
+          "name": "戸籍・住民票・印鑑登録・マイナンバーカード",
+          "in_viewport": false
+        },
+        {
+          "index": 25,
+          "role": "link",
+          "name": "住民票等の証明・住所変更の届出",
+          "in_viewport": false
+        },
+        {
+          "index": 26,
+          "role": "link",
+          "name": "3・4・5月期における転入・転出の手続きについて",
+          "in_viewport": true
+        },
+        {
+          "index": 27,
+          "role": "link",
+          "name": "住民記録の届出",
+          "in_viewport": false
+        },
+        {
+          "index": 28,
+          "role": "link",
+          "name": "転入届（新宿区外から引越ししてきたとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 29,
+          "role": "link",
+          "name": "転入届【マイナンバーカード（個人番号カード）を利用して転入するとき】",
+          "in_viewport": true
+        },
+        {
+          "index": 30,
+          "role": "link",
+          "name": "転出届（新宿区外に引越しするとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 31,
+          "role": "link",
+          "name": "転出届 【マイナンバーカード（個人番号カード）を利用して転出するとき】",
+          "in_viewport": false
+        },
+        {
+          "index": 32,
+          "role": "link",
+          "name": "転居届（新宿区内で引越ししたとき）",
+          "in_viewport": true
+        },
+        {
+          "index": 33,
+          "role": "link",
+          "name": "世帯変更届（世帯主が変わったとき、世帯を分けたり、一緒にしたりしたとき）",
+          "in_viewport": false
+        },
+        {
+          "index": 34,
+          "role": "link",
+          "name": "転出届（マイナポータルで手続きをするとき）",
+          "in_viewport": true
+        },
+        {
+          "index": 35,
+          "role": "link",
+          "name": "スマートフォン等から住所変更の届出書・住民票等の請求書の作成ができます",
+          "in_viewport": false
+        },
+        {
+          "index": 36,
+          "role": "link",
+          "name": "戸籍・住民票・印鑑登録・マイナンバーカード",
+          "in_viewport": true
+        },
+        {
+          "index": 37,
+          "role": "link",
+          "name": "電子申請サービス",
+          "in_viewport": true
+        },
+        {
+          "index": 38,
+          "role": "link",
+          "name": "保険・年金・税金",
+          "in_viewport": true
+        },
+        {
+          "index": 39,
+          "role": "link",
+          "name": "出産・子ども・教育",
+          "in_viewport": true
+        },
+        {
+          "index": 40,
+          "role": "link",
+          "name": "福祉・介護",
+          "in_viewport": true
+        },
+        {
+          "index": 41,
+          "role": "link",
+          "name": "健康・医療・衛生",
+          "in_viewport": true
+        },
+        {
+          "index": 42,
+          "role": "link",
+          "name": "ごみ・資源・環境",
+          "in_viewport": true
+        },
+        {
+          "index": 43,
+          "role": "link",
+          "name": "住まい",
+          "in_viewport": true
+        },
+        {
+          "index": 44,
+          "role": "link",
+          "name": "まちづくり・都市計画",
+          "in_viewport": true
+        },
+        {
+          "index": 45,
+          "role": "link",
+          "name": "道路・交通・自転車",
+          "in_viewport": true
+        },
+        {
+          "index": 46,
+          "role": "link",
+          "name": "みどり・河川・公園",
+          "in_viewport": true
+        },
+        {
+          "index": 47,
+          "role": "link",
+          "name": "地域共生・区民活動",
+          "in_viewport": true
+        },
+        {
+          "index": 48,
+          "role": "link",
+          "name": "多文化共生・国際交流",
+          "in_viewport": true
+        },
+        {
+          "index": 49,
+          "role": "link",
+          "name": "消費生活・相談",
+          "in_viewport": true
+        },
+        {
+          "index": 50,
+          "role": "link",
+          "name": "社会保障・税番号（マイナンバー）制度",
+          "in_viewport": true
+        },
+        {
+          "index": 51,
+          "role": "link",
+          "name": "本ホームページについて",
+          "in_viewport": false
+        },
+        {
+          "index": 52,
+          "role": "link",
+          "name": "本ホームページの使い方",
+          "in_viewport": false
+        },
+        {
+          "index": 53,
+          "role": "link",
+          "name": "個人情報の取り扱い",
+          "in_viewport": false
+        },
+        {
+          "index": 54,
+          "role": "link",
+          "name": "ウェブアクセシビリティ方針",
+          "in_viewport": false
+        },
+        {
+          "index": 55,
+          "role": "link",
+          "name": "ページの先頭へ",
+          "in_viewport": false
+        },
+        {
+          "index": 56,
+          "role": "link",
+          "name": "新宿区のロゴ",
+          "in_viewport": false
+        },
+        {
+          "index": 57,
+          "role": "link",
+          "name": "受付時間",
+          "in_viewport": false
+        },
+        {
+          "index": 58,
+          "role": "link",
+          "name": "交通アクセス",
+          "in_viewport": false
+        },
+        {
+          "index": 59,
+          "role": "button",
+          "name": "Verify DigiCert TLS certificate for this site",
+          "in_viewport": false
+        },
+        {
+          "index": 60,
+          "role": "div",
+          "name": "質問にお答えします！ AIスタッフを閉じる",
+          "in_viewport": true
+        },
+        {
+          "index": 61,
+          "role": "div",
+          "name": "AIスタッフを閉じる",
+          "in_viewport": true
+        }
+      ]
+    },
+    {
+      "url": "https://www.city.shinjuku.lg.jp/todokede/koseki03_000008_f.html",
+      "title": "転入届【マイナンバーカード（個人番号カード）を利用して転入するとき】：新宿区",
+      "scroll_y": 0,
+      "text": "ホーム\nくらし\n観光・文化\n早引きメニュー\nテーマから探す\n新宿区ホーム\nくらし\n戸籍・住民票・印鑑登録・マイナンバーカード\n住所変更の届出\n転入届【マイナンバーカード（個人番号カード）を利用して転入するとき】\n転入届【マイナンバーカード（個人番号カード）を利用して転入するとき】\nくらし\n戸籍・住民票・印鑑登録・マイナンバーカード\n日本語\n日本語\nEnglish\n한국어\n简体中文\n質問にお答えします！",
+      "elements": [
+        {
+          "index": 0,
+          "role": "link",
+          "name": "本文へ",
+          "in_viewport": false
+        },
+        {
+          "index": 1,
+          "role": "link",
+          "name": "サイトマップ",
+          "in_viewport": false
+        },
+        {
+          "index": 2,
+          "role": "link",
+          "name": "アクセス等",
+          "in_viewport": false
+        },
+        {
+          "index": 3,
+          "role": "link",
+          "name": "問い合わせ",
+          "in_viewport": false
+        },
+        {
+          "index": 4,
+          "role": "link",
+          "name": "携帯サイト",
+          "in_viewport": false
+        },
+        {
+          "index": 5,
+          "role": "link",
+          "name": "新宿区 SHINJUKU CITY",
+          "in_viewport": true
+        },
+        {
+          "index": 6,
+          "role": "input",
+          "name": "検索",
+          "in_viewport": false
+        },
+        {
+          "index": 7,
+          "role": "link",
+          "name": "検索の方法",
+          "in_viewport": false
+        },
+        {
+          "index": 8,
+          "role": "link",
+          "name": "標準",
+          "in_viewport": false
+        },
+        {
+          "index": 9,
+          "role": "link",
+          "name": "拡大",
+          "in_viewport": false
+        },
+        {
+          "index": 10,
+          "role": "link",
+          "name": "音声読み上げ",
+          "in_viewport": false
+        },
+        {
+          "index": 11,
+          "role": "link",
+          "name": "Language",
+          "in_viewport": false
+        },
+        {
+          "index": 12,
+          "role": "link",
+          "name": "ホーム",
+          "in_viewport": true
+        },
+        {
+          "index": 13,
+          "role": "link",
+          "name": "くらし",
+          "in_viewport": true
+        },
+        {
+          "index": 14,
+          "role": "link",
+          "name": "観光・文化",
+          "in_viewport": true
+        },
+        {
+          "index": 15,
+          "role": "link",
+          "name": "産業・ビジネス",
+          "in_viewport": false
+        },
+        {
+          "index": 16,
+          "role": "link",
+          "name": "防災・防犯",
+          "in_viewport": false
+        },
+        {
+          "index": 17,
+          "role": "link",
+          "name": "その他区政情報",
+          "in_viewport": false
+        },
+        {
+          "index": 18,
+          "role": "link",
+          "name": "テーマから探す",
+          "in_viewport": true
+        },
+        {
+          "index": 19,
+          "role": "link",
+          "name": "お手続きの情報・窓口案内",
+          "in_viewport": false
+        },
+        {
+          "index": 20,
+          "role": "link",
+          "name": "施設案内・利用予約",
+          "in_viewport": false
+        },
+        {
+          "index": 21,
+          "role": "link",
+          "name": "新宿行政手続きナビ",
+          "in_viewport": false
+        },
+        {
+          "index": 22,
+          "role": "link",
+          "name": "新宿区ホーム",
+          "in_viewport": true
+        },
+        {
+          "index": 23,
+          "role": "link",
+          "name": "くらし",
+          "in_viewport": true
+        },
+        {
+          "index": 24,
+          "role": "link",
+          "name": "戸籍・住民票・印鑑登録・マイナンバーカード",
+          "in_viewport": true
+        },
+        {
+          "index": 25,
+          "role": "link",
+          "name": "住民票等の証明・住所変更の届出",
+          "in_viewport": false
+        },
+        {
+          "index": 26,
+          "role": "link",
+          "name": "住所変更の届出",
+          "in_viewport": true
+        },
+        {
+          "index": 27,
+          "role": "link",
+          "name": "転出届 【マイナンバーカード（個人番号カード）を利用して転出するとき】",
+          "in_viewport": false
+        },
+        {
+          "index": 28,
+          "role": "link",
+          "name": "こちら",
+          "in_viewport": false
+        },
+        {
+          "index": 29,
+          "role": "link",
+          "name": "こちら",
+          "in_viewport": false
+        },
+        {
+          "index": 30,
+          "role": "link",
+          "name": "戸籍住民課窓口受付状況",
+          "in_viewport": false
+        },
+        {
+          "index": 31,
+          "role": "link",
+          "name": "特別出張所",
+          "in_viewport": false
+        },
+        {
+          "index": 32,
+          "role": "link",
+          "name": "特別出張所窓口受付状況",
+          "in_viewport": false
+        },
+        {
+          "index": 33,
+          "role": "link",
+          "name": "地域振興部-戸籍住民課",
+          "in_viewport": false
+        },
+        {
+          "index": 34,
+          "role": "input",
+          "name": "1",
+          "in_viewport": false
+        },
+        {
+          "index": 35,
+          "role": "input",
+          "name": "2",
+          "in_viewport": false
+        },
+        {
+          "index": 36,
+          "role": "input",
+          "name": "3",
+          "in_viewport": false
+        },
+        {
+          "index": 37,
+          "role": "input",
+          "name": "1",
+          "in_viewport": false
+        },
+        {
+          "index": 38,
+          "role": "input",
+          "name": "2",
+          "in_viewport": false
+        },
+        {
+          "index": 39,
+          "role": "input",
+          "name": "3",
+          "in_viewport": false
+        },
+        {
+          "index": 40,
+          "role": "input",
+          "name": "確認画面へ",
+          "in_viewport": false
+        },
+        {
+          "index": 41,
+          "role": "link",
+          "name": "ご意見フォーム",
+          "in_viewport": false
+        },
+        {
+          "index": 42,
+          "role": "link",
+          "name": "戸籍・住民票・印鑑登録・マイナンバーカード",
+          "in_viewport": true
+        },
+        {
+          "index": 43,
+          "role": "link",
+          "name": "電子申請サービス",
+          "in_viewport": false
+        },
+        {
+          "index": 44,
+          "role": "link",
+          "name": "保険・年金・税金",
+          "in_viewport": false
+        },
+        {
+          "index": 45,
+          "role": "link",
+          "name": "出産・子ども・教育",
+          "in_viewport": false
+        },
+        {
+          "index": 46,
+          "role": "link",
+          "name": "福祉・介護",
+          "in_viewport": false
+        },
+        {
+          "index": 47,
+          "role": "link",
+          "name": "健康・医療・衛生",
+          "in_viewport": false
+        },
+        {
+          "index": 48,
+          "role": "link",
+          "name": "ごみ・資源・環境",
+          "in_viewport": false
+        },
+        {
+          "index": 49,
+          "role": "link",
+          "name": "住まい",
+          "in_viewport": false
+        },
+        {
+          "index": 50,
+          "role": "link",
+          "name": "まちづくり・都市計画",
+          "in_viewport": false
+        },
+        {
+          "index": 51,
+          "role": "link",
+          "name": "道路・交通・自転車",
+          "in_viewport": false
+        },
+        {
+          "index": 52,
+          "role": "link",
+          "name": "みどり・河川・公園",
+          "in_viewport": false
+        },
+        {
+          "index": 53,
+          "role": "link",
+          "name": "地域共生・区民活動",
+          "in_viewport": false
+        },
+        {
+          "index": 54,
+          "role": "link",
+          "name": "多文化共生・国際交流",
+          "in_viewport": false
+        },
+        {
+          "index": 55,
+          "role": "link",
+          "name": "消費生活・相談",
+          "in_viewport": false
+        },
+        {
+          "index": 56,
+          "role": "link",
+          "name": "社会保障・税番号（マイナンバー）制度",
+          "in_viewport": false
+        },
+        {
+          "index": 57,
+          "role": "link",
+          "name": "本ホームページについて",
+          "in_viewport": false
+        },
+        {
+          "index": 58,
+          "role": "link",
+          "name": "本ホームページの使い方",
+          "in_viewport": false
+        },
+        {
+          "index": 59,
+          "role": "link",
+          "name": "個人情報の取り扱い",
+          "in_viewport": false
+        },
+        {
+          "index": 60,
+          "role": "link",
+          "name": "ウェブアクセシビリティ方針",
+          "in_viewport": false
+        },
+        {
+          "index": 61,
+          "role": "link",
+          "name": "ページの先頭へ",
+          "in_viewport": false
+        },
+        {
+          "index": 62,
+          "role": "link",
+          "name": "新宿区のロゴ",
+          "in_viewport": false
+        },
+        {
+          "index": 63,
+          "role": "link",
+          "name": "受付時間",
+          "in_viewport": false
+        },
+        {
+          "index": 64,
+          "role": "link",
+          "name": "交通アクセス",
+          "in_viewport": false
+        },
+        {
+          "index": 65,
+          "role": "button",
+          "name": "Verify DigiCert TLS certificate for this site",
+          "in_viewport": false
+        },
+        {
+          "index": 66,
+          "role": "div",
+          "name": "質問にお答えします！ AIスタッフを閉じる",
+          "in_viewport": true
+        },
+        {
+          "index": 67,
+          "role": "div",
+          "name": "AIスタッフを閉じる",
+          "in_viewport": true
+        }
+      ]
+    }
+  ]
+}
