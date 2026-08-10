@@ -68,20 +68,32 @@ function snapshot(o: RawObservation | Observation, screenshotKey: string | null)
 }
 
 function constraintRecord(t: ConstraintTrace, charsBefore: number, charsAfter: number): ConstraintRecord {
-  const masked: MaskRecord[] = t.masked_words.map((h) => ({
-    surface: h.surface,
-    entry: h.entry,
-    action: h.action as MaskRecord["action"],
-    comprehension: h.comprehension,
-    cohort: h.cohort as MaskRecord["cohort"],
-    in_control: h.in_control,
-    evidence_ja: evidence(h),
-  }));
+  // ★ basis 없는 히트는 기록에 넣지 않는다.
+  //   "none"은 조사 미수록어(unknown)다 — 「왜 가렸는가」에 답할 근거가 없다.
+  //   계약(core/types.ts)의 MaskRecord.basis도 이 값을 받지 않으므로 DB 저장에서 거부된다.
+  //   근거 없는 히트는 버그다 (절대규칙 2).
+  const masked: MaskRecord[] = t.masked_words
+    .filter((h) => h.basis !== "none")
+    .map((h) => ({
+      surface: h.surface,
+      entry: h.entry,
+      action: h.action as MaskRecord["action"],
+      // 이해율(数値) 근거인가, 지정 명단 근거인가. 리포트 문구가 여기서 갈린다
+      basis: h.basis as MaskRecord["basis"],
+      comprehension: h.comprehension,
+      cohort: h.cohort as MaskRecord["cohort"],
+      // 명단 근거일 때의 「대신 이렇게 쓰세요」 — 그대로 개선 제안이 된다
+      listing: h.listing,
+      in_control: h.in_control,
+      evidence_ja: evidence(h),
+    }));
   return {
     profile: t.profile,
     profile_version: t.profile_version,
     masked,
-    masked_in_controls: t.masked_in_controls,
+    // 버린 히트까지 세면 실제보다 많이 가린 것처럼 보인다. 오차는 항상 과소 쪽이어야 한다.
+    // core/fixtures도 같은 정의다 — masked 안에서 센다.
+    masked_in_controls: masked.filter((m) => m.in_control).length,
     dom_text_withheld: t.dom_text_withheld,
     elements_total: t.elements_total,
     elements_in_viewport: t.elements_in_viewport,
