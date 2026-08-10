@@ -103,16 +103,39 @@ export type ObservationSnapshot = {
   screenshot_key: string | null;
 };
 
-/** 마스킹 1건의 기록. 근거 숫자와 출처가 반드시 붙는다 */
+/**
+ * 마스킹 1건의 기록. 근거가 반드시 붙는다.
+ *
+ * 근거는 두 종류이고 **성질이 다르다.** 섞으면 주장이 무너진다 (절대규칙 4).
+ * - `comprehension_rate` — 国立国語研究所 外来語定着度調査. 이해율 %가 있다 → `comprehension` + `cohort`
+ * - `designated_list`    — 「やさしい日本語 書き換え例」. %가 없는 지정 명단이다 → `listing`
+ *
+ * 명단에 「이해율」을 붙이면 존재하지 않는 조사를 존재한다고 말하는 것이 된다.
+ * 그래서 %를 공유 필드로 강제하지 않고 `basis`로 갈라 둔다.
+ *
+ * ★ `MaskHit`에는 세 번째 값 `"none"`(사전 미수록어를 `unknown: "mask"`로 가린 경우)이 있지만
+ *   여기에는 일부러 넣지 않았다. 근거 없이 가린 것은 기록 대상이 아니다 (절대규칙 2).
+ *   출품 프로필 5종은 전부 `unknown: "keep"`이므로 이 경로는 발생하지 않는다.
+ *   저장 단계에서 `basis === "none"`인 히트는 버린다.
+ */
 export type MaskRecord = {
   surface: string;
   entry: string | null;
   action: "mask" | "partial" | "unknown";
+  /** 어느 근거로 가렸는가. 리포트 문구·집계 축이 여기서 갈린다 */
+  basis: "comprehension_rate" | "designated_list";
+  /** 이해율 근거일 때만 값이 있다 */
   comprehension: number | null;
-  cohort: "overall" | "senior";
+  /** 명단 근거에는 코호트가 없다. 「누구의 이해율인가」라는 질문 자체가 성립하지 않는다 */
+  cohort: "overall" | "senior" | null;
+  /** 명단 근거일 때만 값이 있다. `meaning`이 「대신 이렇게 쓰세요」 → 리포트의 개선 제안이 된다 */
+  listing: { no: number; term: string; meaning: string } | null;
   /** 링크·버튼 라벨 안이었는가. true가 많을수록 탐색이 막힌다 */
   in_control: boolean;
-  /** 「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査） */
+  /**
+   * 「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査）
+   * 「転入届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.97
+   */
   evidence_ja: string;
 };
 

@@ -207,8 +207,10 @@
             "surface": "アクセシビリティ",
             "entry": "アクセシビリティ",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 2.1,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -216,8 +218,10 @@
             "surface": "サイト",
             "entry": "サイト",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 7.8,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -225,8 +229,10 @@
             "surface": "コンテンツ",
             "entry": "コンテンツ",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 8.8,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「コンテンツ」60歳以上の理解率 8.8%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -234,8 +240,10 @@
             "surface": "ダウンロード",
             "entry": "ダウンロード",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 8.2,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -243,8 +251,10 @@
             "surface": "サービス",
             "entry": "サービス",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 24.6,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「サービス」60歳以上の理解率 24.6%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           }
@@ -484,8 +494,10 @@
             "surface": "オンライン",
             "entry": "オンライン",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 53,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「オンライン」60歳以上の理解率 53%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -493,8 +505,10 @@
             "surface": "ダウンロード",
             "entry": "ダウンロード",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 8.2,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -502,8 +516,10 @@
             "surface": "サービス",
             "entry": "サービス",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 24.6,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「サービス」60歳以上の理解率 24.6%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           }
@@ -701,8 +717,10 @@
             "surface": "サービス",
             "entry": "サービス",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 24.6,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「サービス」60歳以上の理解率 24.6%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -710,8 +728,10 @@
             "surface": "ダウンロード",
             "entry": "ダウンロード",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 8.2,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -719,8 +739,10 @@
             "surface": "オンライン",
             "entry": "オンライン",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 53,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「オンライン」60歳以上の理解率 53%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           }
@@ -882,8 +904,10 @@
             "surface": "ログイン",
             "entry": "ログイン",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 6.4,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「ログイン」60歳以上の理解率 6.4%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           }
@@ -1080,8 +1104,10 @@
             "surface": "サービス",
             "entry": "サービス",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 24.6,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「サービス」60歳以上の理解率 24.6%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -1089,8 +1115,10 @@
             "surface": "ダウンロード",
             "entry": "ダウンロード",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 8.2,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -1098,8 +1126,10 @@
             "surface": "オンライン",
             "entry": "オンライン",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 53,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「オンライン」60歳以上の理解率 53%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           }
@@ -1261,8 +1291,10 @@
             "surface": "リフォーム",
             "entry": "リフォーム",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 26.4,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「リフォーム」60歳以上の理解率 26.4%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           }
@@ -1459,8 +1491,10 @@
             "surface": "サービス",
             "entry": "サービス",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 24.6,
             "cohort": "senior",
+            "listing": null,
             "in_control": true,
             "evidence_ja": "「サービス」60歳以上の理解率 24.6%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -1468,8 +1502,10 @@
             "surface": "ダウンロード",
             "entry": "ダウンロード",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 8.2,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           },
@@ -1477,8 +1513,10 @@
             "surface": "オンライン",
             "entry": "オンライン",
             "action": "mask",
+            "basis": "comprehension_rate",
             "comprehension": 53,
             "cohort": "senior",
+            "listing": null,
             "in_control": false,
             "evidence_ja": "「オンライン」60歳以上の理解率 53%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）"
           }

@@ -74,8 +74,10 @@ function mask(surface: string, comprehension: number, in_control: boolean): Mask
     surface,
     entry: surface,
     action: "mask",
+    basis: "comprehension_rate",
     comprehension,
     cohort: "senior",
+    listing: null,
     in_control,
     evidence_ja: `「${surface}」60歳以上の理解率 ${comprehension}%（国立国語研究所 外来語定着度調査 2002-2004, CC BY 4.0）`,
   };

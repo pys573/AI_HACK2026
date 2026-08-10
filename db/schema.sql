@@ -143,11 +143,24 @@ create table if not exists masks (
   surface       text not null,
   entry         text,
   action        text not null check (action in ('mask','partial','unknown')),
+  -- 근거의 종류. 이해율(%)과 지정 명단은 성질이 다르다 — 섞으면 주장이 무너진다
+  basis         text not null default 'comprehension_rate'
+                check (basis in ('comprehension_rate','designated_list')),
   comprehension numeric(5,2),
-  cohort        text not null check (cohort in ('overall','senior')),
+  -- 명단 근거에는 코호트가 없다. 「누구의 이해율인가」라는 질문 자체가 성립하지 않는다
+  cohort        text check (cohort in ('overall','senior')),
+  -- 「대신 뭐라고 쓰라는 건가」. 명단 근거에만 있고, 그대로 리포트의 개선 제안이 된다
+  listing_no      int,
+  listing_term    text,
+  listing_meaning text,
   -- true = 링크·버튼 라벨 안이었다. 이게 많을수록 탐색 자체가 막힌다
   in_control    boolean not null,
-  evidence_ja   text not null
+  evidence_ja   text not null,
+  -- 근거 없는 히트는 버그다(절대규칙 2). 애플리케이션만 믿지 않고 여기서도 막는다
+  constraint masks_basis_evidence check (
+    (basis = 'comprehension_rate' and cohort is not null)
+    or (basis = 'designated_list' and listing_no is not null)
+  )
 );
 
 create index if not exists masks_run_idx     on masks (run_id);
@@ -250,14 +263,18 @@ create or replace view v_top_masks as
 select
   r.batch_id,
   m.surface,
+  -- 근거가 다르면 같은 표기라도 합치지 않는다. 합치는 순간 「이 %는 어디서 나왔나」에 답할 수 없다
+  m.basis,
   m.comprehension,
   count(*)                                    as hits,
   count(*) filter (where m.in_control)        as hits_in_controls,
   count(distinct m.run_id)                    as runs_affected,
-  min(m.evidence_ja)                          as evidence_ja
+  min(m.evidence_ja)                          as evidence_ja,
+  -- 「代わりにこう書く」 — 명단 근거일 때만 채워진다
+  min(m.listing_meaning)                      as plain_ja
 from masks m
 join runs r using (run_id)
-group by r.batch_id, m.surface, m.comprehension
+group by r.batch_id, m.surface, m.basis, m.comprehension
 order by hits_in_controls desc, hits desc;
 
 -- ⑦ 위협 요약
