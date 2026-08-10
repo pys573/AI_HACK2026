@@ -1,0 +1,37 @@
+[
+  {
+    "mission_id": "shinjuku-tennyu",
+    "url_patterns": ["tetsuzuki", "juminhyo", "tennyu", "todokede", "koseki_juminhyo"],
+    "text_patterns": ["転入", "本人確認"],
+    "human_baseline_clicks": null,
+    "note": "✅ 검증됨 (2026-08-10, control 프로필 2회). 「転入届（新宿区外から引越ししてきたとき）」 페이지에서 키·LLM 판정이 모두 ○로 일치했고 불일치는 없었다. text_patterns는 AND 조건이며, 「転入」만으로는 一覧 페이지에서도 맞아버리므로 「本人確認」(持ち物 안내에 거의 반드시 나온다)을 함께 요구한다."
+  },
+  {
+    "mission_id": "shinjuku-juminhyo",
+    "url_patterns": ["juminhyo", "konbini", "certificate", "shomeisho"],
+    "text_patterns": ["コンビニ", "住民票"],
+    "human_baseline_clicks": null,
+    "note": "v0 미검증. マイナンバーカード를 쓴 コンビニ交付 안내. 신청 SaaS로 넘어가면 안 되고, 区 사이트 안의 안내 페이지가 정답이다."
+  },
+  {
+    "mission_id": "shinjuku-sodaigomi",
+    "url_patterns": ["sodai", "gomi", "recycle", "gomi_recycle"],
+    "text_patterns": ["粗大ごみ", "手数料"],
+    "human_baseline_clicks": null,
+    "note": "v0 미검증. 申込み 방법과 手数料가 같은 페이지에 있는 경우가 많다. 分かれている場合は手数料 쪽을 정답으로 본다."
+  },
+  {
+    "mission_id": "shinjuku-kokuho",
+    "url_patterns": ["kokuho", "hoken", "kenko"],
+    "text_patterns": ["国民健康保険", "加入"],
+    "human_baseline_clicks": null,
+    "note": "v0 미검증. 「加入」과 「脱退」가 같은 페이지인 경우가 있다. 그 경우도 도달로 본다."
+  },
+  {
+    "mission_id": "shinjuku-hoikuen",
+    "url_patterns": ["hoiku", "kosodate", "nyuen"],
+    "text_patterns": ["保育園", "申込"],
+    "human_baseline_clicks": null,
+    "note": "v0 미검증. 受付期間은 PDF 안에만 있는 경우가 있다. 그 경우 PDF 링크가 있는 안내 페이지를 도달로 본다 — PDF 안까지 읽는 것은 이번 범위 밖이다."
+  }
+]

@@ -1,4 +1,6 @@
-node_modules/
+# 末尾スラッシュだとシンボリックリンクに一致しない。
+# ワークツリーでは node_modules を本体から symlink しているため、スラッシュを付けない。
+node_modules
 .env
 .env.local
 .DS_Store
@@ -23,3 +25,4 @@ AI User testing.md
 FINDINGS.md
 CLAUDE.md
 개발계획.md
+agent/runs/

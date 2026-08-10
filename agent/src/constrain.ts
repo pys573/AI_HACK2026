@@ -60,11 +60,14 @@ export type Observation = {
 export type ConstraintTrace = {
   profile: string;
   profile_version: string;
-  masked_words: MaskHit[];
+  /** in_control: 링크·버튼 라벨 안이었는가. 본문만 가려진 것과는 무게가 다르다 */
+  masked_words: Array<MaskHit & { in_control: boolean }>;
   /** 마스킹된 단어가 링크·버튼 라벨 안에 있었던 횟수. 이게 클수록 탐색이 막힌다. */
   masked_in_controls: number;
   dom_text_withheld: boolean;
   elements_total: number;
+  /** 실제로 에이전트에게 넘어간 요소 수. `elements_total`과의 차이가 「줌」의 실체다. */
+  elements_in_viewport: number;
 };
 
 /**
@@ -75,8 +78,11 @@ export type ConstraintTrace = {
  *   2) ★ 링크·버튼 라벨 — 「어디를 눌러야 하는가」를 못 정하게 된다
  * 2번이 본질이다. 본문만 가리면 에이전트는 여전히 정확한 링크를 누른다.
  */
-export function constrain(raw: RawObservation, p: Profile): { obs: Observation; trace: ConstraintTrace } {
-  const hits: MaskHit[] = [];
+export function constrain(
+  raw: RawObservation,
+  p: Profile,
+): { obs: Observation; trace: ConstraintTrace; visible: Element[] } {
+  const hits: Array<MaskHit & { in_control: boolean }> = [];
   let inControls = 0;
 
   const maskText = (s: string, isControl: boolean): string => {
@@ -84,21 +90,35 @@ export function constrain(raw: RawObservation, p: Profile): { obs: Observation; 
     const r = mask(s, p.lexicon);
     for (const h of r.hits) {
       if (h.action === "mask" || h.action === "partial" || h.action === "unknown") {
-        hits.push(h);
+        hits.push({ ...h, in_control: isControl });
         if (isControl) inControls++;
       }
     }
     return r.text;
   };
 
-  const elements = raw.elements.map((e) => ({
-    index: e.index,
+  // ★ 화면 밖 요소는 목록에서 지운다. 플래그만 붙여 전부 넘기면 에이전트는
+  //   스크롤 없이 페이지 맨 아래 링크를 누를 수 있다. 사람이 겪을 수 없는 경로다.
+  //   그 순간 이 도구는 사용성이 아니라 DOM을 측정하게 된다.
+  //   여기서 지우는 것이 「줌 200%」의 실체다 — 나머지는 스크롤해야 보인다.
+  //
+  //   ★ 번호는 0부터 다시 매긴다.
+  //   원본 번호를 그대로 두면 [0, 11, 13, 58…]처럼 구멍이 뚫린 목록이 되고,
+  //   모델은 없는 번호(6, 7…)를 꽤 자주 만들어낸다. 그건 우리 도구가 만든 잡음이지
+  //   제약의 효과가 아니다. 측정하려는 것에 잡음을 섞지 않는다.
+  //   원본 요소는 `visible`로 같은 순서로 함께 돌려준다 — act()는 그걸로 되돌아간다.
+  const visible = raw.elements.filter((e) => e.in_viewport);
+
+  const elements = visible.map((e, i) => ({
+    index: i,
     role: e.role,
     name: maskText(e.name, true),
-    in_viewport: e.in_viewport,
+    in_viewport: true,
   }));
 
-  const text = p.observation.dom_text ? maskText(raw.text, false) : null;
+  // ★ `raw.text`(페이지 전체)가 아니라 `raw.text_viewport`(지금 화면)를 쓴다.
+  //   전체 본문을 주면 조작요소만 뷰포트로 자른 것과 앞뒤가 안 맞는다 — observe.ts 참조.
+  const text = p.observation.dom_text ? maskText(raw.text_viewport, false) : null;
 
   return {
     obs: {
@@ -116,7 +136,9 @@ export function constrain(raw: RawObservation, p: Profile): { obs: Observation; 
       masked_in_controls: inControls,
       dom_text_withheld: !p.observation.dom_text,
       elements_total: raw.elements.length,
+      elements_in_viewport: visible.length,
     },
+    visible,
   };
 }
 
