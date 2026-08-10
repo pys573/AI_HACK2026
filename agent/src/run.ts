@@ -125,10 +125,18 @@ export type RunOptions = {
   headless?: boolean;
   /** 도메인당 최소 요청 간격. 절대규칙 6 — 기본 4초에서 낮추지 않는다 */
   delayMs?: number;
+  /**
+   * 미션의 스텝 상한을 실험용으로 덮어쓴다.
+   * 「인내 예산이 짧아서 실패한 게 아니냐」를 확인하려면 예산만 늘려도 소용없다.
+   * 스텝 상한에 먼저 걸리면 그건 사이트가 아니라 우리 계측 장치가 만든 결과다.
+   * ★ 덮어쓴 값은 trace.mission.max_steps에 그대로 남는다. 숨기지 않는다.
+   */
+  maxSteps?: number;
 };
 
 export async function runOnce(opts: RunOptions): Promise<RunTrace> {
   const mission = loadMission(opts.missionId);
+  if (opts.maxSteps) mission.max_steps = opts.maxSteps;
   const profile = loadProfile(opts.profileId);
   const variant = opts.variant ?? 0;
   const runId = `${mission.id}__${profile.id}__v${variant}__${Date.now()}`;
@@ -340,14 +348,17 @@ if (!missionId) {
   process.exit(1);
 }
 
+const maxSteps = process.env.MAX_STEPS ? Number(process.env.MAX_STEPS) : undefined;
+
 const mission = loadMission(missionId);
 const profile = loadProfile(profileId);
 console.log(`\n▶ ${mission.site_name} / ${mission.id}`);
 console.log(`  프로필 : ${profile.id} v${profile.version} — ${profile.label.ja}`);
 console.log(`  용무   : ${mission.intent_ja}`);
-console.log(`  예산   : ${profile.patience.clicks}클릭 / ${profile.patience.seconds}초\n`);
+console.log(`  예산   : ${profile.patience.clicks}클릭 / ${profile.patience.seconds}초`);
+console.log(`  스텝상한: ${maxSteps ?? mission.max_steps}${maxSteps ? " (MAX_STEPS로 덮어씀)" : ""}\n`);
 
-const t = await runOnce({ missionId, profileId, headless: process.env.HEADED !== "1" });
+const t = await runOnce({ missionId, profileId, maxSteps, headless: process.env.HEADED !== "1" });
 
 console.log(`\n── 결과 ─────────────────────────────────`);
 console.log(`  outcome  : ${t.verdict.outcome}  (到達 ${t.verdict.reached ? "○" : "×"})`);

@@ -12,7 +12,8 @@
     "sitecheck": "node agent/src/sitecheck.ts",
     "orca:smoke": "node --env-file=.env llm/smoke.ts",
     "fixture:build": "node core/fixtures/build-sample.ts",
-    "run": "node --env-file=.env agent/src/run.ts"
+    "run": "node --env-file=.env agent/src/run.ts",
+    "agent:test": "node --test \"agent/test/*.test.ts\""
   },
   "devDependencies": {
     "playwright": "^1.62.1"
