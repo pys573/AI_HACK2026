@@ -415,6 +415,11 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
 }
 
 // ── CLI ──────────────────────────────────────────────────────
+//
+// ★ import.meta.main 가드가 필요한 이유: batch.ts가 runOnce를 import 한다.
+//   가드가 없으면 import 하는 순간 이 아래가 통째로 실행돼서, 인자가 없다며
+//   batch를 process.exit(1)로 죽인다.
+if (import.meta.main) {
 const [missionId, profileId = "senior-70s"] = process.argv.slice(2);
 if (!missionId) {
   console.error("사용법: node --env-file=.env agent/src/run.ts <mission-id> [profile-id]");
@@ -474,3 +479,4 @@ if (t.steps.length) {
   if (words.size) console.log(`             ${[...words].join(" ")}`);
 }
 console.log(`  트레이스 : agent/runs/${t.run_id}/trace.json\n`);
+}
