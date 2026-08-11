@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { RunView } from "@/lib/data";
-import { Badge, MaskedText } from "./ui";
+import type { MaskView, RunView } from "@/lib/data";
+import { ActionLine, Badge, BasisNote, MaskedText, MaskEvidence } from "./ui";
 
 /**
  * ★ 이 화면이 제품의 주장 그 자체다.
@@ -16,6 +16,10 @@ export function BeforeAfter({ run }: { run: RunView }) {
   const step = run.steps.find((s) => s.n === n) ?? run.steps[0];
   const hidden = step.rawTotal - step.seenTotal;
   const uniqMasks = dedupeMasks(step.masked);
+  // 첫 화면은 1手目(270→9)이 가장 강해서 그대로 두지만, 그 手는 가린 말이 0건이다.
+  // 그러면 제품의 심장(근거 붙은 마스킹)이 클릭해야만 보인다 — 3분 데모에서 아무도 클릭하지 않는다.
+  // 그래서 0건일 때는 「다른 手에서는 이렇게 나왔다」를 한 줄 보여준다.
+  const elsewhere = uniqMasks.length === 0 ? runWideMasks(run) : null;
 
   return (
     <div>
@@ -129,21 +133,35 @@ export function BeforeAfter({ run }: { run: RunView }) {
           )}
         </div>
 
-        {uniqMasks.length === 0 ? (
-          <p className="mt-2 text-xs leading-relaxed text-fg-dim">
-            調査に載っていない語は隠しません。誤差は常に
-            <strong className="text-fg-muted">「隠しすぎない」側</strong>に倒します。
-          </p>
-        ) : (
+        {uniqMasks.length > 0 && (
           <ul className="mt-3 space-y-2">
             {uniqMasks.map((m) => (
-              <li key={m.surface} className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="masked font-medium">{m.surface}</span>
-                <span className="text-fg-muted">{m.evidence}</span>
-                {m.inControl && <Badge tone="blocked">リンクの文字の中</Badge>}
+              <li key={m.surface}>
+                <MaskEvidence mask={m} />
               </li>
             ))}
           </ul>
+        )}
+
+        {elsewhere && elsewhere.masks.length > 0 && (
+          <div className="mt-3 rounded-lg border border-line-soft bg-surface-2 p-3">
+            <div className="text-[11px] text-fg-dim">
+              この実行では {elsewhere.stepCount} 手目以降で {elsewhere.masks.length} 語を伏せています
+            </div>
+            <ul className="mt-2 space-y-2">
+              {elsewhere.masks.map((m) => (
+                <li key={m.surface}>
+                  <MaskEvidence mask={m} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {run.lexiconKind && (
+          <div className="mt-3">
+            <BasisNote kind={run.lexiconKind} />
+          </div>
         )}
       </div>
 
@@ -151,19 +169,11 @@ export function BeforeAfter({ run }: { run: RunView }) {
       {step.action && (
         <div className="mt-4 rounded-lg border border-line bg-surface p-4">
           <div className="text-xs font-medium text-fg-dim">この画面を見て、AIがしたこと</div>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-            <Badge tone="stumble">{step.action.kind}</Badge>
-            {step.action.index !== null && (
-              <span className="font-mono text-xs text-fg-muted">
-                #{step.action.index}{" "}
-                <MaskedText
-                  text={
-                    step.seenElements.find((e) => e.index === step.action!.index)?.name ||
-                    "（名前なし）"
-                  }
-                />
-              </span>
-            )}
+          <div className="mt-2">
+            <ActionLine
+              action={step.action}
+              label={step.seenElements.find((e) => e.index === step.action!.index)?.name}
+            />
           </div>
           <p className="mt-2 text-sm leading-relaxed text-fg-muted">
             「{step.action.reason}」
@@ -220,8 +230,17 @@ function Panel({
   );
 }
 
-function dedupeMasks(masked: { surface: string; evidence: string; inControl: boolean }[]) {
-  const m = new Map<string, { surface: string; evidence: string; inControl: boolean }>();
+/** 실행 전체에서 가린 말. 「몇 手目부터」는 클릭할 곳을 알려주기 위한 것이다 */
+function runWideMasks(run: RunView) {
+  const first = run.steps.find((s) => s.masked.length > 0);
+  return {
+    stepCount: first?.n ?? 0,
+    masks: dedupeMasks(run.steps.flatMap((s) => s.masked)),
+  };
+}
+
+function dedupeMasks(masked: MaskView[]) {
+  const m = new Map<string, MaskView>();
   for (const x of masked) {
     const prev = m.get(x.surface);
     // 링크 라벨 안에서 한 번이라도 걸렸으면 그쪽을 남긴다. 무게가 다르다.
