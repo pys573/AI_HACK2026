@@ -5,9 +5,10 @@
  * import 목록이 「정답을 안 봤다」의 증거다.
  */
 
-import { complete } from "../../llm/orca.ts";
+import { complete, OrcaError } from "../../llm/orca.ts";
 import type { Action, ActionKind, CostRecord, Mission } from "../../core/types.ts";
 import type { Observation, Profile } from "./constrain.ts";
+import { llmOpts } from "./llm-opts.ts";
 import { actionSchema, allowedKinds, DECIDE_SYSTEM, decideUser, type HistoryEntry } from "./prompts.ts";
 
 /**
@@ -99,7 +100,10 @@ export async function decide(
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
       // 재질문일수록 말로 못을 박는다. 스키마만 주면 안 지키는 모델이 실제로 있다(glm-5.2).
-      const r = await complete(attempt === 1 ? base : { ...base, system: `${DECIDE_SYSTEM}\n\n${nag(kinds, lastNote)}` });
+      const r = await complete(
+        attempt === 1 ? base : { ...base, system: `${DECIDE_SYSTEM}\n\n${nag(kinds, lastNote)}` },
+        llmOpts(),
+      );
       costs.push(r.cost);
 
       const action = toAction(r.parsed);
@@ -112,16 +116,35 @@ export async function decide(
       lastNote = `kind「${action.kind}」は使えません`;
     } catch (e) {
       if (!(e instanceof Error)) throw e;
-      // 4xx·키 없음 같은 건 다시 물어도 같은 답이 온다. 돈만 쓴다.
-      // 싼 모델이 JSON 대신 YAML 비슷한 걸 뱉는 경우만 다시 묻는다.
-      if (!e.message.includes("JSON")) throw decideFailure(e.message, costs);
-      lastNote = "出力がJSONではありませんでした";
+      if (!worthReasking(e)) throw decideFailure(e.message, costs);
+      lastNote = "出力がJSONスキーマの要件を満たしていませんでした";
     }
   }
 
   // 여기까지 오면 모델 쪽 문제다. 관측 제약과는 무관하다.
   // 그럴듯한 액션을 지어내지 않는다 (절대규칙 3) — 실패를 실패라고 기록하고 넘긴다.
   throw decideFailure(`[decide] ${MAX_ATTEMPTS}회 물어도 쓸 수 있는 action이 오지 않았다 (${lastNote})`, costs);
+}
+
+/**
+ * 다시 물어볼 가치가 있는 실패인가.
+ *
+ * 「모델이 형식을 못 지켰다」는 말로 못을 박으면 고쳐지는 일이다 → 다시 묻는다.
+ * 「키가 없다·400·404」는 몇 번을 물어도 같은 답이 오고 돈만 쓴다 → 즉시 올린다.
+ * HTTP 단계 실패(OrcaError)는 orca.ts가 이미 재시도할 것(429·5xx)은 하고 올린 것이다.
+ *
+ * ⚠️ llm/orca.ts의 스키마 실패 문구에 맞춰져 있다. 저쪽이 바뀌면 여기도 바뀐다.
+ *   2026-08-11 현재 3종 — 전부 "schema"로 시작한다:
+ *     schema를 요구했으나 본문이 비었다
+ *     schema를 요구했으나 JSON이 아니다: …
+ *     schema의 필수 필드가 없다 […]: …          ← qwen3.7-flash가 딴 모양을 줄 때
+ *   예전엔 "JSON" 한 단어만 봤다. 그래서 뒤의 둘은 재질문 없이 그대로 실패로 올렸고,
+ *   그 스텝은 통째로 버려졌다. **버려진 스텝은 「제약 때문에 헤맸다」로 집계된다** —
+ *   우리 도구가 만든 잡음이 측정 결과에 섞인다.
+ */
+function worthReasking(e: Error): boolean {
+  if (e instanceof OrcaError) return false;
+  return e.message.includes("schema") || e.message.includes("JSON");
 }
 
 /** 무엇이 틀렸는지 알려주고 다시 묻는다. 「다시 해봐」만으로는 같은 답이 온다. */

@@ -27,10 +27,11 @@ import type {
 } from "../../core/types.ts";
 import { evidence } from "../../lexicon/src/mask.ts";
 import { BASELINE_MODEL, estimateCost } from "../../llm/pricing.ts";
-import { ensureLivePrices, prices } from "../../llm/orca.ts";
+import { ensureLivePrices, onBilledCost, prices } from "../../llm/orca.ts";
 import { act, RateLimiter } from "./act.ts";
 import { constrain, loadProfile, Patience, type ConstraintTrace, type Observation, type Profile } from "./constrain.ts";
-import { decide, isDecideFailure } from "./decide.ts";
+import { decide } from "./decide.ts";
+import { routingOff } from "./llm-opts.ts";
 import { keyMatch, judge } from "./judge.ts";
 import { loadMission } from "./mission.ts";
 import { observe, type RawObservation } from "./observe.ts";
@@ -162,7 +163,25 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
   const origin = new URL(mission.start_url).origin;
   const steps: Step[] = [];
   const history: HistoryEntry[] = [];
-  const allCalls: CostRecord[] = [];
+
+  /**
+   * ★ 원가 원장. **부른 쪽이 아니라 실제로 과금된 쪽**에서 받는다 (llm/orca.ts).
+   *
+   *   `complete()`의 반환값(`LlmResponse.cost`)은 **채택된 시도 1건**뿐이다.
+   *   스키마 위반이나 429로 버려진 시도도 토큰은 이미 태웠고 이미 과금됐는데, 거기엔 없다.
+   *   그것만 세면 실행 합계가 실제보다 **적게** 나온다 — 「実測原価」라고 부르면서
+   *   과소 보고하는 셈이라 ⑥에서 「이 숫자 어디서 나왔나요」에 답할 수 없다 (절대규칙 4).
+   *
+   *   실측으로 새던 곳 두 군데. 이제 둘 다 이 싱크가 잡는다:
+   *     judge()  — 산문을 뱉은 1차 시도를 버리고 2차만 돌려준다. 1차분이 사라졌다
+   *     orca.ts  — 내부 재시도(429·5xx·스키마 위반)는 A에게 보이지도 않았다
+   *
+   * ⚠️ 이 구독은 **프로세스 전역**이다. 한 프로세스에서 runOnce를 동시에 두 개 돌리면
+   *   서로의 호출이 섞인다. 지금은 CLI 1실행 = 1프로세스라 문제없지만, 배치 하네스를
+   *   만들 때는 complete()의 per-call `onBilled` 옵션으로 갈아타야 한다.
+   */
+  const billed: CostRecord[] = [];
+  const offBilled = onBilledCost((c) => billed.push(c));
 
   let browser: Browser | null = null;
   let outcome: Outcome = "max_steps";
@@ -190,12 +209,14 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     rl.last = Date.now();
 
     for (let n = 1; n <= mission.max_steps; n++) {
+      // 이 스텝이 시작된 시점의 원장 위치. 여기부터 끝까지가 이 스텝이 태운 호출이다.
+      // 루프 맨 위에서 찍는 이유: 아래 키 대조 judge()도 이 스텝 중에 일어난 일이다.
+      const billedMark = billed.length;
       const raw = await observe(page, profile.observation.screenshot);
 
       // 키 대조는 LLM을 안 쓴다. 매 스텝 돌려도 원가 0이다.
       if (keyMatch(mission.id, raw)) {
         const j = await judge(mission, raw);
-        if (j.cost) allCalls.push(j.cost);
         keyHit = j.key_match;
         llmHit = j.llm_match;
         disagreed = j.disagreed;
@@ -219,7 +240,6 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         writeFileSync(join(runDir, `step-${String(n).padStart(2, "0")}.png`), raw.screenshot);
       }
 
-      const stepCalls: CostRecord[] = [];
       let action = null;
       let actOk = false;
       let actErr: string | null = null;
@@ -228,8 +248,6 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         const d = await decide(mission, obs, profile, history);
         action = d.action;
         failStreak = 0;
-        stepCalls.push(...d.costs);
-        allCalls.push(...d.costs);
 
         const r = await act(page, action, raw, visible, profile, origin, rl, backsUsed);
         actOk = r.ok;
@@ -260,11 +278,8 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       } catch (e) {
         actErr = e instanceof Error ? e.message : String(e);
         failStreak++;
-        // 판단에 실패해도 그때까지 부른 호출은 이미 과금됐다. 원가에서 빼지 않는다 (절대규칙 4).
-        if (isDecideFailure(e)) {
-          stepCalls.push(...e.costs);
-          allCalls.push(...e.costs);
-        }
+        // 판단에 실패해도 그때까지 부른 호출은 이미 과금됐다 (절대규칙 4).
+        // 여기서 회수하지 않는다 — onBilledCost 싱크가 이미 잡았다. 또 담으면 이중 계상이다.
         console.log(`  [${n}] ✗ ${actErr}`);
 
         // 한 번의 모델 잡음(JSON 대신 YAML 등)으로 실행 전체를 죽이지 않는다.
@@ -288,7 +303,8 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         action,
         action_ok: actOk,
         action_error: actErr,
-        llm_calls: stepCalls,
+        // 이 스텝이 태운 전건. 재질문이 붙었으면 2~3건이 된다 = 사후에 셀 수 있다 = 숨기지 않는다
+        llm_calls: billed.slice(billedMark),
         patience: patience.state(Date.now()),
       });
 
@@ -318,7 +334,6 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       //   스텝 기록이 이 도구의 본체다. 판정은 그 위에 붙는 해석일 뿐이다.
       try {
         const j = await judge(mission, raw);
-        if (j.cost) allCalls.push(j.cost);
         keyHit = j.key_match;
         llmHit = j.llm_match;
         disagreed = j.disagreed;
@@ -346,6 +361,8 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     console.error(`\n  ⚠️ 실행 중단 — ${steps.length}스텝까지의 기록은 저장한다\n     ${verdictReason}`);
   } finally {
     await browser?.close();
+    // 전역 구독이다. 안 끊으면 다음 실행의 호출까지 이 배열로 흘러든다
+    offBilled();
   }
 
   const verdict: Verdict = {
@@ -370,7 +387,7 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     steps,
     verdict,
     findings: [],
-    cost: aggregate(allCalls),
+    cost: aggregate(billed),
   };
 
   writeFileSync(join(runDir, "trace.json"), JSON.stringify(trace, null, 2));
@@ -392,7 +409,9 @@ console.log(`\n▶ ${mission.site_name} / ${mission.id}`);
 console.log(`  프로필 : ${profile.id} v${profile.version} — ${profile.label.ja}`);
 console.log(`  용무   : ${mission.intent_ja}`);
 console.log(`  예산   : ${profile.patience.clicks}클릭 / ${profile.patience.seconds}초`);
-console.log(`  스텝상한: ${maxSteps ?? mission.max_steps}${maxSteps ? " (MAX_STEPS로 덮어씀)" : ""}\n`);
+console.log(`  스텝상한: ${maxSteps ?? mission.max_steps}${maxSteps ? " (MAX_STEPS로 덮어씀)" : ""}`);
+// 어느 쪽으로 돌았는지 화면에도 남긴다. 기록 자체는 trace.cost.by_model이 갖는다
+console.log(`  라우팅  : ${routingOff() ? "OFF — orcarouter/auto (ORCA_NO_ROUTING=1)" : "llm/routing.ts 실측 표"}\n`);
 
 const t = await runOnce({ missionId, profileId, maxSteps, headless: process.env.HEADED !== "1" });
 
@@ -402,7 +421,11 @@ console.log(`  판정     : key ${t.verdict.key_match ? "○" : "×"} / llm ${t.
   `${t.verdict.disagreed ? "  ⚠️ 불일치" : ""}`);
 console.log(`  이유     : ${t.verdict.reason_ja}`);
 console.log(`  스텝     : ${t.steps.length}  클릭 ${t.verdict.clicks}  ${t.verdict.seconds}초`);
-console.log(`  원가     : $${t.cost.total_usd.toFixed(6)}  (호출 ${t.cost.calls}회)`);
+console.log(`  원가     : $${t.cost.total_usd.toFixed(6)}  (호출 ${t.cost.calls}회 — 버려진 시도 포함)`);
+// ★ ⑥의 근거. 「무슨 모델을 왜 골랐나」에 답하려면 실제로 뭐가 돌았는지가 보여야 한다
+for (const [m, v] of Object.entries(t.cost.by_model).sort((a, b) => b[1] - a[1])) {
+  console.log(`             ${m.padEnd(30)} $${v.toFixed(6)}`);
+}
 if (t.cost.baseline_usd !== null && t.cost.total_usd > 0) {
   const cut = (1 - t.cost.total_usd / t.cost.baseline_usd) * 100;
   console.log(`  기준선   : $${t.cost.baseline_usd.toFixed(6)} (전량 ${BASELINE_MODEL}) → ${cut.toFixed(1)}% 절감`);

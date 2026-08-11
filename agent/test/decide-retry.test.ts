@@ -39,6 +39,15 @@ function cost(n: number): CostRecord {
 let script: unknown[] = [];
 let calls = 0;
 
+/** HTTP 단계 실패. decide.ts가 `instanceof`로 「다시 물어도 소용없다」를 가른다 */
+class OrcaError extends Error {
+  status: number;
+  constructor(status: number, body: string) {
+    super(`OrcaRouter ${status}: ${body}`);
+    this.status = status;
+  }
+}
+
 mock.module("../../llm/orca.ts", {
   namedExports: {
     complete: async () => {
@@ -47,7 +56,9 @@ mock.module("../../llm/orca.ts", {
       if (item instanceof Error) throw item;
       return { text: JSON.stringify(item ?? null), parsed: item, cost: cost(calls) };
     },
+    OrcaError,
     // decide.ts는 안 쓰지만 같은 모듈에 있어 로드 시 필요하다
+    onBilledCost: () => () => {},
     prices: () => ({}),
     ensureLivePrices: async () => {},
   },
@@ -111,11 +122,44 @@ test("JSON 형식 에러는 다시 묻는다 — 던진 호출은 과금이 없�
 });
 
 test("4xx·키 없음은 다시 묻지 않는다 — 같은 답이 오고 돈만 쓴다", async () => {
-  scripted([new Error("OrcaRouter 401: invalid api key"), OK]);
+  scripted([new OrcaError(401, "invalid api key"), OK]);
   const { decide } = await import("../src/decide.ts");
 
   await assert.rejects(() => decide(MISSION, OBS, PROFILE, []), /401/);
   assert.equal(calls, 1, "재질문하면 안 된다");
+});
+
+/**
+ * llm/orca.ts가 스키마 위반을 예외로 올리게 바뀌면서(B, 2026-08-11) 문구가 3종이 됐다.
+ * 그중 "JSON"이라는 단어가 들어간 건 1종뿐이다. 예전 조건(`includes("JSON")`)은
+ * 나머지 2종을 재질문 없이 실패로 올렸고, 그 스텝은 통째로 버려졌다.
+ * 버려진 스텝은 「제약 때문에 헤맸다」로 집계된다 — 측정이 오염된다.
+ */
+for (const [label, message] of [
+  ["본문이 비었다", "schema를 요구했으나 본문이 비었다 (model=x)"],
+  ["필수 필드가 없다", 'schema의 필수 필드가 없다 [kind]: {"classification":{}} (model=qwen/qwen3.7-flash)'],
+] as const) {
+  test(`★ 스키마 실패「${label}」도 재질문 대상이다 — "JSON"이라는 단어가 없다`, async () => {
+    scripted([new Error(message), OK]);
+    const { decide } = await import("../src/decide.ts");
+
+    const d = await decide(MISSION, OBS, PROFILE, []);
+    assert.equal(d.action.kind, "click", "다시 물었어야 한다");
+    assert.equal(calls, 2);
+  });
+}
+
+test("★ 대조군 스위치 — ORCA_NO_ROUTING=1이면 라우팅을 끈다", async () => {
+  const { llmOpts, routingOff } = await import("../src/llm-opts.ts");
+
+  delete process.env.ORCA_NO_ROUTING;
+  assert.equal(routingOff(), false);
+  assert.deepEqual(llmOpts(), {}, "기본은 llm/routing.ts 표에 맡긴다");
+
+  process.env.ORCA_NO_ROUTING = "1";
+  // undefined가 아니라 **명시적 null**이어야 orca.ts가 라우팅을 끈다
+  assert.deepEqual(llmOpts(), { resolveModel: null });
+  delete process.env.ORCA_NO_ROUTING;
 });
 
 test("허용 목록 밖의 kind는 거부한다 — find_in_page를 못 쓰는 프로필", async () => {

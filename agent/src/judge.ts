@@ -20,6 +20,7 @@
 import { complete } from "../../llm/orca.ts";
 import type { CostRecord, Mission } from "../../core/types.ts";
 import type { RawObservation } from "./observe.ts";
+import { llmOpts } from "./llm-opts.ts";
 import { loadKey } from "./mission.ts";
 import { JUDGE_SCHEMA, JUDGE_SYSTEM, judgeUser } from "./prompts.ts";
 
@@ -61,13 +62,13 @@ export async function judge(mission: Mission, raw: RawObservation): Promise<Judg
   // decide()와 같은 이유로 한 번만 다시 묻는다. 여기서 던지면 실행 전체의 계측이 날아간다.
   let r;
   try {
-    r = await complete(base);
+    r = await complete(base, llmOpts());
   } catch (e) {
     if (!(e instanceof Error) || !e.message.includes("JSON")) throw e;
-    r = await complete({
-      ...base,
-      system: `${JUDGE_SYSTEM}\n\n出力はJSONオブジェクトのみ。前置きも説明も付けないでください。`,
-    });
+    r = await complete(
+      { ...base, system: `${JUDGE_SYSTEM}\n\n出力はJSONオブジェクトのみ。前置きも説明も付けないでください。` },
+      llmOpts(),
+    );
   }
 
   const p = (r.parsed ?? {}) as { reached?: unknown; reason_ja?: unknown };
