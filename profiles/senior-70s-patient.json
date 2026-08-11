@@ -1,0 +1,38 @@
+{
+  "id": "senior-70s-patient",
+  "version": "1.0-exp",
+  "label": {
+    "ja": "高齢者制約プロファイル（忍耐予算を対照群にそろえた版）",
+    "ko": "고령자 제약 프로필 (인내 예산 대조군과 동일)"
+  },
+  "purpose": "실험용. senior-70s와 단 하나만 다르다 — 인내 예산을 control과 같게 했다. 「제약 때문에 실패」와 「예산이 짧아서 실패」를 분리하기 위한 것이다.",
+  "claims": "国立国語研究所 外来語定着度調査で60歳以上の理解率が30%未満の語をマスクした状態での探索結果である。",
+  "does_not_claim": "실재하는 70대의 행동을 재현했다고 주장하지 않는다. 조사는 2002-2004년 시행이며, 당시의 60세 이상 코호트를 반영한다.",
+  "lexicon": {
+    "kind": "comprehension_rate",
+    "cohort": "senior",
+    "mask_below": 30,
+    "partial_below": null,
+    "unknown": "keep",
+    "source": "NINJAL 外来語定着度調査 (CC BY 4.0)"
+  },
+  "viewport": {
+    "width": 1280,
+    "height": 800,
+    "zoom": 2
+  },
+  "observation": {
+    "dom_text": true,
+    "screenshot": true
+  },
+  "tools": {
+    "find_in_page": false,
+    "site_search": false,
+    "back_limit": 3
+  },
+  "patience": {
+    "clicks": 30,
+    "seconds": 900
+  },
+  "variants": []
+}
