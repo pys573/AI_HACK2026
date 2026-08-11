@@ -1,5 +1,5 @@
 import { loadDemo } from "@/lib/data";
-import { Section } from "@/components/ui";
+import { FindingsList, Section } from "@/components/ui";
 import { Hero } from "@/components/Hero";
 import { Moment } from "@/components/Moment";
 import { SplitReplay } from "@/components/SplitReplay";
@@ -106,6 +106,27 @@ export default function Page() {
       >
         <Verdict runs={[control, senior]} goalJa={mission.goalJa} />
       </Section>
+
+      {/*
+        A(engine)가 findings를 채우면 여기가 자동으로 나타난다. 지금은 빈 배열이라 통째로 안 그린다.
+        「0件」이라고 쓰지 않는 이유는 ui.tsx の FindingsList 주석 참조 —
+        「막힌 곳이 없었다」와 「아직 만들지 않았다」는 다르다.
+      */}
+      {senior.findings.length > 0 && (
+        <Section
+          id="report"
+          eyebrow="report"
+          title="止まった場所と、そこを直す文"
+          lead={
+            <>
+              失敗の記録だけでは、受け取った側は何もできません。
+              止まった1件ごとに、何が止めたのかと、どう書きかえるのかを対にして出します。
+            </>
+          }
+        >
+          <FindingsList findings={senior.findings} />
+        </Section>
+      )}
 
       <Section
         id="cost"

@@ -3,6 +3,7 @@ import {
   ActionLine,
   Badge,
   BasisNote,
+  FindingsList,
   HighlightTerms,
   MaskedText,
   MaskEvidence,
@@ -187,35 +188,9 @@ export function N3Case({ run }: { run: RunView }) {
       {run.findings.length > 0 && (
         <div className="rounded-xl border border-line bg-surface p-5">
           <div className="text-sm font-medium">この実行から出たレポート</div>
-          <ul className="mt-4 space-y-3">
-            {run.findings.map((f) => (
-              <li key={`${f.stepN}-${f.severity}`} className="rounded-lg border border-line bg-surface-2 p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge tone={f.severity === "high" ? "blocked" : "neutral"}>
-                    {f.severity === "high" ? "重い" : f.severity === "medium" ? "中くらい" : "軽い"}
-                  </Badge>
-                  <span className="tnum text-[11px] text-fg-dim">{f.stepN} 手目</span>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-fg-muted">{f.causeJa}</p>
-                <div className="mt-3 rounded border border-clear/25 bg-clear/5 p-3">
-                  <div className="text-[10px] font-bold tracking-[0.18em] text-clear">なおしかた</div>
-                  <p className="mt-1.5 text-xs leading-relaxed text-fg-muted">{f.fixJa}</p>
-                </div>
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-[11px] text-fg-dim hover:text-fg-muted">
-                    根拠 {f.evidence.length} 件
-                  </summary>
-                  <ul className="mt-2 space-y-1">
-                    {f.evidence.map((e, i) => (
-                      <li key={i} className="text-[11px] leading-relaxed text-fg-dim">
-                        ・{e}
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-4">
+            <FindingsList findings={run.findings} />
+          </div>
         </div>
       )}
 

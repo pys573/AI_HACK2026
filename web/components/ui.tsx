@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { MaskView } from "@/lib/data";
+import type { FindingView, MaskView } from "@/lib/data";
 
 export function Section({
   id,
@@ -145,6 +145,58 @@ export function BasisNote({ kind }: { kind: "comprehension_rate" | "designated_l
       あるかのように書かないためです。名簿に無い行政用語は隠していないので、
       実際の壁はここで測っているより大きいはずです。
     </p>
+  );
+}
+
+const SEVERITY_JA: Record<string, string> = {
+  high: "重い",
+  medium: "中くらい",
+  low: "軽い",
+};
+
+/**
+ * 리포트 본문. 「止まった場所」와 「そこを直す文」이 같은 1건으로 나오는 게 상품이다.
+ *
+ * ⚠️ 비어 있으면 **아무것도 그리지 않는다.** 「0件」이라고 쓰면 「막힌 곳이 없었다」로 읽히는데,
+ *    실제로는 「아직 만들지 않았다」이기 때문이다. 없는 것과 없다고 판정된 것은 다르다.
+ */
+export function FindingsList({ findings }: { findings: FindingView[] }) {
+  if (findings.length === 0) return null;
+  return (
+    <ul className="space-y-3">
+      {findings.map((f) => (
+        <li
+          key={`${f.stepN}-${f.severity}-${f.causeJa.slice(0, 12)}`}
+          className="rounded-lg border border-line bg-surface-2 p-4"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge tone={f.severity === "high" ? "blocked" : "neutral"}>
+              {SEVERITY_JA[f.severity] ?? f.severity}
+            </Badge>
+            <span className="tnum text-[11px] text-fg-dim">{f.stepN} 手目</span>
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-fg-muted">{f.causeJa}</p>
+          <div className="mt-3 rounded border border-clear/25 bg-clear/5 p-3">
+            <div className="text-[10px] font-bold tracking-[0.18em] text-clear">なおしかた</div>
+            <p className="mt-1.5 text-xs leading-relaxed text-fg-muted">{f.fixJa}</p>
+          </div>
+          {f.evidence.length > 0 && (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-[11px] text-fg-dim hover:text-fg-muted">
+                根拠 {f.evidence.length} 件
+              </summary>
+              <ul className="mt-2 space-y-1">
+                {f.evidence.map((e, i) => (
+                  <li key={i} className="text-[11px] leading-relaxed text-fg-dim">
+                    ・{e}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }
 
