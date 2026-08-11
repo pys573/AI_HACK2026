@@ -30,7 +30,7 @@ import { BASELINE_MODEL, estimateCost } from "../../llm/pricing.ts";
 import { ensureLivePrices, prices } from "../../llm/orca.ts";
 import { act, RateLimiter } from "./act.ts";
 import { constrain, loadProfile, Patience, type ConstraintTrace, type Observation, type Profile } from "./constrain.ts";
-import { decide } from "./decide.ts";
+import { decide, isDecideFailure } from "./decide.ts";
 import { keyMatch, judge } from "./judge.ts";
 import { loadMission } from "./mission.ts";
 import { observe, type RawObservation } from "./observe.ts";
@@ -260,6 +260,11 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       } catch (e) {
         actErr = e instanceof Error ? e.message : String(e);
         failStreak++;
+        // 판단에 실패해도 그때까지 부른 호출은 이미 과금됐다. 원가에서 빼지 않는다 (절대규칙 4).
+        if (isDecideFailure(e)) {
+          stepCalls.push(...e.costs);
+          allCalls.push(...e.costs);
+        }
         console.log(`  [${n}] ✗ ${actErr}`);
 
         // 한 번의 모델 잡음(JSON 대신 YAML 등)으로 실행 전체를 죽이지 않는다.

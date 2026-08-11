@@ -17,6 +17,34 @@ import { actionSchema, allowedKinds, DECIDE_SYSTEM, decideUser, type HistoryEntr
 export type Decision = { action: Action; costs: CostRecord[] };
 
 /**
+ * 쓸 수 있는 답이 올 때까지 몇 번 묻는가 (첫 호출 포함).
+ *
+ * 1이면 재질문이 없다. 2 이상이어야 「모델이 스키마를 어겼다」를 흡수할 수 있다.
+ * 이 값을 올리면 스텝당 원가가 오르지만, 대신 **버려지는 스텝이 줄어든다.**
+ * 버려진 스텝은 「제약 때문에 헤맸다」로 집계되므로 그쪽이 훨씬 비싸다.
+ */
+const MAX_ATTEMPTS = 3;
+
+/**
+ * decide()가 끝내 쓸 수 있는 답을 못 받았을 때 던진다.
+ *
+ * ★ 그때까지 실제로 부른 호출의 원가를 들고 나간다.
+ *   실패했어도 과금은 됐다. 실패를 이유로 원가에서 빼면 「우리 도구는 싸다」가
+ *   거짓말이 된다 (절대규칙 4).
+ */
+export type DecideFailure = Error & { costs: CostRecord[] };
+
+export function isDecideFailure(e: unknown): e is DecideFailure {
+  return e instanceof Error && Array.isArray((e as DecideFailure).costs);
+}
+
+function decideFailure(message: string, costs: CostRecord[]): DecideFailure {
+  const e = new Error(message) as DecideFailure;
+  e.costs = costs;
+  return e;
+}
+
+/**
  * structured output이 와도 형태는 믿지 않는다. 여기서 한 번 좁힌다.
  *
  * ★ 라우터가 고르는 모델 중 일부(실측: glm-5.2)는 우리가 준 JSON 스키마를 지키지 않고
@@ -63,27 +91,44 @@ export async function decide(
 
   const kinds = allowedKinds(profile);
 
-  try {
-    const r = await complete(base);
-    const action = toAction(r.parsed);
-    // 별칭까지 읽어줘도 허용 목록 밖이면, 그건 진짜로 못 알아들은 것이다.
-    // 여기서 버리면 그 스텝이 「제약 때문에 헤맸다」로 집계되므로, 목록을 말로 박아서 한 번만 다시 묻는다.
-    // ★ 재시도가 붙은 스텝은 trace의 llm_calls가 2건이 된다. 사후에 셀 수 있다 = 숨기지 않는다.
-    if (kinds.includes(action.kind)) return { action, costs: [r.cost] };
-    const retry = await complete({
-      ...base,
-      system: `${DECIDE_SYSTEM}\n\nkind は必ず次のいずれか1つにしてください: ${kinds.join(" / ")}。空文字は不可です。`,
-    });
-    return { action: toAction(retry.parsed), costs: [r.cost, retry.cost] };
-  } catch (e) {
-    // 싼 모델은 가끔 JSON 대신 YAML 비슷한 것을 뱉는다. 그건 우리 관측 제약과 무관한
-    // 모델 쪽 잡음이므로, 한 번만 더 물어본다. 여기서 실행을 죽이면 「예산 소진으로
-    // 포기했다」가 「에러」로 기록되어 이탈률 통계가 오염된다.
-    if (!(e instanceof Error) || !e.message.includes("JSON")) throw e;
-    const r = await complete({
-      ...base,
-      system: `${DECIDE_SYSTEM}\n\n出力はJSONオブジェクトのみ。前置きも説明も付けないでください。`,
-    });
-    return { action: toAction(r.parsed), costs: [r.cost] };
+  // ★ 모든 시도의 원가가 여기 쌓인다. 성공했든 실패했든 부른 호출은 전부 남는다.
+  //   재시도가 붙은 스텝은 trace의 llm_calls가 2~3건이 된다 = 사후에 셀 수 있다 = 숨기지 않는다.
+  const costs: CostRecord[] = [];
+  let lastNote = "";
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      // 재질문일수록 말로 못을 박는다. 스키마만 주면 안 지키는 모델이 실제로 있다(glm-5.2).
+      const r = await complete(attempt === 1 ? base : { ...base, system: `${DECIDE_SYSTEM}\n\n${nag(kinds, lastNote)}` });
+      costs.push(r.cost);
+
+      const action = toAction(r.parsed);
+      // 별칭까지 읽어줘도 허용 목록 밖이면, 그건 진짜로 못 알아들은 것이다.
+      // ★ 이 검사는 재질문의 답에도 똑같이 걸린다. 예전엔 첫 답에만 걸려서,
+      //   재질문이 빈 kind를 돌려줘도 그대로 통과했다. 그 스텝은 act()에서 죽고
+      //   「제약 때문에 헤맸다」로 집계됐다 — 우리 도구가 만든 잡음이 측정에 섞인 것이다.
+      if (kinds.includes(action.kind)) return { action, costs };
+
+      lastNote = `kind「${action.kind}」は使えません`;
+    } catch (e) {
+      if (!(e instanceof Error)) throw e;
+      // 4xx·키 없음 같은 건 다시 물어도 같은 답이 온다. 돈만 쓴다.
+      // 싼 모델이 JSON 대신 YAML 비슷한 걸 뱉는 경우만 다시 묻는다.
+      if (!e.message.includes("JSON")) throw decideFailure(e.message, costs);
+      lastNote = "出力がJSONではありませんでした";
+    }
   }
+
+  // 여기까지 오면 모델 쪽 문제다. 관측 제약과는 무관하다.
+  // 그럴듯한 액션을 지어내지 않는다 (절대규칙 3) — 실패를 실패라고 기록하고 넘긴다.
+  throw decideFailure(`[decide] ${MAX_ATTEMPTS}회 물어도 쓸 수 있는 action이 오지 않았다 (${lastNote})`, costs);
+}
+
+/** 무엇이 틀렸는지 알려주고 다시 묻는다. 「다시 해봐」만으로는 같은 답이 온다. */
+function nag(kinds: string[], lastNote: string): string {
+  return (
+    `前回の回答は使えませんでした: ${lastNote}。\n` +
+    `kind は必ず次のいずれか1つにしてください: ${kinds.join(" / ")}。空文字も省略も不可です。\n` +
+    `出力はJSONオブジェクトのみ。前置きも説明も付けないでください。`
+  );
 }
