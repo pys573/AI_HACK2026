@@ -13,6 +13,7 @@
     "orca:smoke": "node --env-file=.env llm/smoke.ts",
     "fixture:build": "node core/fixtures/build-sample.ts && node core/fixtures/build-sample-n3.ts",
     "run": "node --env-file=.env agent/src/run.ts",
+    "batch": "node --env-file=.env agent/src/batch.ts",
     "report": "node agent/src/report.ts",
     "diagnose": "node --env-file=.env agent/src/rediagnose.ts",
     "agent:test": "node --test --experimental-test-module-mocks \"agent/test/*.test.ts\"",
