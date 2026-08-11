@@ -1,5 +1,5 @@
 import { loadDemo } from "@/lib/data";
-import { FindingsList, Section } from "@/components/ui";
+import { RunReport, Section } from "@/components/ui";
 import { Hero } from "@/components/Hero";
 import { Moment } from "@/components/Moment";
 import { SplitReplay } from "@/components/SplitReplay";
@@ -108,11 +108,12 @@ export default function Page() {
       </Section>
 
       {/*
-        A(engine)가 findings를 채우면 여기가 자동으로 나타난다. 지금은 빈 배열이라 통째로 안 그린다.
-        「0件」이라고 쓰지 않는 이유는 ui.tsx の FindingsList 주석 참조 —
-        「막힌 곳이 없었다」와 「아직 만들지 않았다」는 다르다.
+        ★ **대조군의 0건을 숨기지 않는다.** 실패한 쪽만 늘어놓으면 「이 사이트가 나쁘다」로 읽히고,
+        그건 우리가 하지 않는 주장이다(발표 금지어「サイト監査」). 같은 사이트·같은 용사에서
+        제약 없는 쪽이 0건이라는 사실이 붙어야 「원인은 제약이다」가 성립한다.
+        판정은 ui.tsx の RunReport 가 `reached` 로 한다 — 「없었다」와 「아직 안 만들었다」는 다르다.
       */}
-      {senior.findings.length > 0 && (
+      {[control, senior].some((r) => r.findings.length > 0) && (
         <Section
           id="report"
           eyebrow="report"
@@ -121,10 +122,16 @@ export default function Page() {
             <>
               失敗の記録だけでは、受け取った側は何もできません。
               止まった1件ごとに、何が止めたのかと、どう書きかえるのかを対にして出します。
+              <strong className="text-fg">同じサイトで、制約なしの実行は0件です</strong>
+              —左右を並べているのはそのためで、差が出た原因を
+              サイトだけに押しつけないための対照です。
             </>
           }
         >
-          <FindingsList findings={senior.findings} />
+          <div className="grid items-start gap-4 lg:grid-cols-2">
+            <RunReport run={control} />
+            <RunReport run={senior} />
+          </div>
         </Section>
       )}
 

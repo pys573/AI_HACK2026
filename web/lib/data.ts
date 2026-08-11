@@ -75,6 +75,8 @@ export type FindingView = {
   causeJa: string;
   fixJa: string;
   evidence: string[];
+  /** 출처가 깨져서 버린 근거 줄 수. 0이 아니면 화면에 그 사실을 적는다 */
+  evidenceDropped: number;
   severity: "high" | "medium" | "low";
 };
 
@@ -158,6 +160,15 @@ export type RunView = {
    * 「이 숫자 어디서 나왔나요」에 답하려면 이 결손을 화면에서 먼저 말해야 한다 (절대규칙 4).
    */
   discardedCalls: number;
+  /**
+   * 진단(리포트를 쓰게 한 호출)의 원가. **0의 뜻이 두 가지라 그냥 쓰면 안 된다:**
+   *   - findings가 0건인데 0 → 진짜 0이다. 신호가 없으면 모델을 아예 안 부른다
+   *     (`agent/src/diagnose.ts` — `if (!signals.length) return`).
+   *   - findings가 있는데 0 → **기록 누락**이다. `agent/src/rediagnose.ts`가 findings만
+   *     써넣고 원가는 콘솔에만 찍는다. 그 호출은 실제로 과금됐다.
+   * 즉 리포트가 있는 실행에서는 화면의 합계가 리포트 제작비를 포함하지 않는다 (절대규칙 4).
+   */
+  diagnoseUsd: number;
   /** "api" = 실측 원가. "table" = 가격표 계산치. 섞이면 "mixed" */
   costSource: "api" | "table" | "mixed";
   byModel: Record<string, number>;
@@ -334,13 +345,32 @@ function collectRewrites(t: RunTrace): RewriteView[] {
   return [...byTerm.values()].sort((a, b) => Number(b.inControl) - Number(a.inControl));
 }
 
+/**
+ * ★ 출처가 깨진 근거 줄은 **화면에 내보내지 않는다.**
+ *
+ * 실제로 나오고 있다. `agent/src/signals.ts`가 `m.basis`만 보고 분기하는데,
+ * 2026-08-10 실행의 마스크 기록에는 `basis` 필드가 아직 없다(위 `basisOf()`가 그래서 있다).
+ * 그래서 **이해율 근거인 「サイト」가 지정 명단 쪽으로 새어** 화면에
+ * 「やさしい日本語 書き換え例 No.undefined（出入国在留管理庁）— 言い換え「」」가 찍힌다.
+ * 존재하지 않는 명단 번호를, 존재하지 않는 조사의 출처와 함께 쓰는 것이다 (절대규칙 4).
+ *
+ * `MaskRecord`는 `maskView()`에서 걸러지지만 `Finding.evidence`는 엔진이 만든 자유 문장이라
+ * 그 관문을 지나지 않는다. 그래서 여기에 관문을 하나 더 둔다.
+ *
+ * ⚠️ **고쳐 쓰지 않는다.** 우리가 올바른 문장으로 바꿔 넣으면 그건 우리가 지어낸 근거가 된다.
+ *    버리고, 버린 개수를 화면에 적는다. 오차는 언제나 「주장을 덜 하는」 쪽으로 넘긴다.
+ */
+const BROKEN_EVIDENCE = /undefined|言い換え「」/;
+
 function findingView(f: Finding): FindingView {
+  const evidence = f.evidence.filter((e) => !BROKEN_EVIDENCE.test(e));
   return {
     stepN: f.step_n,
     url: f.url,
     causeJa: f.cause_ja,
     fixJa: f.fix_ja,
-    evidence: f.evidence,
+    evidence,
+    evidenceDropped: f.evidence.length - evidence.length,
     severity: f.severity,
   };
 }
@@ -380,6 +410,7 @@ function toRunView(t: RunTrace): RunView {
       (a, s) => a + s.llm_calls.reduce((b, c) => b + (c.retries ?? 0), 0),
       0,
     ),
+    diagnoseUsd: t.cost.by_step_type?.diagnose ?? 0,
     costSource,
     byModel: t.cost.by_model,
     steps: t.steps.map((s) => stepView(s, t.profile_id)),
