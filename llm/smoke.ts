@@ -7,7 +7,7 @@
  *   node llm/smoke.ts
  */
 
-import { complete, fetchLivePrices, livePricesFetchedAt, OrcaError, prices, setLivePrices, usingLivePrices } from "./orca.ts";
+import { complete, fetchLivePrices, livePricesFetchedAt, onBilledCost, OrcaError, prices, setLivePrices, usingLivePrices } from "./orca.ts";
 import { BASELINE_MODEL } from "./pricing.ts";
 import { routingTable } from "./routing.ts";
 
@@ -85,3 +85,30 @@ for (const r of routingTable()) {
   line(`  ${r.step_type.padEnd(9)} → ${r.model}${r.overridden ? "  (env로 덮어씀)" : ""}`);
 }
 line(`  기준선(라우팅 안 했을 때): ${BASELINE_MODEL}`);
+
+line("\n── 6. 과금 원장 — 버려진 시도까지 세는가 ───────");
+{
+  const ledger: Array<{ model: string; kept: boolean; usd: number }> = [];
+  const off = onBilledCost((c, kept) => ledger.push({ model: c.model, kept, usd: c.cost_usd }));
+  try {
+    // 스키마를 무시하는 게 확인된 모델(routing.ts DENYLIST)로 일부러 실패시킨다.
+    // 재시도로 버려진 호출도 과금됐다는 걸 눈으로 확인하는 게 이 절의 목적이다
+    await complete(
+      {
+        step_type: "perceive",
+        system: "JSONのみ。",
+        user: "「新宿区 住民異動届」ページを分類せよ。",
+        schema: { type: "object", properties: { page_kind: { type: "string" } }, required: ["page_kind"], additionalProperties: false },
+        force_model: "qwen/qwen3.7-flash",
+      },
+      { retries: 1 },
+    );
+    line("  (예상과 달리 성공했다 — 모델 거동이 바뀌었을 수 있다)");
+  } catch (e) {
+    line(`✓ 실패로 처리됨: ${e instanceof Error ? e.message.slice(0, 90) : String(e)}`);
+  }
+  off();
+  const total = ledger.reduce((s, r) => s + (Number.isFinite(r.usd) ? r.usd : 0), 0);
+  line(`  원장 ${ledger.length}건 (버려짐 ${ledger.filter((r) => !r.kept).length}건) 합계 $${total.toFixed(6)}`);
+  line(`  → 반환값만 세면 이 $${total.toFixed(6)}가 통째로 사라진다 (절대규칙 4)`);
+}
