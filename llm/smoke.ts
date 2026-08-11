@@ -8,6 +8,8 @@
  */
 
 import { complete, fetchLivePrices, livePricesFetchedAt, OrcaError, prices, setLivePrices, usingLivePrices } from "./orca.ts";
+import { BASELINE_MODEL } from "./pricing.ts";
+import { routingTable } from "./routing.ts";
 
 const line = (s: string) => console.log(s);
 
@@ -27,11 +29,16 @@ try {
 
 line("\n── 2. POST /chat/completions (orcarouter/auto) ─");
 try {
-  const r = await complete({
-    step_type: "perceive",
-    system: "あなたは簡潔に答えるアシスタントです。",
-    user: "「テスト」とだけ返してください。",
-  });
+  // resolveModel:null = 라우팅을 끈 대조군. 이걸 명시하지 않으면 routing.ts 표를 타서
+  // 「auto가 무엇을 고르는가」를 못 본다 (A/B 하네스의 기준선이 사라진다)
+  const r = await complete(
+    {
+      step_type: "perceive",
+      system: "あなたは簡潔に答えるアシスタントです。",
+      user: "「テスト」とだけ返してください。",
+    },
+    { resolveModel: null },
+  );
   line(`✓ text     : ${JSON.stringify(r.text.slice(0, 60))}`);
   line(`  model    : ${r.cost.model}`);
   line(`  tokens   : in ${r.cost.prompt_tokens} / out ${r.cost.completion_tokens} / cached ${r.cost.cached_tokens}`);
@@ -72,3 +79,9 @@ for (const m of ["qwen/qwen3.7-flash", "anthropic/claude-opus-5"]) {
     line(`✗ ${m.padEnd(28)} → ${e instanceof Error ? e.message.slice(0, 120) : String(e)}`);
   }
 }
+
+line("\n── 5. 라우팅 표 (⑥ 削減施策의 근거) ────────────");
+for (const r of routingTable()) {
+  line(`  ${r.step_type.padEnd(9)} → ${r.model}${r.overridden ? "  (env로 덮어씀)" : ""}`);
+}
+line(`  기준선(라우팅 안 했을 때): ${BASELINE_MODEL}`);

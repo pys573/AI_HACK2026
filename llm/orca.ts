@@ -20,6 +20,7 @@
 
 import type { CostRecord, LlmRequest, LlmResponse } from "../core/types.ts";
 import { estimateCost, FALLBACK_PRICES, type ModelPrice } from "./pricing.ts";
+import { resolveModel as tableResolveModel } from "./routing.ts";
 
 const BASE_URL = process.env.ORCAROUTER_BASE_URL ?? "https://api.orcarouter.ai/v1";
 const API_KEY = process.env.ORCAROUTER_API_KEY ?? "";
@@ -179,13 +180,43 @@ function extractCost(
   return { cost_usd: Number.NaN, cost_source: "table" };
 }
 
+/**
+ * Anthropic 경유 호출용 스키마 정리.
+ *
+ * ✅ 2026-08-11 실측: `maxItems`가 있으면 **HTTP 400**으로 거절한다
+ *    (`For 'array' type, property 'maxItems' is not supported`).
+ *    OpenAI·Google은 같은 스키마를 그대로 받는다 — 벤더별 지원 범위가 다르다.
+ *
+ * 제약을 지우는 건 의미를 바꾸는 일이라 원래는 피해야 한다. 다만 여기서 지우는 건
+ * 전부 **범위 제한**뿐이고(필드 구성·타입·required는 건드리지 않는다),
+ * 남기면 400으로 호출 자체가 죽는다. 죽는 것보다 느슨한 게 낫다.
+ */
+const ANTHROPIC_UNSUPPORTED = ["maxItems", "minItems", "maxLength", "minLength", "pattern", "format"];
+
+function sanitizeForAnthropic(node: unknown): unknown {
+  if (Array.isArray(node)) return node.map(sanitizeForAnthropic);
+  if (node && typeof node === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+      if (ANTHROPIC_UNSUPPORTED.includes(k)) continue;
+      out[k] = sanitizeForAnthropic(v);
+    }
+    return out;
+  }
+  return node;
+}
+
 export type CompleteOptions = {
   mode?: RoutingMode;
   /** 재시도 횟수 (5xx·타임아웃만). 4xx는 재시도하지 않는다 */
   retries?: number;
   timeoutMs?: number;
-  /** step_type → 모델. B가 주입한다. 없으면 orcarouter/auto */
-  resolveModel?: (req: LlmRequest) => string;
+  /**
+   * step_type → 모델.
+   * 기본값은 `llm/routing.ts`의 실측 기반 표다. 넘기면 그걸 쓰고,
+   * `null`을 넘기면 라우팅을 끄고 `orcarouter/auto`로 보낸다 (A/B 하네스의 대조군).
+   */
+  resolveModel?: ((req: LlmRequest) => string) | null;
 };
 
 /**
@@ -196,7 +227,14 @@ export async function complete(req: LlmRequest, opts: CompleteOptions = {}): Pro
   const mode = opts.mode ?? (process.env.ORCAROUTER_MODE as RoutingMode | undefined) ?? "balanced";
   const retries = opts.retries ?? 2;
   const timeoutMs = opts.timeoutMs ?? 60_000;
-  const model = req.force_model ?? opts.resolveModel?.(req) ?? AUTO_MODEL;
+  // 라우팅의 유일한 결정 지점.
+  //   force_model      → A/B 하네스가 못을 박은 경우
+  //   resolveModel:null → 라우팅 끄기(대조군). orcarouter/auto로 나간다
+  //   기본             → llm/routing.ts 실측 표
+  // ⚠️ 기본값을 auto로 두면 A는 코드를 안 고쳤다는 이유만으로 라우팅 없이 돌게 된다.
+  //    그 상태의 절감은 우리 시책이 아니라 OrcaRouter의 것이다 (⑥에서 설명이 안 된다)
+  const model =
+    req.force_model ?? (opts.resolveModel === null ? AUTO_MODEL : (opts.resolveModel ?? tableResolveModel)(req));
 
   const payload: Record<string, unknown> = {
     model,
@@ -209,9 +247,11 @@ export async function complete(req: LlmRequest, opts: CompleteOptions = {}): Pro
   };
 
   if (req.schema) {
+    // 벤더별 스키마 지원 범위가 다르다 — anthropic은 maxItems에서 400을 낸다 (2026-08-11 실측)
+    const schema = model.startsWith("anthropic/") ? sanitizeForAnthropic(req.schema) : req.schema;
     payload.response_format = {
       type: "json_schema",
-      json_schema: { name: "response", strict: true, schema: req.schema },
+      json_schema: { name: "response", strict: true, schema },
     };
   }
 

@@ -22,14 +22,27 @@ export type ModelPrice = {
   provider: string;
 };
 
-/** 덱 p.5 게재분. 이 외 194모델 이상이 있다 */
+/**
+ * 덱 p.5 게재분 + 우리가 실제로 라우팅하는 모델의 스냅샷.
+ *
+ * ⚠️ 라우팅 표(`llm/routing.ts`)에 있는 모델이 여기 없으면, 라이브 취득이 실패한 실행의
+ *    원가가 통째로 NaN이 된다 — 「모르는 모델을 0원으로 세지 않는다」의 대가다.
+ *    그래서 4개 스텝의 담당 모델은 반드시 여기에도 있어야 한다.
+ *    **routing.ts를 고치면 이 표도 같이 고친다.**
+ */
 export const FALLBACK_PRICES: Record<string, ModelPrice> = {
+  // ── 덱 p.5 게재분 (2026-08-08) ──
   "anthropic/claude-opus-5": { input_per_m: 5.0, output_per_m: 25.0, quality: 10.0, provider: "Anthropic Direct" },
   "google/gemini-3.6-flash": { input_per_m: 1.5, output_per_m: 7.5, quality: 8.0, provider: "Google Direct" },
   "meta/muse-spark-1.1": { input_per_m: 1.25, output_per_m: 4.25, quality: 8.0, provider: "-" },
   "google/gemini-3.5-flash-lite": { input_per_m: 0.3, output_per_m: 2.5, quality: 6.0, provider: "Google Direct" },
   "deepseek/deepseek-v4-flash": { input_per_m: 0.147, output_per_m: 0.295, quality: 6.0, provider: "DeepSeek" },
   "qwen/qwen3.7-flash": { input_per_m: 0.03, output_per_m: 0.13, quality: 7.0, provider: "Alibaba Cloud" },
+
+  // ── 라이브 /models 스냅샷 (2026-08-11 취득). 덱 미게재분이라 quality 점수가 없다 ──
+  // 이 값으로 계산된 원가는 cost_source "table" = **추정치**다. 実測이라 부르지 않는다
+  "google/gemini-3.1-flash-lite": { input_per_m: 0.25, output_per_m: 1.5, provider: "Google Direct" },
+  "openai/gpt-5-mini": { input_per_m: 0.25, output_per_m: 2.0, provider: "OpenAI" },
 };
 
 /**
