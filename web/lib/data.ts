@@ -11,9 +11,10 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { RunTrace, Step } from "@core/types.ts";
+import type { Finding, MaskRecord, RunTrace, Step } from "@core/types.ts";
 
 const DEMO_DIR = join(process.cwd(), "public", "demo");
+const FIXTURE_DIR = join(process.cwd(), "..", "core", "fixtures");
 
 /** 원본 요소 목록은 「벽처럼 많다」가 전해지면 충분하다. 전량 보내면 페이로드만 커진다 */
 const RAW_ELEMENT_CAP = 160;
@@ -25,12 +26,71 @@ export type ElementView = {
   inViewport: boolean;
 };
 
+/**
+ * ★ 근거의 종류가 다르면 **화면에 쓸 수 있는 말도 다르다.**
+ *
+ * - `comprehension_rate` — 이해율 조사가 있다 → 「60歳以上の理解率 8.2%」라고 쓸 수 있다
+ * - `designated_list`    — 「이 말은 바꿔 써라」는 지정 명단이다. **조사도 %도 존재하지 않는다**
+ *
+ * 명단 쪽에 %를 붙이면 존재하지 않는 조사를 존재한다고 말하는 것이 된다 (절대규칙 4).
+ * 그래서 UI의 성실함에 기대지 않고 **여기서** 잘라낸다 — 근거가 이해율이 아니면
+ * `comprehension`은 화면까지 도달하지 못한다.
+ */
 export type MaskView = {
   surface: string;
+  basis: "comprehension_rate" | "designated_list" | null;
+  /** basis가 comprehension_rate일 때만 값이 있다. %는 이 필드에서만 나온다 */
+  comprehension: number | null;
+  /** 명단 근거에는 코호트가 없다 — 「누구의 이해율인가」가 성립하지 않으므로 null이다 */
+  cohort: "overall" | "senior" | null;
+  /** basis가 designated_list일 때만. `meaning`이 「대신 이렇게 쓰세요」 */
+  listing: { no: number; term: string; meaning: string } | null;
   /** 「「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）」 */
   evidence: string;
   /** 링크·버튼 라벨 안이었는가. 본문이 가려진 것과는 무게가 다르다 */
   inControl: boolean;
+};
+
+/**
+ * 같은 줄의 before/after 한 쌍.
+ *
+ * raw의 「화면 안」 요소는 seen과 순서가 1:1로 대응한다 (control·senior-70s·resident-n3
+ * 전 트레이스 실측 확인). seen의 index는 다시 매겨지므로 **번호로 짝지으면 틀린다.**
+ */
+export type LabelPair = {
+  /** seen 쪽 번호 — 에이전트가 실제로 지목에 쓴 번호 */
+  index: number;
+  role: string;
+  /** 페이지에 있던 글자 */
+  raw: string;
+  /** 에이전트에게 건네진 글자 */
+  seen: string;
+  changed: boolean;
+};
+
+/** diagnose()의 산출물. B2B 리포트의 본문이 되는 부분 */
+export type FindingView = {
+  stepN: number;
+  url: string;
+  causeJa: string;
+  fixJa: string;
+  evidence: string[];
+  severity: "high" | "medium" | "low";
+};
+
+/**
+ * 「대신 이렇게 쓰세요」 목록.
+ *
+ * ⚠️ 이 문장은 **우리가 쓴 것이 아니다.** 出入国在留管理庁・文化庁의 언어 바꿔쓰기 예를
+ *    그대로 옮긴 것이다. 우리가 손대면 그 순간 「우리 의견」이 되고 근거가 사라진다.
+ */
+export type RewriteView = {
+  term: string;
+  no: number;
+  meaning: string;
+  /** 링크 라벨 안에서 사라진 적이 있는가. 있으면 탐색 자체가 막힌 것이라 우선순위가 높다 */
+  inControl: boolean;
+  stepNs: number[];
 };
 
 export type StepView = {
@@ -47,12 +107,15 @@ export type StepView = {
   rawElements: ElementView[];
   rawTruncated: number;
   seenElements: ElementView[];
+  /** 화면 안 요소의 before/after 대응. 짝을 못 만들면 빈 배열이다 */
+  pairs: LabelPair[];
   masked: MaskView[];
   maskedInControls: number;
   action: {
     kind: string;
     index: number | null;
     query: string | null;
+    delta: number | null;
     reason: string;
   } | null;
   actionOk: boolean;
@@ -67,6 +130,10 @@ export type RunView = {
   profileId: string;
   profileVersion: string;
   labelJa: string;
+  /** 이 프로필의 어휘 정책. 근거의 종류가 여기서 정해진다 */
+  lexiconKind: "comprehension_rate" | "designated_list" | null;
+  /** 어휘 데이터의 출처. 표시 의무가 있고, 「우리 의견이 아니다」의 증거이기도 하다 */
+  lexiconSourceJa: string | null;
   /** 이 프로필이 주장하는 것 / 주장하지 않는 것. 화면에 그대로 띄운다 */
   claimsJa: string;
   doesNotClaimJa: string;
@@ -89,7 +156,20 @@ export type RunView = {
   costSource: "api" | "table" | "mixed";
   byModel: Record<string, number>;
   steps: StepView[];
+  findings: FindingView[];
+  /** 명단 근거 실행에서만 나온다. 이해율 실행은 「바꿔쓰기 예」를 갖지 않는다 */
+  rewrites: RewriteView[];
+  missionIntentJa: string;
+  siteName: string;
 };
+
+/**
+ * ⚠️ `lexicon`은 프로필마다 **모양이 다르다.** kind가 그 구분자다.
+ *    senior-70s: 이해율 임계값 / resident-n3: 지정 명단. 공통 필드로 뭉개면 안 된다.
+ */
+export type LexiconPolicy =
+  | { kind: "comprehension_rate"; cohort: string; mask_below: number; source?: string }
+  | { kind: "designated_list"; list: string; source?: string };
 
 export type Profile = {
   id: string;
@@ -100,7 +180,7 @@ export type Profile = {
   observation: { dom_text: boolean; screenshot: boolean };
   tools: { find_in_page: boolean; site_search: boolean; back_limit: number | null };
   patience: { clicks: number; seconds: number };
-  lexicon: { cohort: string; mask_below: number; source?: string } | null;
+  lexicon: LexiconPolicy | null;
 };
 
 const OUTCOME_JA: Record<string, string> = {
@@ -124,6 +204,48 @@ function toolsJa(p: Profile): string[] {
   if (p.tools.back_limit === null) out.push("戻る（無制限）");
   else if (p.tools.back_limit > 0) out.push(`戻る（${p.tools.back_limit}回まで）`);
   return out;
+}
+
+/**
+ * 옛 트레이스(2026-08-10 실행)에는 `basis`가 없다. mask-basis 마이그레이션 이전이다.
+ * 없는 것을 있다고 채우지 않는다 — 실제로 이해율 숫자를 들고 있을 때만 이해율 근거로 본다.
+ * 어느 쪽도 아니면 `null`로 두고, 화면은 `evidence_ja`만 그대로 띄운다.
+ */
+function basisOf(m: MaskRecord): MaskView["basis"] {
+  if (m.basis) return m.basis;
+  if (typeof m.comprehension === "number") return "comprehension_rate";
+  if (m.listing) return "designated_list";
+  return null;
+}
+
+/** ★ %가 화면으로 나가는 유일한 통로. 근거가 이해율이 아니면 여기서 끊긴다 */
+function maskView(m: MaskRecord): MaskView {
+  const basis = basisOf(m);
+  return {
+    surface: m.surface,
+    basis,
+    comprehension: basis === "comprehension_rate" ? (m.comprehension ?? null) : null,
+    cohort: basis === "comprehension_rate" ? (m.cohort ?? null) : null,
+    listing: basis === "designated_list" ? (m.listing ?? null) : null,
+    evidence: m.evidence_ja,
+    inControl: m.in_control,
+  };
+}
+
+/**
+ * 화면 안 요소의 before/after 짝.
+ * 개수가 어긋나면 **짝을 만들지 않는다.** 잘못 짝지은 before/after는 화면 위의 거짓말이다.
+ */
+function labelPairs(s: Step): LabelPair[] {
+  const vp = s.raw.elements.filter((e) => e.in_viewport);
+  if (vp.length !== s.seen.elements.length) return [];
+  return s.seen.elements.map((e, i) => ({
+    index: e.index,
+    role: e.role,
+    raw: vp[i].name,
+    seen: e.name,
+    changed: vp[i].name !== e.name,
+  }));
 }
 
 function stepView(s: Step, profileId: string): StepView {
@@ -152,17 +274,16 @@ function stepView(s: Step, profileId: string): StepView {
       name: e.name,
       inViewport: true,
     })),
-    masked: s.constraint.masked.map((m) => ({
-      surface: m.surface,
-      evidence: m.evidence_ja,
-      inControl: m.in_control,
-    })),
+    pairs: labelPairs(s),
+    masked: s.constraint.masked.map(maskView),
     maskedInControls: s.constraint.masked_in_controls,
     action: s.action
       ? {
           kind: s.action.kind,
-          index: typeof s.action.index === "number" ? s.action.index : null,
+          // 대상이 없는 수(스크롤·포기)는 -1로 기록된다. 요소 번호가 아니므로 null로 만든다
+          index: typeof s.action.index === "number" && s.action.index >= 0 ? s.action.index : null,
           query: s.action.query ?? null,
+          delta: typeof s.action.delta === "number" ? s.action.delta : null,
           reason: s.action.reason_ja,
         }
       : null,
@@ -178,6 +299,46 @@ function readTrace(file: string): RunTrace {
   return JSON.parse(readFileSync(join(DEMO_DIR, file), "utf8")) as RunTrace;
 }
 
+/**
+ * 실행 전체에서 「대신 이렇게 쓰세요」를 모은다. 이게 B2B 리포트의 상품 부분이다.
+ *
+ * 한 번이라도 링크 라벨 안에서 사라진 말을 위로 올린다 — 본문이 어려운 것과
+ * 눌러야 할 링크의 이름이 사라진 것은 무게가 다르다. 후자는 탐색 자체를 막는다.
+ */
+function collectRewrites(t: RunTrace): RewriteView[] {
+  const byTerm = new Map<string, RewriteView>();
+  for (const s of t.steps) {
+    for (const m of s.constraint.masked) {
+      if (m.basis !== "designated_list" || !m.listing) continue;
+      const prev = byTerm.get(m.listing.term);
+      if (prev) {
+        prev.inControl ||= m.in_control;
+        if (!prev.stepNs.includes(s.n)) prev.stepNs.push(s.n);
+      } else {
+        byTerm.set(m.listing.term, {
+          term: m.listing.term,
+          no: m.listing.no,
+          meaning: m.listing.meaning,
+          inControl: m.in_control,
+          stepNs: [s.n],
+        });
+      }
+    }
+  }
+  return [...byTerm.values()].sort((a, b) => Number(b.inControl) - Number(a.inControl));
+}
+
+function findingView(f: Finding): FindingView {
+  return {
+    stepN: f.step_n,
+    url: f.url,
+    causeJa: f.cause_ja,
+    fixJa: f.fix_ja,
+    evidence: f.evidence,
+    severity: f.severity,
+  };
+}
+
 function toRunView(t: RunTrace): RunView {
   const profile = loadProfile(t.profile_id);
 
@@ -189,6 +350,8 @@ function toRunView(t: RunTrace): RunView {
     profileId: t.profile_id,
     profileVersion: t.profile_version,
     labelJa: profile.label.ja,
+    lexiconKind: profile.lexicon?.kind ?? null,
+    lexiconSourceJa: profile.lexicon?.source ?? null,
     claimsJa: profile.claims,
     doesNotClaimJa: profile.does_not_claim,
     viewport: profile.viewport,
@@ -209,11 +372,34 @@ function toRunView(t: RunTrace): RunView {
     costSource,
     byModel: t.cost.by_model,
     steps: t.steps.map((s) => stepView(s, t.profile_id)),
+    findings: t.findings.map(findingView),
+    rewrites: collectRewrites(t),
+    missionIntentJa: t.mission.intent_ja,
+    siteName: t.mission.site_name,
   };
 }
 
 export function loadRun(file: string): RunView {
   return toRunView(readTrace(file));
+}
+
+/**
+ * ★ resident-n3 실행 — 行政漢語의 벽.
+ *
+ * ⚠️ **이건 실측이 아니다.** 페이지 관측(3화면)과 마스킹 결과는 실제지만,
+ *    스텝 진행·LLM 발화·토큰·레이턴시는 손으로 만든 값이다 (core/fixtures/README.md).
+ *    그래서 실측 전용인 `public/demo/`가 아니라 `core/fixtures/`에서 직접 읽는다.
+ *    한 디렉터리에 섞어 두면 어느 쪽이 실측인지 파일에서도 화면에서도 구분이 안 된다 (절대규칙 3).
+ *
+ * 파일이 없어도 페이지는 뜬다 — A가 실제 트레이스로 갈아끼우는 중일 수 있다.
+ */
+export function loadN3(): RunView | null {
+  try {
+    const raw = readFileSync(join(FIXTURE_DIR, "sample-run-n3.json"), "utf8");
+    return toRunView(JSON.parse(raw) as RunTrace);
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -355,6 +541,7 @@ export function loadDemo() {
   return {
     control: toRunView(ct),
     senior: toRunView(st),
+    n3: loadN3(),
     matched: loadMatched(),
     moment: findMoment(ct, st),
     mission: {
