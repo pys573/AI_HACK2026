@@ -14,6 +14,9 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
   const allApi = runs.every((r) => r.costSource === "api");
   // 재시도로 버려진 시도는 행이 안 남는다. 스키마 불일치로 버린 건 200이라 과금은 됐다
   const discarded = runs.reduce((a, r) => a + r.discardedCalls, 0);
+  // 같은 `diagnose: 0`이 실행마다 뜻이 반대다. findings 유무가 그 구분자다
+  const undiagnosed = runs.filter((r) => r.findings.length > 0 && r.diagnoseUsd === 0);
+  const clean = runs.filter((r) => r.findings.length === 0 && r.reached);
 
   const perModel = new Map<string, number>();
   for (const r of runs)
@@ -106,6 +109,46 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
               しかもこれは私たちに都合のいい向きの誤差です。だから先に書いておきます。
               原因は <code className="font-mono">llm/orca.ts</code>{" "}
               の再試行で、既知の不具合として把握しています。
+            </p>
+          </div>
+        )}
+
+        {/*
+          결손이 하나 더 있다. 리포트(findings)를 쓰게 한 호출은 과금됐는데 trace의 원가에 없다 —
+          rediagnose.ts가 결과만 써넣고 원가는 콘솔에만 찍는다. 리포트가 상품인 이상 이건 크다.
+          「0円で報告書が出る」로 읽히면 그게 가장 위험한 거짓말이다.
+        */}
+        {undiagnosed.length > 0 && (
+          <div className="mt-4 rounded-lg border border-blocked/30 bg-blocked/5 p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge tone="blocked">レポートを書かせた費用も入っていません</Badge>
+            </div>
+            <p className="mt-2.5 text-xs leading-relaxed text-fg-muted">
+              上の
+              <a href="#report" className="underline decoration-dotted underline-offset-2">
+                レポート
+              </a>
+              の{undiagnosed.reduce((a, r) => a + r.findings.length, 0)}件は、記録から検出した信号を
+              モデルに渡して書かせたものです。その呼び出しにも費用がかかっていますが、
+              <code className="font-mono">cost.by_step_type.diagnose</code> は 0 のままです。
+              診断だけをやり直す <code className="font-mono">agent/src/rediagnose.ts</code>{" "}
+              が結果だけをファイルに書き戻し、費用を書き戻さないためです。
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-fg-muted">
+              つまり上の金額は
+              <strong className="text-fg">サイトを歩いた分だけ</strong>で、
+              <strong className="text-blocked">レポート作成分は別にかかります</strong>。
+              「0円で報告書が出る」ではありません。これも私たちに都合のいい向きの誤差なので、
+              先に書いておきます。
+              {/* 대조군의 diagnose 0 은 결손이 아니라 진짜 0 이다. 같은 필드지만 뜻이 반대다 */}
+              {clean.length > 0 && (
+                <>
+                  {" "}
+                  なお{clean.map((r) => r.labelJa).join("・")}の diagnose が 0
+                  なのは記録漏れではなく<strong className="text-clear">本当に0</strong>です —
+                  信号が0件だったのでモデルを呼んでいません。
+                </>
+              )}
             </p>
           </div>
         )}

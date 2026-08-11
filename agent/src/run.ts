@@ -32,6 +32,8 @@ import { routingTable } from "../../llm/routing.ts";
 import { act, RateLimiter } from "./act.ts";
 import { constrain, loadProfile, Patience, type ConstraintTrace, type Observation, type Profile } from "./constrain.ts";
 import { decide } from "./decide.ts";
+import { diagnose } from "./diagnose.ts";
+import { MAX_SIGNALS } from "./signals.ts";
 import { routingOff } from "./llm-opts.ts";
 import { keyMatch, judge } from "./judge.ts";
 import { loadMission } from "./mission.ts";
@@ -391,7 +393,24 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     cost: aggregate(billed),
   };
 
+  // ★ 진단은 **트레이스를 다 쓴 뒤에** 돈다. 실패해도 계측은 남아야 한다.
+  //   여기서 던지면 40스텝짜리 실행이 통째로 사라진다 — 실제로 judge()에서 그랬다.
+  //   진단은 사후에 다시 돌릴 수 있지만(`npm run diagnose <run_id>`), 브라우저 조작은 못 돌린다.
   writeFileSync(join(runDir, "trace.json"), JSON.stringify(trace, null, 2));
+  try {
+    const d = await diagnose(trace);
+    trace.findings = d.findings;
+    console.log(`  진단     : ${d.findings.length}건`);
+    for (const f of d.findings) console.log(`             [${f.severity.padEnd(6)}] step ${String(f.step_n).padStart(2)}  ${f.cause_ja}`);
+    // 뺀 것을 적지 않으면 「이 사이트엔 이만큼만 문제가 있었다」로 읽힌다 (절대규칙 3)
+    for (const s of d.ours) console.log(`             [제외  ] step ${String(s.step_n).padStart(2)}  사이트가 아니라 계측 고장: ${s.ours}`);
+    if (d.dropped) console.log(`  ⚠️ 신호 ${d.dropped}건은 상한(${MAX_SIGNALS})을 넘어 리포트에서 뺐다`);
+    // 진단 호출도 과금이다. 원가에 넣지 않으면 「우리 도구는 싸다」가 거짓이 된다 (절대규칙 4)
+    trace.cost = aggregate(billed);
+    writeFileSync(join(runDir, "trace.json"), JSON.stringify(trace, null, 2));
+  } catch (e) {
+    console.error(`  ⚠️ 진단 실패 — 계측은 남았다: ${e instanceof Error ? e.message : String(e)}`);
+  }
   return trace;
 }
 
