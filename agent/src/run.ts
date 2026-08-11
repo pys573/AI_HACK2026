@@ -28,6 +28,7 @@ import type {
 import { evidence } from "../../lexicon/src/mask.ts";
 import { BASELINE_MODEL, estimateCost } from "../../llm/pricing.ts";
 import { ensureLivePrices, onBilledCost, prices } from "../../llm/orca.ts";
+import { routingTable } from "../../llm/routing.ts";
 import { act, RateLimiter } from "./act.ts";
 import { constrain, loadProfile, Patience, type ConstraintTrace, type Observation, type Profile } from "./constrain.ts";
 import { decide } from "./decide.ts";
@@ -410,8 +411,14 @@ console.log(`  프로필 : ${profile.id} v${profile.version} — ${profile.label
 console.log(`  용무   : ${mission.intent_ja}`);
 console.log(`  예산   : ${profile.patience.clicks}클릭 / ${profile.patience.seconds}초`);
 console.log(`  스텝상한: ${maxSteps ?? mission.max_steps}${maxSteps ? " (MAX_STEPS로 덮어씀)" : ""}`);
-// 어느 쪽으로 돌았는지 화면에도 남긴다. 기록 자체는 trace.cost.by_model이 갖는다
-console.log(`  라우팅  : ${routingOff() ? "OFF — orcarouter/auto (ORCA_NO_ROUTING=1)" : "llm/routing.ts 실측 표"}\n`);
+// 어느 쪽으로 돌 **예정**인지. 실제로 뭐가 돌았는지는 아래 결과의 by_model이 말한다.
+//   여기(계획)와 저기(실측)를 나눠 찍는 이유: 429로 폴백하면 둘이 달라진다.
+//   한 줄로 합치면 「돌지도 않은 모델을 주장했다」가 된다 (절대규칙 4).
+console.log(`  라우팅  : ${routingOff() ? "OFF — 대조군 (ORCA_NO_ROUTING=1)" : "llm/routing.ts 표"}`);
+for (const r of routingTable()) {
+  console.log(`             ${r.step_type.padEnd(9)} ${r.model.padEnd(32)} [${r.source}]`);
+}
+console.log("");
 
 const t = await runOnce({ missionId, profileId, maxSteps, headless: process.env.HEADED !== "1" });
 
