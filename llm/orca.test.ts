@@ -174,12 +174,40 @@ test("step_type이 모델을 정한다 — 기본이 auto면 절감은 우리 �
   }
 });
 
-test("resolveModel:null이면 라우팅을 끈다 — A/B 하네스의 대조군", async () => {
+test("resolveModel:null이면 라우팅을 끈다 — 이 호출만", async () => {
   const s = stub([() => ok("x")]);
   try {
     await complete(REQ, { retries: 0, resolveModel: null });
     assert.equal(s.calls[0].body.model, "orcarouter/auto");
   } finally {
+    s.restore();
+  }
+});
+
+test("ORCA_NO_ROUTING=1은 호출부가 뭘 넘기든 이긴다 — 대조군이 조용히 섞이면 원가 비교가 무의미해진다", async () => {
+  const s = stub([() => ok("x"), () => ok("x")]);
+  process.env.ORCA_NO_ROUTING = "1";
+  try {
+    // 호출부가 스위치를 모르고 자기 resolver를 넘긴 상황. 그래도 라우팅은 꺼져야 한다
+    await complete(REQ, { retries: 0, resolveModel: () => "google/gemini-3.6-flash" });
+    assert.equal(s.calls[0].body.model, "orcarouter/auto");
+    // 표도 같이 auto라고 말해야 한다. 설정값을 읊으면 리포트가 돌지도 않은 모델을 주장한다
+    const t = routingTable();
+    assert.ok(t.every((r) => r.model === "orcarouter/auto" && r.source === "disabled"), JSON.stringify(t));
+  } finally {
+    delete process.env.ORCA_NO_ROUTING;
+    s.restore();
+  }
+});
+
+test("force_model은 ORCA_NO_ROUTING보다 강하다 — 「전량 opus-5였다면」 기준선을 재려면 필요하다", async () => {
+  const s = stub([() => ok("x")]);
+  process.env.ORCA_NO_ROUTING = "1";
+  try {
+    await complete({ ...REQ, force_model: "anthropic/claude-opus-5" }, { retries: 0 });
+    assert.equal(s.calls[0].body.model, "anthropic/claude-opus-5");
+  } finally {
+    delete process.env.ORCA_NO_ROUTING;
     s.restore();
   }
 });

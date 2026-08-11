@@ -71,6 +71,30 @@ export const DENYLIST: Record<string, string> = {
   "google/gemini-2.5-flash-lite": "프론티어와 판정 불일치 (2026-08-11 실측)",
 };
 
+/** 라우팅을 끈 상태에서 나가는 곳. OrcaRouter가 알아서 고른다 */
+export const AUTO_MODEL = "orcarouter/auto";
+
+/**
+ * 실행 단위로 라우팅을 끈다 — A/B 하네스의 **대조군**.
+ *
+ * 왜 프로필이 아니라 실행 단위인가 (A의 판단, 2026-08-11):
+ *   `profiles/*.json`에 붙이면 좌우 데모의 변수가 「제약」과 「모델」 두 개가 된다.
+ *   무엇 때문에 차이가 났는지 말할 수 없게 된다.
+ *
+ * 왜 호출부가 아니라 여기서 보는가:
+ *   호출부마다 `resolveModel: null`을 넘기는 방식이면, 호출부가 하나 늘어날 때
+ *   거기서 빠뜨리는 순간 **일부만 라우팅된 섞인 실행**이 된다. 그런데도 실행은
+ *   성공하고 숫자도 나온다 — 조용히 무의미해진 원가 비교가 리포트에 실린다.
+ *   판단 지점을 한 곳으로 모아서 그 사고 자체를 불가능하게 만든다.
+ *
+ * ⚠️ `force_model`은 이보다 우선한다. 「전량 opus-5로 돌렸다면」 기준선을
+ *    재려면 라우팅을 끈 채로 모델을 못 박을 수 있어야 하기 때문이다.
+ */
+export function routingDisabled(): boolean {
+  const v = process.env.ORCA_NO_ROUTING;
+  return v === "1" || v === "true";
+}
+
 /** `ORCA_MODEL_PERCEIVE=...` 형태로 스텝별 덮어쓰기. A/B 하네스가 쓴다 */
 function envOverride(step: StepType): string | undefined {
   const v = process.env[`ORCA_MODEL_${step.toUpperCase()}`];
@@ -82,14 +106,24 @@ function envOverride(step: StepType): string | undefined {
  * 그래야 「왜 이 모델인가」가 미션과 무관하게 설명된다.
  */
 export function resolveModel(req: LlmRequest): string {
+  if (routingDisabled()) return AUTO_MODEL;
   return envOverride(req.step_type) ?? MODEL_BY_STEP[req.step_type] ?? MODEL_BY_STEP.decide;
 }
 
-/** 리포트·발표에 그대로 붙일 수 있는 형태. 근거 없는 표는 ⑥에서 0점이다 */
-export function routingTable(): Array<{ step_type: StepType; model: string; overridden: boolean }> {
+/** 이 모델이 어디서 정해졌는가. 리포트에 「왜 이 모델인가」를 쓰려면 이게 필요하다 */
+export type ModelSource = "table" | "env" | "disabled";
+
+/**
+ * 리포트·발표에 그대로 붙일 수 있는 형태. 근거 없는 표는 ⑥에서 0점이다.
+ *
+ * ⚠️ **지금 실제로 나가는 모델**을 돌려준다. 라우팅이 꺼져 있으면 표도 auto라고 말한다.
+ *    여기가 설정값을 그대로 읊으면, 대조군 실행의 리포트가 돌지도 않은 모델을 주장하게 된다.
+ */
+export function routingTable(): Array<{ step_type: StepType; model: string; source: ModelSource }> {
+  const disabled = routingDisabled();
   return (Object.keys(MODEL_BY_STEP) as StepType[]).map((s) => ({
     step_type: s,
     model: resolveModel({ step_type: s, system: "", user: "" }),
-    overridden: envOverride(s) !== undefined,
+    source: disabled ? "disabled" : envOverride(s) !== undefined ? "env" : "table",
   }));
 }

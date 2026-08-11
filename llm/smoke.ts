@@ -9,7 +9,7 @@
 
 import { complete, fetchLivePrices, livePricesFetchedAt, onBilledCost, OrcaError, prices, setLivePrices, usingLivePrices } from "./orca.ts";
 import { BASELINE_MODEL } from "./pricing.ts";
-import { routingTable } from "./routing.ts";
+import { routingDisabled, routingTable } from "./routing.ts";
 
 const line = (s: string) => console.log(s);
 
@@ -82,9 +82,13 @@ for (const m of ["qwen/qwen3.7-flash", "anthropic/claude-opus-5"]) {
 
 line("\n── 5. 라우팅 표 (⑥ 削減施策의 근거) ────────────");
 for (const r of routingTable()) {
-  line(`  ${r.step_type.padEnd(9)} → ${r.model}${r.overridden ? "  (env로 덮어씀)" : ""}`);
+  const note = r.source === "env" ? "  (env로 덮어씀)" : r.source === "disabled" ? "  (ORCA_NO_ROUTING=1)" : "";
+  line(`  ${r.step_type.padEnd(9)} → ${r.model}${note}`);
 }
 line(`  기준선(라우팅 안 했을 때): ${BASELINE_MODEL}`);
+if (routingDisabled()) {
+  line("  ⚠️ 지금은 대조군 실행이다. 이 실행의 원가를 「라우팅 적용 결과」라고 부르지 말 것");
+}
 
 line("\n── 6. 과금 원장 — 버려진 시도까지 세는가 ───────");
 {

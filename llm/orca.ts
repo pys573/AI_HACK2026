@@ -20,7 +20,7 @@
 
 import type { CostRecord, LlmRequest, LlmResponse } from "../core/types.ts";
 import { estimateCost, FALLBACK_PRICES, type ModelPrice } from "./pricing.ts";
-import { resolveModel as tableResolveModel } from "./routing.ts";
+import { AUTO_MODEL, resolveModel as tableResolveModel, routingDisabled } from "./routing.ts";
 
 const BASE_URL = process.env.ORCAROUTER_BASE_URL ?? "https://api.orcarouter.ai/v1";
 const API_KEY = process.env.ORCAROUTER_API_KEY ?? "";
@@ -28,7 +28,8 @@ const API_KEY = process.env.ORCAROUTER_API_KEY ?? "";
 /** 덱 p.4: 품질우선 / 코스트우선 / 밸런스 / auto(학습) */
 export type RoutingMode = "quality" | "cost" | "balanced" | "auto";
 
-export const AUTO_MODEL = "orcarouter/auto";
+/** 정의는 routing.ts로 옮겼다 (라우팅 판단이 한 곳에 모여야 해서). 기존 import 경로는 유지한다 */
+export { AUTO_MODEL };
 
 /** /models 로 받아온 라이브 가격표. 없으면 폴백 표를 쓴다 */
 let livePrices: Record<string, ModelPrice> | null = null;
@@ -298,14 +299,20 @@ export async function complete(req: LlmRequest, opts: CompleteOptions = {}): Pro
   const retries = opts.retries ?? 2;
   const timeoutMs = opts.timeoutMs ?? 60_000;
 
-  // 라우팅의 유일한 결정 지점.
-  //   force_model      → A/B 하네스가 못을 박은 경우
-  //   resolveModel:null → 라우팅 끄기(대조군). orcarouter/auto로 나간다
-  //   기본             → llm/routing.ts 실측 표
+  // 라우팅의 유일한 결정 지점. 우선순위는 위가 강하다:
+  //   1. force_model         A/B 하네스가 못을 박은 경우 (「전량 opus-5였다면」 기준선)
+  //   2. ORCA_NO_ROUTING=1   실행 전체의 라우팅을 끈다 (대조군). 호출부가 뭘 넘겼든 이긴다
+  //   3. resolveModel:null   이 호출만 라우팅을 끈다
+  //   4. 기본                llm/routing.ts 실측 표
+  //
+  // ⚠️ 2가 3보다 강한 게 핵심이다. 호출부마다 끄는 방식이면 새 호출부에서 한 번
+  //    빠뜨리는 순간 「일부만 라우팅된」 실행이 되는데, 그래도 성공하고 숫자도 나온다.
+  //    무의미해진 원가 비교가 조용히 리포트에 실린다
   // ⚠️ 기본값을 auto로 두면 A는 코드를 안 고쳤다는 이유만으로 라우팅 없이 돌게 된다.
   //    그 상태의 절감은 우리 시책이 아니라 OrcaRouter의 것이다 (⑥에서 설명이 안 된다)
   const model =
-    req.force_model ?? (opts.resolveModel === null ? AUTO_MODEL : (opts.resolveModel ?? tableResolveModel)(req));
+    req.force_model ??
+    (opts.resolveModel === null || routingDisabled() ? AUTO_MODEL : (opts.resolveModel ?? tableResolveModel)(req));
 
   const payload: Record<string, unknown> = {
     model,
