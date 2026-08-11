@@ -80,8 +80,11 @@ const OURS: Array<[needle: string, why: string]> = [
   ["createTreeWalker", "관측 중 body null (08/11 수정)"],
   ["429", "OrcaRouter 무료 한도"],
   ["알 수 없는 액션", "모델이 스키마 밖 action을 냈다"],
+  ["schema를 요구했으나", "모델이 스키마를 안 지켰다"],
   ["画面にない番号", "모델이 화면에 없는 번호를 냈다"],
+  ["요소", "화면 목록에서 그 번호를 못 찾았다"],
   ["화면 밖 좌표", "우리 좌표 계산"],
+  ["guard:", "우리 가드가 막았다 (절대규칙 5 — 읽기 전용)"],
   ["Timeout", "브라우저 타임아웃"],
 ];
 
@@ -180,7 +183,21 @@ function scrollRuns(steps: Step[]): Signal[] {
   return out;
 }
 
-/** 조작이 실패한 스텝. 우리 고장으로 알려진 문구면 표시만 하고 리포트에서는 뺀다 */
+/**
+ * 조작이 실패한 스텝. **전부 우리 쪽으로 분류한다.**
+ *
+ * ★ 처음에는 알려진 문구만 빼는 목록 방식이었다. 실측(08-11)으로 트레이스에 남은
+ *   action_error를 전부 뽑아보니 **사이트 탓인 것이 하나도 없었다** — 우리 파서,
+ *   우리 좌표, 우리 가드, 모델의 스키마 위반뿐이다.
+ *
+ *   사이트가 원인인 조작 실패는 애초에 여기로 오지 않는다. 배너가 링크를 덮어
+ *   엉뚱한 것이 눌린 경우는 `action_ok: true`로 성공 처리되고(act.ts:192),
+ *   그 결과는 주회·스크롤로 나타난다. 그쪽이 진짜 사용성 데이터다.
+ *
+ *   그래서 목록 방식을 뒤집는다. 목록은 새 문구가 나올 때마다 **모르는 것을
+ *   사이트 탓으로 흘려보낸다.** 기본을 「우리 쪽」으로 두면 그 사고가 구조적으로 막힌다.
+ *   원인을 아는 것은 이름을 적고, 모르는 것은 모른다고 적는다 (절대규칙 2).
+ */
 function actionFailures(steps: Step[]): Signal[] {
   return steps
     .filter((s) => s.action && !s.action_ok)
@@ -193,9 +210,8 @@ function actionFailures(steps: Step[]): Signal[] {
         `エラー: ${brief(s.action_error, 120)}`,
       ],
       wasted_steps: 1,
-      // 남은 것(우리 고장이 아닌 실패)도 사이트 문제로 단정하지 않는다 → high로 올리지 않는다
       severity: "medium" as const,
-      ours: selfInflicted(s.action_error) ?? undefined,
+      ours: selfInflicted(s.action_error) ?? "원인 미상 — 사이트 탓으로 단정하지 않는다",
     }));
 }
 
@@ -266,23 +282,52 @@ function maskedControls(steps: Step[]): Signal[] {
     }
   }
 
-  return [...byWord.entries()].map(([surface, { steps: ns, url, m }]) => ({
+  return [...byWord.entries()].flatMap(([surface, { steps: ns, url, m }]) => {
+    const basis = basisLine(m);
+    if (!basis) return []; // 출처를 댈 수 없으면 싣지 않는다 (아래 basisLine 주석)
+    return [{
     kind: "masked_control" as const,
     step_n: ns[0],
     url,
     evidence: [
       `「${surface}」がリンク・ボタンのラベルに含まれており、${ns.length}画面（${ns.map((n) => `ステップ${n}`).join(" / ")}）で読めない状態だった`,
-      // 「根拠:」를 붙이지 않는다 — evidence 자체가 근거이고, 표시하는 쪽이 이미 라벨을 붙인다
-      m.basis === "comprehension_rate"
-        ? `${m.cohort === "senior" ? "60歳以上" : "全体"}の理解率 ${m.comprehension}%（国立国語研究所 外来語言い換え提案 2003-2006）`
-        : `やさしい日本語 書き換え例 No.${m.listing?.no}（出入国在留管理庁）— 言い換え「${m.listing?.meaning?.slice(0, 50) ?? ""}」`,
+      basis,
     ],
     // 낭비 스텝은 여기서 세지 않는다. 뒤따르는 주회·스크롤이 이미 센다
     wasted_steps: 0,
     // ★ 「이 말 때문에 실패했다」는 인과를 우리는 주장하지 않는다(profiles/README.md).
     //   말할 수 있는 것은 「몇 화면에 걸쳐 있었나」뿐이다. 그래서 high로 올리지 않는다.
     severity: ns.length >= 3 ? ("medium" as const) : ("low" as const),
-  }));
+    }];
+  });
+}
+
+/**
+ * 마스킹의 출처 한 줄.
+ *
+ * ★ **직접 조립하지 않는다.** `evidence_ja`는 `MaskRecord`의 필수 필드이고(core/types.ts:139),
+ *   `lexicon/src/mask.ts`의 `evidence()`가 만든다. 출처를 아는 것은 저쪽 하나뿐이다.
+ *
+ *   실측(08-11, D 지적): 여기서 손으로 다시 조립하다가 두 군데를 틀렸다.
+ *     · 08-10 트레이스에는 `basis`가 없다 — `evidence_ja`가 더 오래된 필드다.
+ *       `basis`로 분기하니 이해율 근거인 「サイト」가 명단 쪽으로 새어
+ *       「やさしい日本語 書き換え例 No.undefined（出入国在留管理庁）」가 찍혔다.
+ *       **없는 명단 번호를, 그 말을 실은 적 없는 관청 이름으로 인용한 것이다.**
+ *     · 이해율의 출처를 「外来語言い換え提案 2003-2006」이라고 썼는데
+ *       실제 자료는 「外来語定着度調査」다. 둘은 다른 조사다.
+ *
+ *   지어낸 출처는 근거가 아니라 거짓말이다 (절대규칙 4). 그래서 **그대로 옮긴다.**
+ *
+ * 옛 기록을 위한 재구성은 `basis` 대신 **값의 존재**로 판정한다(D의 `basisOf()`와 같은 규율).
+ * 그래도 못 정하면 신호를 버린다 — 오차는 언제나 과소 보고 쪽으로 (절대규칙 2).
+ */
+function basisLine(m: Step["constraint"]["masked"][number]): string | null {
+  if (m.evidence_ja?.trim()) return m.evidence_ja.trim();
+  if (typeof m.comprehension === "number") {
+    return `${m.cohort === "senior" ? "60歳以上" : "全体"}の理解率 ${m.comprehension}%（国立国語研究所 外来語定着度調査）`;
+  }
+  if (m.listing) return `『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.${m.listing.no}`;
+  return null;
 }
 
 /**

@@ -134,6 +134,31 @@ test("가려진 라벨을 그대로 눌렀으면 그 화면은 세지 않는다 
   assert.equal(kinds(trace([s])).includes("masked_control"), false);
 });
 
+test("★ basis가 없는 옛 기록도 이해율 쪽으로 읽는다 — 없는 명단 번호를 인용하지 않는다", () => {
+  // 08-10 트레이스에는 basis가 없다(evidence_ja가 더 오래된 필드다).
+  // basis로 분기하면 이해율 근거가 명단 쪽으로 새어
+  // 「やさしい日本語 書き換え例 No.undefined（出入国在留管理庁）」가 찍혔다 — 지어낸 인용이다
+  const old = { surface: "サイト", in_control: true, comprehension: 7.8, cohort: "senior" };
+  const t = trace([step(1, { constraint: { elements_total: 100, elements_in_viewport: 50, chars_before: 0, chars_after: 0, masked: [old], masked_in_controls: 1 } } as never)]);
+  const e = find(t, "masked_control")!.evidence.join();
+  assert.match(e, /理解率 7\.8%/);
+  assert.doesNotMatch(e, /undefined|書き換え例/);
+});
+
+test("★ 출처는 evidence_ja를 그대로 쓴다 — 손으로 다시 조립하지 않는다", () => {
+  // 직접 조립하다가 「外来語言い換え提案 2003-2006」이라고 썼는데 실제 자료는 「外来語定着度調査」였다.
+  // 출처를 아는 것은 lexicon/src/mask.ts 하나뿐이다
+  const m = { ...masked("サイト"), evidence_ja: "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）" };
+  const t = trace([step(1, { constraint: { elements_total: 100, elements_in_viewport: 50, chars_before: 0, chars_after: 0, masked: [m], masked_in_controls: 1 } } as never)]);
+  assert.equal(find(t, "masked_control")!.evidence[1], m.evidence_ja);
+});
+
+test("출처를 댈 수 없는 마스크는 아예 싣지 않는다", () => {
+  const bare = { surface: "なにか", in_control: true };
+  const t = trace([step(1, { constraint: { elements_total: 100, elements_in_viewport: 50, chars_before: 0, chars_after: 0, masked: [bare], masked_in_controls: 1 } } as never)]);
+  assert.equal(kinds(t).includes("masked_control"), false);
+});
+
 test("어휘는 인과를 주장하지 않는다 → high로 올라가지 않는다", () => {
   const m = { constraint: { elements_total: 100, elements_in_viewport: 50, chars_before: 0, chars_after: 0, masked: [masked("サイト")], masked_in_controls: 1 } };
   const t = trace([step(1, m as never), step(2, m as never), step(3, m as never), step(4, m as never)]);
@@ -149,6 +174,19 @@ test("우리 파서가 낸 실패는 리포트에서 빠지고, 뺐다는 사실
   assert.deepEqual(r.signals, []);
   assert.equal(r.ours.length, 1);
   assert.equal(r.ours[0].ours, "모델이 스키마 밖 action을 냈다");
+});
+
+test("★ 처음 보는 에러 문구도 사이트 탓으로 흘려보내지 않는다", () => {
+  // 목록 방식이면 새 문구가 나올 때마다 조용히 사이트 탓이 된다. 기본을 우리 쪽으로 둔다
+  const t = trace([step(1, { action: { kind: "click", delta: null, index: 1, query: null, reason_ja: "" }, action_ok: false, action_error: "본 적 없는 새 에러" } as never)]);
+  const r = detectSignals(t);
+  assert.deepEqual(r.signals, []);
+  assert.match(r.ours[0].ours!, /단정하지 않는다/);
+});
+
+test("우리 가드가 막은 것은 사이트의 문제가 아니다", () => {
+  const t = trace([step(1, { action: { kind: "click", delta: null, index: 1, query: null, reason_ja: "" }, action_ok: false, action_error: "guard: 외부 사이트 (www.example.jp)" } as never)]);
+  assert.match(detectSignals(t).ours[0].ours!, /가드/);
 });
 
 test("우리 크래시로 끊긴 실행은 「到達できなかった」로 세지 않는다", () => {
