@@ -152,6 +152,12 @@ export type RunView = {
   totalUsd: number;
   baselineUsd: number | null;
   calls: number;
+  /**
+   * 기록에 남지 않은 호출 수. 재시도로 버려진 시도는 `llm_calls`에 행이 안 생기는데,
+   * 스키마 불일치로 버린 건 200 OK라 **과금은 됐다**. 즉 total_usd는 과소집계일 수 있다.
+   * 「이 숫자 어디서 나왔나요」에 답하려면 이 결손을 화면에서 먼저 말해야 한다 (절대규칙 4).
+   */
+  discardedCalls: number;
   /** "api" = 실측 원가. "table" = 가격표 계산치. 섞이면 "mixed" */
   costSource: "api" | "table" | "mixed";
   byModel: Record<string, number>;
@@ -369,6 +375,11 @@ function toRunView(t: RunTrace): RunView {
     totalUsd: t.cost.total_usd,
     baselineUsd: t.cost.baseline_usd,
     calls: t.cost.calls,
+    // 성공한 호출의 attempt 번호 = 그 앞에서 버려진 시도 수. 버려진 시도 자체는 행이 없다
+    discardedCalls: t.steps.reduce(
+      (a, s) => a + s.llm_calls.reduce((b, c) => b + (c.retries ?? 0), 0),
+      0,
+    ),
     costSource,
     byModel: t.cost.by_model,
     steps: t.steps.map((s) => stepView(s, t.profile_id)),

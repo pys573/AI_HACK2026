@@ -96,6 +96,40 @@ export function Honesty({
               サイトのせいではなくツールのノイズです。数に入れたまま公開しています。
             </li>
           )}
+          {/*
+            ★ 「制約のせい」と「モデルのせい」를 아직 분리하지 못했다.
+            OrcaRouter가 난이도에 따라 모델을 고르는데, 제약이 바꾸는 게 바로 그 난이도다.
+            즉 라우터를 쓰는 한 자동으로 따라오는 교락(交絡)이다. 우리가 먼저 말한다.
+          */}
+          <li>
+            <strong className="text-fg">2つの実行でモデルをそろえていません。</strong>
+            対照群は {Object.keys(control.byModel).length} 種類（
+            {Object.keys(control.byModel).join("・")}）だけで終わり、制約側は{" "}
+            {Object.keys(senior.byModel).length} 種類（{Object.keys(senior.byModel).join("・")}
+            ）に振り分けられました。
+            <span className="mt-1.5 block rounded-lg border border-line bg-surface-2 p-3 text-xs leading-relaxed">
+              モデルは固定していません。OrcaRouter
+              が判断の難しさに応じて選ぶからです。そして制約が変えているのは、まさにその
+              <strong className="text-fg">難しさ</strong>です。
+              つまり「制約のせいで失敗した」の中に
+              <strong className="text-fg">「モデルが違ったせい」が混ざっている可能性</strong>
+              を、この2実行では否定できません。
+              <br />
+              分け方は分かっています —{" "}
+              <code className="font-mono">force_model</code> で固定して回せば分離できます。
+              <strong className="text-blocked">まだやっていません。</strong>
+            </span>
+          </li>
+          <li>
+            <strong className="text-fg">
+              「このモデルが読めなかった」以上のことは言えません。
+            </strong>
+            別のモデルなら同じ制約でも届くかもしれません。だから私たちが出すのは絶対値ではなく、
+            <strong className="text-fg">規格を固定したときのサイト同士の差</strong>です。
+            燃費表示と同じで、値は試験条件で動きますが、条件を公開して固定してあるかぎり
+            比較は成り立ちます。どのモデルが使われたかは記録に残っています —
+            残っていない呼び出しがあることも含めて、原価の節に書いてあります。
+          </li>
           <li>
             <strong className="text-fg">サイトの品質評価ではありません。</strong>
             アクセシビリティの合否判定でも、監査でもありません。

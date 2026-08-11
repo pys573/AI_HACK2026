@@ -12,6 +12,8 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
   const calls = runs.reduce((a, r) => a + r.calls, 0);
   const saved = baseline > 0 ? (1 - total / baseline) * 100 : 0;
   const allApi = runs.every((r) => r.costSource === "api");
+  // 재시도로 버려진 시도는 행이 안 남는다. 스키마 불일치로 버린 건 200이라 과금은 됐다
+  const discarded = runs.reduce((a, r) => a + r.discardedCalls, 0);
 
   const perModel = new Map<string, number>();
   for (const r of runs)
@@ -60,7 +62,7 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
         <p className="mt-3 text-sm leading-relaxed text-fg-muted">
           {allApi ? (
             <>
-              {calls} 回すべて、OrcaRouter
+              記録に残っている {calls} 回は、すべて OrcaRouter
               が応答に添えて返した実費をそのまま保存しています。こちらで単価表を掛けた推計値は
               1件もありません。
             </>
@@ -72,11 +74,41 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
             </>
           )}
         </p>
-        <p className="mt-2 text-xs text-fg-dim">
-          生データは <code className="font-mono">trace.json</code> の{" "}
-          <code className="font-mono">steps[].llm_calls[]</code>{" "}
-          に1呼び出しずつ残っています。リポジトリで検証できます。
+        {/* 「1呼び出しずつ残っている」は judge 호출에 대해 거짓이다. 행이 없다 — 위치를 정확히 쓴다 */}
+        <p className="mt-2 text-xs leading-relaxed text-fg-dim">
+          生データは <code className="font-mono">trace.json</code> にあります。各手の判断は{" "}
+          <code className="font-mono">steps[].llm_calls[]</code> に1呼び出しずつ。
+          実行の最後に1回だけ走る成否判定は手に紐づかないため行が無く、{" "}
+          <code className="font-mono">cost.by_step_type.judge</code>{" "}
+          に金額だけ入っています。リポジトリで検証できます。
         </p>
+
+        {/*
+          ★ 이 블록이 없으면 위의 금액은 방어할 수 없다.
+          재시도로 버려진 시도는 행이 안 남는다 — 그런데 스키마 불일치로 버린 건 200이라 과금은 됐다.
+          결손 방향이 **우리에게 유리한 쪽**(더 싸 보임)이라 더더욱 우리가 먼저 말해야 한다.
+        */}
+        {discarded > 0 && (
+          <div className="mt-4 rounded-lg border border-blocked/30 bg-blocked/5 p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge tone="blocked">記録に残っていない呼び出しが {discarded} 回</Badge>
+            </div>
+            <p className="mt-2.5 text-xs leading-relaxed text-fg-muted">
+              実際に叩いたのは<strong className="tnum text-fg">少なくとも {calls + discarded} 回</strong>
+              で、上の金額に入っているのは <strong className="tnum text-fg">{calls} 回</strong>
+              分です。差は再試行で捨てた分で、
+              <strong className="text-fg">返答の形式が違ったので捨てた</strong>ものは HTTP 200
+              が返っています。つまり課金はされているはずですが、記録を残す前に捨てているため
+              金額が分かりません。
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-fg-muted">
+              上の実費は<strong className="text-blocked">実際より小さい可能性があります</strong>。
+              しかもこれは私たちに都合のいい向きの誤差です。だから先に書いておきます。
+              原因は <code className="font-mono">llm/orca.ts</code>{" "}
+              の再試行で、既知の不具合として把握しています。
+            </p>
+          </div>
+        )}
       </div>
 
       {/* モデル内訳 */}
@@ -114,7 +146,12 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
               <span>
                 実費 <strong className="text-fg">${r.totalUsd.toFixed(6)}</strong>
               </span>
-              <span>{r.calls} 呼び出し</span>
+              <span>
+                {r.calls} 呼び出し
+                {r.discardedCalls > 0 && (
+                  <span className="text-blocked">（ほかに記録なし {r.discardedCalls}）</span>
+                )}
+              </span>
               {r.baselineUsd !== null && (
                 <span>
                   比較値 ${r.baselineUsd.toFixed(4)} →{" "}
