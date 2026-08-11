@@ -1,5 +1,11 @@
 /**
- * A가 `complete()`에 붙이는 호출 옵션 — 지금은 라우팅 on/off 하나뿐이다.
+ * 라우팅 대조군 스위치의 **표시용** 판독기.
+ *
+ * ★ 끄는 일 자체는 A가 하지 않는다. `ORCA_NO_ROUTING`은 B가 `llm/routing.ts`에서
+ *   중앙으로 읽고, 호출부가 뭘 넘기든 그쪽이 이긴다(2026-08-11). A가 호출마다
+ *   `resolveModel: null`을 같이 넘기면 같은 사실이 두 군데에 적히고, 한쪽만 고치는
+ *   날 조용히 어긋난다. 그래서 A는 **읽기만** 한다 — CLI에 「어느 쪽으로 돌렸는지」를
+ *   찍는 용도다.
  *
  * ★ 왜 프로필이 아니라 실행 단위인가.
  *
@@ -23,14 +29,9 @@
  * `trace.cost.by_model`로 집계된다. 어느 쪽으로 돌렸는지는 거기서 사후에 읽을 수 있다.
  */
 
-import type { CompleteOptions } from "../../llm/orca.ts";
+import { routingDisabled } from "../../llm/routing.ts";
 
+/** 이 실행이 라우팅 대조군인가. 판정 주체는 B다 — 여기서 다시 판정하지 않는다 */
 export function routingOff(): boolean {
-  return process.env.ORCA_NO_ROUTING === "1";
-}
-
-/** decide()·judge()가 `complete()`에 그대로 넘긴다 */
-export function llmOpts(): CompleteOptions {
-  // undefined가 아니라 명시적 null이어야 라우팅이 꺼진다 (llm/orca.ts CompleteOptions)
-  return routingOff() ? { resolveModel: null } : {};
+  return routingDisabled();
 }

@@ -8,7 +8,6 @@
 import { complete, OrcaError } from "../../llm/orca.ts";
 import type { Action, ActionKind, CostRecord, Mission } from "../../core/types.ts";
 import type { Observation, Profile } from "./constrain.ts";
-import { llmOpts } from "./llm-opts.ts";
 import { actionSchema, allowedKinds, DECIDE_SYSTEM, decideUser, type HistoryEntry } from "./prompts.ts";
 
 /**
@@ -102,7 +101,6 @@ export async function decide(
       // 재질문일수록 말로 못을 박는다. 스키마만 주면 안 지키는 모델이 실제로 있다(glm-5.2).
       const r = await complete(
         attempt === 1 ? base : { ...base, system: `${DECIDE_SYSTEM}\n\n${nag(kinds, lastNote)}` },
-        llmOpts(),
       );
       costs.push(r.cost);
 
@@ -142,7 +140,7 @@ export async function decide(
  *   그 스텝은 통째로 버려졌다. **버려진 스텝은 「제약 때문에 헤맸다」로 집계된다** —
  *   우리 도구가 만든 잡음이 측정 결과에 섞인다.
  */
-function worthReasking(e: Error): boolean {
+export function worthReasking(e: Error): boolean {
   if (e instanceof OrcaError) return false;
   return e.message.includes("schema") || e.message.includes("JSON");
 }

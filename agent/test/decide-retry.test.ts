@@ -149,16 +149,22 @@ for (const [label, message] of [
   });
 }
 
-test("★ 대조군 스위치 — ORCA_NO_ROUTING=1이면 라우팅을 끈다", async () => {
-  const { llmOpts, routingOff } = await import("../src/llm-opts.ts");
+/**
+ * 라우팅 대조군 스위치. **끄는 일은 B가 한다** — A는 CLI에 찍기 위해 읽기만 한다.
+ * A가 호출부에서 resolveModel:null을 같이 넘기면 같은 사실이 두 군데에 적히고,
+ * 한쪽만 고치는 날 리포트의 「어느 쪽으로 돌렸나」가 조용히 거짓이 된다.
+ */
+test("★ 대조군 스위치 — 판정 주체는 llm/routing.ts 하나뿐이다", async () => {
+  const { routingOff } = await import("../src/llm-opts.ts");
+  const { routingDisabled } = await import("../../llm/routing.ts");
 
   delete process.env.ORCA_NO_ROUTING;
   assert.equal(routingOff(), false);
-  assert.deepEqual(llmOpts(), {}, "기본은 llm/routing.ts 표에 맡긴다");
+  assert.equal(routingOff(), routingDisabled(), "A가 따로 판정하지 않는다");
 
   process.env.ORCA_NO_ROUTING = "1";
-  // undefined가 아니라 **명시적 null**이어야 orca.ts가 라우팅을 끈다
-  assert.deepEqual(llmOpts(), { resolveModel: null });
+  assert.equal(routingOff(), true);
+  assert.equal(routingOff(), routingDisabled());
   delete process.env.ORCA_NO_ROUTING;
 });
 

@@ -20,7 +20,7 @@
 import { complete } from "../../llm/orca.ts";
 import type { CostRecord, Mission } from "../../core/types.ts";
 import type { RawObservation } from "./observe.ts";
-import { llmOpts } from "./llm-opts.ts";
+import { worthReasking } from "./decide.ts";
 import { loadKey } from "./mission.ts";
 import { JUDGE_SCHEMA, JUDGE_SYSTEM, judgeUser } from "./prompts.ts";
 
@@ -60,14 +60,16 @@ export async function judge(mission: Mission, raw: RawObservation): Promise<Judg
 
   // 심판 모델이 JSON 대신 「未到達\n\n現在のページは…」처럼 산문을 뱉는 일이 실제로 있었다.
   // decide()와 같은 이유로 한 번만 다시 묻는다. 여기서 던지면 실행 전체의 계측이 날아간다.
+  // ★ 「다시 물을 값어치가 있는가」의 판정은 decide.ts 하나만 갖는다.
+  //   여기에 조건을 복사해두면 스키마 실패 문구가 늘어난 날 한쪽만 낡는다.
+  //   실제로 그랬다 — "JSON"만 보던 시절, 나머지 두 문구는 재질문 없이 판정을 날렸다.
   let r;
   try {
-    r = await complete(base, llmOpts());
+    r = await complete(base);
   } catch (e) {
-    if (!(e instanceof Error) || !e.message.includes("JSON")) throw e;
+    if (!(e instanceof Error) || !worthReasking(e)) throw e;
     r = await complete(
       { ...base, system: `${JUDGE_SYSTEM}\n\n出力はJSONオブジェクトのみ。前置きも説明も付けないでください。` },
-      llmOpts(),
     );
   }
 
