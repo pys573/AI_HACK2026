@@ -430,10 +430,21 @@ if (t.cost.baseline_usd !== null && t.cost.total_usd > 0) {
   const cut = (1 - t.cost.total_usd / t.cost.baseline_usd) * 100;
   console.log(`  기준선   : $${t.cost.baseline_usd.toFixed(6)} (전량 ${BASELINE_MODEL}) → ${cut.toFixed(1)}% 절감`);
 }
-const s1 = t.steps[0];
-if (s1) {
-  console.log(`  1스텝 제약: 요소 ${s1.constraint.elements_total} → ${s1.constraint.elements_in_viewport}` +
-    ` / 본문 ${s1.constraint.chars_before} → ${s1.constraint.chars_after}자` +
-    ` / 마스킹 ${s1.constraint.masked.length}건 (라벨 안 ${s1.constraint.masked_in_controls})`);
+// 1스텝만 보여주면 「첫 화면이 마침 그랬다」로 들린다. 실행 전체를 합쳐야 제약의 크기가 보인다.
+//
+// ★ 「◯건」이 아니라 「◯단어 / 연 ◯회」로 쓴다.
+//   constrain()의 maskText()는 요소 라벨과 본문에 각각 돌기 때문에 같은 단어가 두 번 기록된다.
+//   건수를 그대로 「가린 단어 수」라고 부르면 2배 과대 보고가 된다 (절대규칙 2 — 오차는 과소 쪽으로).
+//
+// chars_before → chars_after는 뺐다. 마스킹이 길이 보존(転入届 → ◯◯◯)이라 항상 같은 숫자다.
+if (t.steps.length) {
+  const total = t.steps.reduce((a, s) => a + s.constraint.elements_total, 0);
+  const shown = t.steps.reduce((a, s) => a + s.constraint.elements_in_viewport, 0);
+  const hits = t.steps.flatMap((s) => s.constraint.masked);
+  const inCtl = t.steps.reduce((a, s) => a + s.constraint.masked_in_controls, 0);
+  const words = new Set(hits.map((m) => m.surface));
+  console.log(`  제약 실측 : 요소 ${total} → ${shown} (${total ? Math.round((1 - shown / total) * 100) : 0}% 차단)`);
+  console.log(`             마스킹 ${words.size}단어 / 연 ${hits.length}회 (링크 라벨 안 ${inCtl}회)`);
+  if (words.size) console.log(`             ${[...words].join(" ")}`);
 }
 console.log(`  트레이스 : agent/runs/${t.run_id}/trace.json\n`);

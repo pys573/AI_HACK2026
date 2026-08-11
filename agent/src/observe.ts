@@ -56,6 +56,11 @@ export type RawObservation = {
  */
 const EXTRACT = `() => {
   const SEL = 'a[href], button, input:not([type=hidden]), select, textarea, summary, [role=button], [role=link], [role=tab], [role=menuitem], [onclick], [tabindex]:not([tabindex="-1"])';
+  // ★ 관측 중에 페이지가 넘어가면 document.body가 잠깐 null이 된다.
+  //   그대로 createTreeWalker에 넘기면 TypeError로 실행 전체가 죽는다.
+  //   실측: 2026-08-11 control 실행이 2스텝에서 이렇게 끊겼다. 사이트 탓이 아니라 우리 쪽 경합이다.
+  //   빈 관측을 돌려주면 다음 스텝에서 다시 찍는다 — 죽는 것보다 한 스텝 낭비가 싸다.
+  if (!document.body) return { url: location.href, title: document.title, text: '', text_viewport: '', elements: [], scroll: { y: 0, height: 0 } };
   const vw = window.innerWidth, vh = window.innerHeight;
   const out = [];
   let i = 0;
