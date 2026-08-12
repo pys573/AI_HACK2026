@@ -26,6 +26,17 @@ export function ModelFixed({ matrix, cards }: { matrix: Matrix; cards: Array<{ i
     routed: f.routed_same_sites.find((r) => r.id === p.id) ?? null,
   }));
 
+  // ★ 読み手が気づく前に、こちらから言う。
+  //   固定した側の数字が上がっていれば「差の一部はモデルだった」ということであり、
+  //   それを黙って表だけ出すと、指摘された瞬間に他の数字まで疑われる。
+  //   だから文章はデータから作る — 手で書くと、回し直した日に古いままになる
+  const ctlF = rows.find((r) => r.id === "control")?.fixed ?? null;
+  const ctlR = rows.find((r) => r.id === "control")?.routed ?? null;
+  const bothControlFull = !!ctlF && !!ctlR && ctlF.rate >= 0.99 && ctlR.rate >= 0.99;
+  const others = rows.filter((r) => r.id !== "control" && r.routed);
+  const improved = others.filter((r) => r.fixed.rate > r.routed!.rate);
+  const stillZero = others.filter((r) => r.fixed.rate === 0 && r.routed!.rate === 0);
+
   return (
     <>
       <h2 className="mt-14 text-xl font-bold">その差は、モデルの違いではないのか</h2>
@@ -63,7 +74,28 @@ export function ModelFixed({ matrix, cards }: { matrix: Matrix; cards: Array<{ i
         </table>
       </div>
 
+      {bothControlFull && (
+        <p className="mt-4 max-w-3xl text-sm leading-relaxed">
+          <strong className="text-fg">対照群はどちらも {Math.round(ctlR!.rate * 100)}% のままでした。</strong>
+          {stillZero.length > 0 && (
+            <>
+              {" "}
+              そして{stillZero.map((r) => r.label).join("、")}は、モデルを固定しても
+              <strong className="text-blocked">{" "}0%{" "}</strong>のままです。
+            </>
+          )}{" "}
+          制約のあるなしで生まれる差は、モデルを揃えても残りました。
+        </p>
+      )}
+
       <p className="mt-3 max-w-3xl text-[11px] leading-relaxed text-fg-dim">
+        {improved.length > 0 && (
+          <>
+            ⚠️ ただし、固定した側で数字が上がったプロファイルが {improved.length} 件あります（
+            {improved.map((r) => r.label).join("、")}）。
+            <strong className="text-fg">差の一部がモデルの違いである可能性は、この結果でも否定できません。</strong>{" "}
+          </>
+        )}
         同じサイト・同じ用事の実行だけを並べています。実行回数は少なく、
         これは「差がモデルだけで説明されるものではなかった」という1回分の確認であって、
         差の大きさを確定させるものではありません。この実行の費用は、

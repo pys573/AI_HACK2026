@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-12T05:11:35.961Z",
+ "generated_at": "2026-08-12T05:29:53.371Z",
  "profiles": [
   {
    "id": "control",
@@ -4087,6 +4087,51 @@
      "replayable": true
     },
     {
+     "run_id": "shinjuku-juminhyo__control__v1__1786511501716",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 8,
+     "seconds": 119,
+     "steps": 20,
+     "findings": 3,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.028490249999999998,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-juminhyo__busy-worker__v0__1786511358961",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 7,
+     "seconds": 122,
+     "steps": 20,
+     "findings": 5,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.025252499999999997,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-juminhyo__busy-worker__v1__1786512109093",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 8,
+     "seconds": 116,
+     "steps": 17,
+     "findings": 2,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.024254,
+     "replayable": true
+    },
+    {
      "run_id": "shinjuku-juminhyo__resident-n3__v0__1786511077395",
      "profile_id": "resident-n3",
      "profile_version": "1.1",
@@ -4099,6 +4144,21 @@
      "masked_words": 69,
      "masked_in_controls": 24,
      "cost_usd": 0.02921925,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-juminhyo__resident-n3__v1__1786511796088",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 8,
+     "seconds": 143,
+     "steps": 20,
+     "findings": 6,
+     "masked_words": 33,
+     "masked_in_controls": 17,
+     "cost_usd": 0.02784775,
      "replayable": true
     },
     {
@@ -4117,6 +4177,21 @@
      "replayable": true
     },
     {
+     "run_id": "shinjuku-juminhyo__senior-70s__v1__1786511650186",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 12,
+     "seconds": 136,
+     "steps": 20,
+     "findings": 6,
+     "masked_words": 24,
+     "masked_in_controls": 14,
+     "cost_usd": 0.027233250000000004,
+     "replayable": true
+    },
+    {
      "run_id": "shinjuku-juminhyo__smartphone-novice__v0__1786511247201",
      "profile_id": "smartphone-novice",
      "profile_version": "1.0",
@@ -4129,6 +4204,21 @@
      "masked_words": 1,
      "masked_in_controls": 1,
      "cost_usd": 0.014306749999999998,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-juminhyo__smartphone-novice__v1__1786511961812",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 3,
+     "seconds": 112,
+     "steps": 20,
+     "findings": 5,
+     "masked_words": 1,
+     "masked_in_controls": 1,
+     "cost_usd": 0.021042,
      "replayable": true
     }
    ],
@@ -4161,6 +4251,88 @@
      "severity": "high"
     },
     {
+     "run_id": "shinjuku-juminhyo__busy-worker__v0__1786511358961",
+     "profile_id": "busy-worker",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/?search=%E4%BD%8F%E6%B0%91%E7%A5%A8+%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B%E4%BA%A4%E4%BB%98",
+     "cause_ja": "検索結果ページで最初に画面へ入る操作要素がページ全体のごく一部に限られ、残りの大半はスクロールしないと触れられない状態だった。目的の項目が最初の画面に現れていなかった。",
+     "fix_ja": "サイト内検索結果ページのテンプレートを変更し、ヘッダー・バナー類を検索結果一覧より下に移動して、最初の画面に検索結果の先頭項目が表示されるようにする。",
+     "evidence": [
+      "ステップ4の時点で、ページ内の操作要素271個のうち画面に入っていたのは11個（4%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は260個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__resident-n3__v1__1786511796088",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/?search=%E4%BD%8F%E6%B0%91%E7%A5%A8+%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B",
+     "cause_ja": "検索結果ページの操作要素の大半が初期表示の画面外にあり、最初に見える範囲だけでは検索結果本体に届かない。目的のリンクを見るにはスクロールが前提になっている。",
+     "fix_ja": "検索結果ページで、検索結果リストの先頭が初期表示内に入るよう、結果リストより上に置かれているヘッダー・バナー領域の高さを詰める。",
+     "evidence": [
+      "ステップ4の時点で、ページ内の操作要素271個のうち画面に入っていたのは11個（4%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は260個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__smartphone-novice__v1__1786511961812",
+     "profile_id": "smartphone-novice",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "ページ前半で下方向のスクロールだけが続き、上に戻る操作が起きていない。目的の手続きが画面上で特定できないまま読み進めた状態になっている。",
+     "fix_ja": "ページ冒頭に「住民票の写し／印鑑登録／マイナンバーカード」など掲載項目名を並べたアンカーリンクの目次を設置し、クリックで該当セクションへ飛べるようにする。",
+     "evidence": [
+      "ステップ4〜10で、同じページをスクロールし続けている（下7回・上0回）",
+      "この間の1画面あたりの操作要素は平均7個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__busy-worker__v1__1786512109093",
+     "profile_id": "busy-worker",
+     "step_n": 6,
+     "url": "https://www.city.shinjuku.lg.jp/?search=%E4%BD%8F%E6%B0%91%E7%A5%A8+%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B",
+     "cause_ja": "検索結果ページの初期表示には、ページ内の操作要素のうちごく一部しか入っておらず、結果一覧の大半に触れるにはスクロールが必要だった。",
+     "fix_ja": "検索結果ページのテンプレートを変更し、ヘッダー下の共通バナー・絞り込み条件ブロックを初期状態で折りたたみ、検索結果一覧の1件目がページ読み込み直後の表示領域内に来るようにする。",
+     "evidence": [
+      "ステップ6の時点で、ページ内の操作要素271個のうち画面に入っていたのは8個（3%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は263個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__smartphone-novice__v1__1786511961812",
+     "profile_id": "smartphone-novice",
+     "step_n": 12,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "ページ後半は一画面に現れる操作要素がほとんどなく、下へスクロールしても次に押せる行き先が出てこない状態が続いた。",
+     "fix_ja": "ページ後半（本文の終わり側）に、上部と同じ手続きリンク一覧を再掲したブロックを1つ置き、下までスクロールした位置からでも各手続きページへ遷移できるようにする。",
+     "evidence": [
+      "ステップ12〜20で、同じページをスクロールし続けている（下9回・上0回）",
+      "この間の1画面あたりの操作要素は平均1個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__smartphone-novice__v1__1786511961812",
+     "profile_id": "smartphone-novice",
+     "step_n": 12,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "ページ内のリンクやボタンの大半が画面外にあり、一画面に入っていた操作要素はごくわずかだった。残りに触れるにはスクロールが必要な構成になっている。",
+     "fix_ja": "該当箇所のセクションを、見出しと説明文で縦に伸びた形から1項目1行のリンク一覧に組み替え、1画面に複数のリンクが同時に表示されるようにする。",
+     "evidence": [
+      "ステップ12の時点で、ページ内の操作要素76個のうち画面に入っていたのは1個（1%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は75個"
+     ],
+     "severity": "high"
+    },
+    {
      "run_id": "shinjuku-juminhyo__smartphone-novice__v0__1786511247201",
      "profile_id": "smartphone-novice",
      "step_n": 16,
@@ -4189,6 +4361,20 @@
      "severity": "high"
     },
     {
+     "run_id": "shinjuku-juminhyo__busy-worker__v1__1786512109093",
+     "profile_id": "busy-worker",
+     "step_n": 17,
+     "url": "https://www.city.shinjuku.lg.jp/living.html",
+     "cause_ja": "検索から入ってもトップやくらしのページでカテゴリ階層をたどる形になり、住民票のコンビニ交付の手続きページへ直接つながる導線が最後のページまで現れなかった。そのため用件に届く前に操作回数を消費した。",
+     "fix_ja": "「くらし」ページの先頭（本文最上部）に「住民票の写しをコンビニで取得する」というテキストリンクを追加し、コンビニ交付の手続き案内ページへ1クリックで遷移できるようにする。",
+     "evidence": [
+      "17ステップ・クリック8回・116秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: くらし：新宿区",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
      "run_id": "shinjuku-juminhyo__resident-n3__v0__1786511077395",
      "profile_id": "resident-n3",
      "step_n": 18,
@@ -4197,6 +4383,20 @@
      "fix_ja": "koseki01_002005.html の手順1〜12を見出しだけのアコーディオン（折りたたみ）にし、初期表示で全セクションの見出しが一画面に収まるようにする。",
      "evidence": [
       "ステップ18の時点で、ページ内の操作要素67個のうち画面に入っていたのは1個（1%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は66個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__control__v1__1786511501716",
+     "profile_id": "control",
+     "step_n": 19,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/koseki01_002005.html",
+     "cause_ja": "ページ後半では操作要素が縦に大きく離れて配置されており、表示中の画面にはほとんど入らない。次に押せるものを見つけるにはスクロールが前提になっている。",
+     "fix_ja": "ページ内に散在している関連リンク（マイナンバーカードの手続き、利用時間、対応店舗などへのリンク）を、本文末尾ではなく目次ブロック直下の「関連リンク」一覧としてまとめて1画面に収まる位置に置く。",
+     "evidence": [
+      "ステップ19の時点で、ページ内の操作要素67個のうち画面に入っていたのは1個（1%）",
       "残りに触れるにはスクロールが要る",
       "同じ条件で画面に入らなかった要素は66個"
      ],
@@ -4245,6 +4445,90 @@
      "severity": "high"
     },
     {
+     "run_id": "shinjuku-juminhyo__busy-worker__v0__1786511358961",
+     "profile_id": "busy-worker",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index07.html",
+     "cause_ja": "マイナンバーカードに関する手続きの目次ページに行き着いたが、そのページには住民票の写しをコンビニで取得する方法の記載がなく、次にどこへ進めばよいかが示されていなかった。そのため用事を終えられないまま操作が尽きた。",
+     "fix_ja": "マイナンバーカード目次ページ（todokede/index07.html）の先頭に「コンビニで住民票の写しを取る」というリンクを1本置き、コンビニ交付の手順ページへ直接飛ばす。",
+     "evidence": [
+      "20ステップ・クリック7回・122秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: マイナンバーカード（個人番号カード）：新宿区",
+      "審判の判断: 現在のページはマイナンバーカードに関する手続きの目次ページであり、住民票の写しをコンビニで取得する具体的な方法についての記載がありません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__control__v1__1786511501716",
+     "profile_id": "control",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/koseki01_002005.html",
+     "cause_ja": "最後に到達したページには、コンビニ交付の利用条件・利用時間・取得できる証明書・端末操作の手順がまとめて載っているが、いずれも1ページに縦方向へ長く続く本文として置かれている。そのため「住民票の写しをコンビニで取る手順」という目的の箇所にたどり着く前に、使える操作の予算を使い切った。",
+     "fix_ja": "当該ページの本文冒頭（最初の見出しの直下）に、「取得できる証明書」「利用できる時間」「必要なもの」「端末での操作手順」へ飛ぶページ内アンカーリンクの目次ブロックを追加する。",
+     "evidence": [
+      "20ステップ・クリック8回・119秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: コンビニ交付サービス（住民票の写し・印鑑登録証明書・税証明書）：新宿区",
+      "審判の判断: 本ページには、コンビニ交付サービスを利用する際の条件や利用時間、取得できる証明書として住民票の写しが含まれること、さらにキオスク端末の具体的な操作方法まで記載されています。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__senior-70s__v1__1786511650186",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html#container",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック12回・136秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 戸籍・住民票・印鑑登録・マイナンバーカード：新宿区",
+      "審判の判断: 現在のページは「戸籍・住民票・印鑑登録・マイナンバーカード」の案内一覧ページであり、コンビニで住民票の写しを取得する具体的な手順や方法は記載されていません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__senior-70s__v1__1786511650186",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html#container",
+     "cause_ja": "画面に入る操作要素が少ない（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ20の時点で、ページ内の操作要素76個のうち画面に入っていたのは1個（1%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は75個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__resident-n3__v1__1786511796088",
+     "profile_id": "resident-n3",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "「戸籍・住民票・印鑑登録・マイナンバーカード」の一覧ページまでは到達したが、そのページにコンビニ交付の手順が載っておらず、次にどのリンクへ進めばよいか判断できないまま操作回数を使い切った。手続き一覧から「コンビニで住民票の写しを取る」という用事にたどり着く導線が確認できない。",
+     "fix_ja": "todokede/index.html の先頭に「コンビニで住民票の写しをとる」という文言のリンクを1本置き、コンビニ交付の手順ページへ直接遷移させる。",
+     "evidence": [
+      "20ステップ・クリック8回・143秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 戸籍・住民票・印鑑登録・マイナンバーカード：新宿区",
+      "審判の判断: 現在のページは戸籍や住民票に関する手続きの一覧ページであり、コンビニで住民票の写しを取得する具体的な方法や手順は記載されていません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__smartphone-novice__v1__1786511961812",
+     "profile_id": "smartphone-novice",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "最後にいたのは戸籍・住民票などの手続きを並べた一覧ページで、コンビニ交付の手順そのものへ進むリンクが見つからず、目的のページに到達できないまま操作の上限に達した。",
+     "fix_ja": "https://www.city.shinjuku.lg.jp/todokede/index.html のファーストビュー内（ページ見出し直下）に「コンビニで住民票の写しを取る」というテキストリンクを1本追加し、コンビニ交付の手順ページへ直接遷移させる。",
+     "evidence": [
+      "20ステップ・クリック3回・112秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 戸籍・住民票・印鑑登録・マイナンバーカード：新宿区",
+      "審判の判断: 現在のページは「戸籍・住民票・印鑑登録・マイナンバーカード」の一覧ページであり、コンビニで住民票の写しを取得する具体的な手順や方法は記載されていません。"
+     ],
+     "severity": "high"
+    },
+    {
      "run_id": "shinjuku-juminhyo__resident-n3__v0__1786511077395",
      "profile_id": "resident-n3",
      "step_n": 2,
@@ -4267,6 +4551,32 @@
      "evidence": [
       "「介護」がリンク・ボタンのラベルに含まれており、5画面（ステップ2 / ステップ4 / ステップ11 / ステップ15 / ステップ16）で読めない状態だった",
       "「介護」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.10"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__busy-worker__v0__1786511358961",
+     "profile_id": "busy-worker",
+     "step_n": 2,
+     "url": "https://www.city.shinjuku.lg.jp/?search=%E4%BD%8F%E6%B0%91%E7%A5%A8+%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B%E4%BA%A4%E4%BB%98",
+     "cause_ja": "検索結果ページで下方向のスクロールだけが続いており、目的の項目が見つからないまま次の画面へ送り続けている状態だった。",
+     "fix_ja": "検索結果ページの各結果に、そのページで手続きできる内容を示す1行の説明文（ページのdescription）を表示する。",
+     "evidence": [
+      "ステップ2〜4で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均15個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__resident-n3__v1__1786511796088",
+     "profile_id": "resident-n3",
+     "step_n": 2,
+     "url": "https://www.city.shinjuku.lg.jp/?search=%E4%BD%8F%E6%B0%91%E7%A5%A8+%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B",
+     "cause_ja": "検索結果ページで下方向へのスクロールが続いており、1画面に入る操作要素が少ないため、目的の項目を探すのに画面送りを繰り返す必要がある。",
+     "fix_ja": "検索結果ページの1件あたりの表示高さ（余白・行間）を縮め、1画面に表示される検索結果の件数を増やす。",
+     "evidence": [
+      "ステップ2〜4で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均15個"
      ],
      "severity": "medium"
     },
@@ -4298,6 +4608,32 @@
      "severity": "medium"
     },
     {
+     "run_id": "shinjuku-juminhyo__resident-n3__v1__1786511796088",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/?search=%E4%BD%8F%E6%B0%91%E7%A5%A8+%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B",
+     "cause_ja": "検索結果ページのリンクラベルに「税金」が含まれており、複数の画面で読めない状態だった。この語が読めないと、そのリンクが自分の用事に関係するかを判断できない。",
+     "fix_ja": "検索結果ページのリンクラベルの「税金」を、『やさしい日本語 書き換え例』に沿った表現に置き換える。",
+     "evidence": [
+      "「税金」がリンク・ボタンのラベルに含まれており、4画面（ステップ3 / ステップ10 / ステップ11 / ステップ12）で読めない状態だった",
+      "「税金」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.82"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__resident-n3__v1__1786511796088",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/?search=%E4%BD%8F%E6%B0%91%E7%A5%A8+%E3%82%B3%E3%83%B3%E3%83%93%E3%83%8B",
+     "cause_ja": "検索結果ページのリンクラベルに「介護」が含まれており、複数の画面で読めない状態だった。この語が読めないと、そのリンクを開くべきか判断できない。",
+     "fix_ja": "検索結果ページのリンクラベルの「介護」を、『やさしい日本語 書き換え例』に沿った表現に置き換える。",
+     "evidence": [
+      "「介護」がリンク・ボタンのラベルに含まれており、4画面（ステップ3 / ステップ10 / ステップ11 / ステップ12）で読めない状態だった",
+      "「介護」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.10"
+     ],
+     "severity": "medium"
+    },
+    {
      "run_id": "shinjuku-juminhyo__senior-70s__v0__1786510911068",
      "profile_id": "senior-70s",
      "step_n": 4,
@@ -4311,6 +4647,32 @@
      "severity": "medium"
     },
     {
+     "run_id": "shinjuku-juminhyo__senior-70s__v1__1786511650186",
+     "profile_id": "senior-70s",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/life_event.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「サイト」がリンク・ボタンのラベルに含まれており、3画面（ステップ4 / ステップ5 / ステップ7）で読めない状態だった",
+      "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__senior-70s__v1__1786511650186",
+     "profile_id": "senior-70s",
+     "step_n": 8,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html#container",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「ダウンロード」がリンク・ボタンのラベルに含まれており、8画面（ステップ8 / ステップ9 / ステップ10 / ステップ11 / ステップ12 / ステップ13 / ステップ14 / ステップ15）で読めない状態だった",
+      "「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
      "run_id": "shinjuku-juminhyo__senior-70s__v0__1786510911068",
      "profile_id": "senior-70s",
      "step_n": 10,
@@ -4320,6 +4682,32 @@
      "evidence": [
       "「ダウンロード」がリンク・ボタンのラベルに含まれており、5画面（ステップ10 / ステップ11 / ステップ12 / ステップ13 / ステップ14）で読めない状態だった",
       "「ダウンロード」60歳以上の理解率 8.2%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__busy-worker__v0__1786511358961",
+     "profile_id": "busy-worker",
+     "step_n": 11,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index07.html",
+     "cause_ja": "マイナンバーカード目次ページで、下方向のスクロールだけが繰り返され、目的の項目に当たらないまま画面送りが続いていた。",
+     "fix_ja": "todokede/index07.html の見出しを「コンビニ交付」「カードの申請」「カードの受け取り」のように用件別に分け、各見出しの直下に該当リンクをまとめる。",
+     "evidence": [
+      "ステップ11〜13で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均15個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__control__v1__1786511501716",
+     "profile_id": "control",
+     "step_n": 13,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/koseki01_002005.html",
+     "cause_ja": "同じページで下方向のスクロールだけが連続しており、上に戻る操作は発生していない。1画面あたりに現れる操作要素がまばらなため、目的の箇所に届かないまま送り続ける状態になっている。",
+     "fix_ja": "本文の各セクション（利用条件／利用時間／取得できる証明書／端末での操作手順）を見出しクリックで開閉するアコーディオンに変更し、閉じた状態では見出しの一覧が1画面に収まるようにする。",
+     "evidence": [
+      "ステップ13〜17で、同じページをスクロールし続けている（下5回・上0回）",
+      "この間の1画面あたりの操作要素は平均3個"
      ],
      "severity": "medium"
     },
@@ -4363,6 +4751,19 @@
      "severity": "medium"
     },
     {
+     "run_id": "shinjuku-juminhyo__busy-worker__v0__1786511358961",
+     "profile_id": "busy-worker",
+     "step_n": 16,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index07.html",
+     "cause_ja": "マイナンバーカード目次ページで下方向のスクロールだけが続き、戻る動きがないまま進んでいた。この区間は一画面あたりに現れる操作要素が乏しく、探している項目にたどり着けたか判断できないまま送りが続いた。",
+     "fix_ja": "todokede/index07.html の冒頭に、ページ内の各見出しへ飛ぶ目次リンク一覧を設置する。",
+     "evidence": [
+      "ステップ16〜19で、同じページをスクロールし続けている（下4回・上0回）",
+      "この間の1画面あたりの操作要素は平均3個"
+     ],
+     "severity": "medium"
+    },
+    {
      "run_id": "shinjuku-juminhyo__control__v0__1786510750629",
      "profile_id": "control",
      "step_n": 18,
@@ -4376,12 +4777,39 @@
      "severity": "medium"
     },
     {
+     "run_id": "shinjuku-juminhyo__resident-n3__v1__1786511796088",
+     "profile_id": "resident-n3",
+     "step_n": 18,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "手続き一覧ページで下に進んだ後に上へ戻る動きが起きており、目的の項目を通り過ぎたと本人が判断している。1画面に入る操作要素が少なく、一覧全体の見通しが立たない。",
+     "fix_ja": "todokede/index.html の冒頭に、ページ内の見出しへ飛ぶ目次リンク（住民票の写し／戸籍／印鑑登録／マイナンバーカード）を設置する。",
+     "evidence": [
+      "ステップ18〜20で、同じページをスクロールし続けている（下1回・上2回）",
+      "この間の1画面あたりの操作要素は平均10個",
+      "途中で上に戻っている（2回）= 通り過ぎたと本人が判断している"
+     ],
+     "severity": "medium"
+    },
+    {
      "run_id": "shinjuku-juminhyo__smartphone-novice__v0__1786511247201",
      "profile_id": "smartphone-novice",
      "step_n": 8,
      "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
      "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
      "fix_ja": "",
+     "evidence": [
+      "「アクセシビリティ」がリンク・ボタンのラベルに含まれており、1画面（ステップ8）で読めない状態だった",
+      "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__smartphone-novice__v1__1786511961812",
+     "profile_id": "smartphone-novice",
+     "step_n": 8,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "リンクのラベルにカタカナの外来語がそのまま使われており、今回の語彙条件では読めない語として扱われた。",
+     "fix_ja": "当該リンクのラベルを「アクセシビリティ（サイトの使いやすさについて）」のように日本語の説明を併記した表記に書き換える。",
      "evidence": [
       "「アクセシビリティ」がリンク・ボタンのラベルに含まれており、1画面（ステップ8）で読めない状態だった",
       "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査）"
@@ -4400,6 +4828,32 @@
       "「ツール」60歳以上の理解率 18.7%（国立国語研究所 外来語定着度調査）"
      ],
      "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__senior-70s__v1__1786511650186",
+     "profile_id": "senior-70s",
+     "step_n": 16,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html#container",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「ツール」がリンク・ボタンのラベルに含まれており、1画面（ステップ16）で読めない状態だった",
+      "「ツール」60歳以上の理解率 18.7%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-juminhyo__senior-70s__v1__1786511650186",
+     "profile_id": "senior-70s",
+     "step_n": 17,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html#container",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「アクセシビリティ」がリンク・ボタンのラベルに含まれており、2画面（ステップ17 / ステップ18）で読めない状態だった",
+      "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
     }
    ],
    "dropout_rate": 1,
@@ -4407,12 +4861,12 @@
   }
  ],
  "totals": {
-  "runs": 99,
+  "runs": 105,
   "reached": 60,
-  "cost_usd": 1.789596,
-  "baseline_usd": 18.880319999999998,
-  "findings": 210,
-  "masked_words": 848
+  "cost_usd": 1.94371575,
+  "baseline_usd": 20.842754999999997,
+  "findings": 237,
+  "masked_words": 906
  },
  "by_profile": [
   {
@@ -4446,5 +4900,78 @@
    "rate": 0.3684210526315789
   }
  ],
- "model_fixed": null
+ "model_fixed": {
+  "models": [
+   "gpt-5-mini-2025-08-07"
+  ],
+  "runs": 20,
+  "site_names": [
+   "浜松市",
+   "港区"
+  ],
+  "by_profile": [
+   {
+    "id": "control",
+    "runs": 4,
+    "reached": 4,
+    "rate": 1
+   },
+   {
+    "id": "busy-worker",
+    "runs": 4,
+    "reached": 3,
+    "rate": 0.75
+   },
+   {
+    "id": "resident-n3",
+    "runs": 4,
+    "reached": 2,
+    "rate": 0.5
+   },
+   {
+    "id": "senior-70s",
+    "runs": 4,
+    "reached": 0,
+    "rate": 0
+   },
+   {
+    "id": "smartphone-novice",
+    "runs": 4,
+    "reached": 2,
+    "rate": 0.5
+   }
+  ],
+  "routed_same_sites": [
+   {
+    "id": "control",
+    "runs": 8,
+    "reached": 8,
+    "rate": 1
+   },
+   {
+    "id": "busy-worker",
+    "runs": 8,
+    "reached": 4,
+    "rate": 0.5
+   },
+   {
+    "id": "resident-n3",
+    "runs": 8,
+    "reached": 2,
+    "rate": 0.25
+   },
+   {
+    "id": "senior-70s",
+    "runs": 8,
+    "reached": 0,
+    "rate": 0
+   },
+   {
+    "id": "smartphone-novice",
+    "runs": 8,
+    "reached": 3,
+    "rate": 0.375
+   }
+  ]
+ }
 }
