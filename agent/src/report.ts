@@ -77,7 +77,9 @@ for (const d of readdirSync(RUNS)) {
     steps: t.steps.length,
     reached: t.verdict.reached,
     clicks: k("click"),
-    scrolls: k("scroll"),
+    // 세로와 가로를 합쳐 센다. 사람 쪽에서 보면 둘 다 「몇 번 밀어야 했나」다.
+    // 좌우 스크롤 도입(08-13) 전의 실행에는 scroll_side가 아예 없으므로 기존 수치는 그대로다.
+    scrolls: k("scroll") + k("scroll_side"),
     secs: t.verdict.seconds,
     elPerScreen: t.steps.reduce((a, s) => a + s.seen.elements.length, 0) / (t.steps.length || 1),
     words: new Set(hits.map((h) => h.surface)).size,

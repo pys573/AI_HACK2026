@@ -11,7 +11,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { mask, type MaskHit, type MaskPolicy } from "../../lexicon/src/mask.ts";
-import type { Element, RawObservation } from "./observe.ts";
+import type { Element, RawObservation, ScrollState } from "./observe.ts";
 
 const PROFILE_DIR = join(import.meta.dirname, "..", "..", "profiles");
 
@@ -58,7 +58,12 @@ export type Observation = {
    */
   elements: Array<Pick<Element, "index" | "role" | "name" | "in_viewport" | "box">>;
   screenshot: Buffer | null;
-  scroll: { y: number; height: number };
+  /**
+   * ★ 여기는 마스킹하지 않고 그대로 통과시킨다. 스크롤 막대는 사이트가 쓴 글이 아니라
+   *   브라우저가 그리는 것이라, 어려운 낱말로 가려질 대상이 아니다.
+   *   `overflow_x`가 좌우 스크롤이라는 수단의 유일한 열쇠다 (observe.ts `ScrollState`).
+   */
+  scroll: ScrollState;
 };
 
 /** 무엇을 왜 가렸는지의 기록. 리포트와 화면의 근거가 된다. */

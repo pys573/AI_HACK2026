@@ -18,6 +18,7 @@ import type {
   ConstraintRecord,
   CostRecord,
   MaskRecord,
+  Mission,
   ObservationSnapshot,
   Outcome,
   RunTrace,
@@ -37,7 +38,7 @@ import { diagnose } from "./diagnose.ts";
 import { MAX_SIGNALS } from "./signals.ts";
 import { routingOff } from "./llm-opts.ts";
 import { keyMatch, judge } from "./judge.ts";
-import { loadMission } from "./mission.ts";
+import { hasKey, loadMission } from "./mission.ts";
 import { observe, type RawObservation } from "./observe.ts";
 import type { HistoryEntry } from "./prompts.ts";
 import { blockedNavigationThreat, shield } from "../../security/inspect.ts";
@@ -138,8 +139,62 @@ function aggregate(calls: CostRecord[]) {
   return { total_usd: total, by_step_type: byStep, by_model: byModel, calls: calls.length, cached_tokens: cached, baseline_usd: baseline };
 }
 
+/**
+ * 실행 중에 밖으로 흘려보내는 진행 상황.
+ *
+ * ★ 왜 필요한가: 1회 실행이 5분 넘게 걸린다. 그동안 화면이 「実行中…」만 띄우고 있으면
+ *   보는 사람은 무엇이 일어나는지 모르고, **우리 제품에서 제일 볼 만한 부분(헤매는 과정)이
+ *   통째로 안 보인다.** 트레이스는 끝나야 나오므로, 도중에 나가는 통로가 따로 있어야 한다.
+ *
+ * ⚠️ Step을 통째로 싣지 않는다. raw.text는 페이지 한 장에 수만 자다 —
+ *   그걸 스텝마다 흘리면 통로가 막힌다. 전체 기록은 끝난 뒤 trace.json에서 읽는다.
+ */
+export type Progress =
+  | {
+      kind: "start";
+      run_id: string;
+      site_name: string;
+      start_url: string;
+      goal_ja: string;
+      profile_id: string;
+      profile_label_ja: string;
+      max_steps: number;
+      /** 사람이 만든 정답 키가 있는가. false면 도달 판정이 AI 하나뿐이다 */
+      key_available: boolean;
+    }
+  | {
+      kind: "step";
+      n: number;
+      url: string;
+      title: string;
+      /** click / scroll / scroll_side / back / find_in_page / site_search / give_up / null(판단 실패) */
+      action: string | null;
+      detail: string;
+      reason_ja: string;
+      ok: boolean;
+      error: string | null;
+      screenshot_key: string | null;
+      /** 이 스텝에서 실제로 가린 단어들. 화면의 Before/After가 여기서 나온다 */
+      masked: string[];
+      elements_total: number;
+      elements_in_viewport: number;
+      clicks_left: number;
+      seconds_left: number;
+      threats: number;
+    }
+  | { kind: "verdict"; outcome: Outcome; reached: boolean; reason_ja: string; key_available: boolean }
+  /** 근거(evidence)를 반드시 같이 싣는다 — 근거 없는 지적은 리포트가 아니라 비난이다 */
+  | { kind: "finding"; step_n: number; severity: string; cause_ja: string; fix_ja: string; evidence: string[] }
+  | { kind: "done"; run_id: string; trace_path: string; cost_usd: number; steps: number }
+  | { kind: "failed"; message: string };
+
 export type RunOptions = {
-  missionId: string;
+  missionId?: string;
+  /**
+   * 즉석 미션 — 그 자리에서 받은 URL. `missions/`에 없다 = **정답 키도 없다.**
+   * 이때 도달 판정은 AI 하나뿐이 되고, 그 사실은 Progress와 verdict 문구로 화면까지 간다.
+   */
+  mission?: Mission;
   profileId: string;
   variant?: number;
   batchId?: string;
@@ -153,16 +208,46 @@ export type RunOptions = {
    * ★ 덮어쓴 값은 trace.mission.max_steps에 그대로 남는다. 숨기지 않는다.
    */
   maxSteps?: number;
+  /**
+   * 결과를 어디에 쓸 것인가. 기본은 `agent/runs/`.
+   *
+   * ★ 즉석 실행은 **반드시 다른 폴더로 보낸다.** `scripts/build-web-data.ts`가
+   *   `agent/runs/` 전체를 훑어서 matrix.json(=화면의 모든 숫자)을 만들기 때문이다.
+   *   즉석 실행이 거기 섞이면 105회 실측 통계에 심사장에서 넣은 URL이 들어간다.
+   *   그 순간 「이 숫자 어디서 나왔나요」에 답할 수 없다 (절대규칙 4).
+   */
+  outDir?: string;
+  /** 스텝마다 호출된다. 던지면 실행이 죽으므로 받는 쪽에서 삼킨다 */
+  onProgress?: (p: Progress) => void;
 };
 
 export async function runOnce(opts: RunOptions): Promise<RunTrace> {
-  const mission = loadMission(opts.missionId);
+  const mission = opts.mission ?? (opts.missionId ? loadMission(opts.missionId) : null);
+  if (!mission) throw new Error("미션이 없다 — missionId 또는 mission 중 하나는 줘야 한다");
   if (opts.maxSteps) mission.max_steps = opts.maxSteps;
   const profile = loadProfile(opts.profileId);
   const variant = opts.variant ?? 0;
   const runId = `${mission.id}__${profile.id}__v${variant}__${Date.now()}`;
-  const runDir = join(RUNS_DIR, runId);
+  const runDir = join(opts.outDir ?? RUNS_DIR, runId);
   mkdirSync(runDir, { recursive: true });
+
+  // 던져도 실행이 죽지 않게 감싼다. 진행 표시가 계측을 죽이면 본말전도다
+  const emit = (p: Progress) => {
+    try {
+      opts.onProgress?.(p);
+    } catch {
+      /* 화면 사정으로 계측을 잃지 않는다 */
+    }
+  };
+
+  /**
+   * ★ 이 실행에 사람이 만든 정답 키가 있는가. **없으면 판정 방식 자체가 달라진다.**
+   *   키가 있으면: 키가 맞은 스텝에서만 심판을 부른다 (105회와 완전히 동일).
+   *   키가 없으면: 그 신호가 영원히 안 오므로, **페이지가 바뀔 때마다** 한 번 묻는다.
+   *   매 스텝 묻지 않는 이유는 원가와 시간이다 — 스크롤만 한 스텝은 같은 페이지다.
+   */
+  const keyed = hasKey(mission.id);
+  let lastJudgedUrl = "";
 
   // 라이브 가격표를 먼저 받아둔다. 실패하면 폴백 표로 계속하되 cost_source가 "table"이 된다.
   await ensureLivePrices();
@@ -204,6 +289,18 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
   const t0 = Date.now();
   const patience = new Patience(profile.patience.clicks, profile.patience.seconds, t0);
 
+  emit({
+    kind: "start",
+    run_id: runId,
+    site_name: mission.site_name,
+    start_url: mission.start_url,
+    goal_ja: mission.goal_ja,
+    profile_id: profile.id,
+    profile_label_ja: profile.label.ja,
+    max_steps: mission.max_steps,
+    key_available: keyed,
+  });
+
   try {
     browser = await chromium.launch({ channel: "chrome", headless: opts.headless ?? true });
     const ctx = await browser.newContext({
@@ -229,7 +326,10 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       const { safe, threats } = shield(raw);
 
       // 키 대조는 LLM을 안 쓴다. 매 스텝 돌려도 원가 0이다.
-      if (keyMatch(mission.id, safe)) {
+      // 키가 없는 즉석 미션에서는 그 신호가 안 오므로, 페이지가 바뀐 스텝에서만 대신 묻는다.
+      const askJudge = keyed ? keyMatch(mission.id, safe) : safe.url !== lastJudgedUrl;
+      if (askJudge) {
+        lastJudgedUrl = safe.url;
         const j = await judge(mission, safe);
         keyHit = j.key_match;
         llmHit = j.llm_match;
@@ -240,8 +340,9 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
           console.log(`  [${n}] ✓ 到達 — ${j.reason_ja}`);
           break;
         }
-        // 키는 맞았는데 LLM이 아니라고 했다. 계속 탐색시킨다.
-        console.log(`  [${n}] ~ 키는 일치, LLM은 미도달 판정 — ${j.reason_ja}`);
+        // 아직 아니다. 계속 탐색시킨다.
+        // (키 있음 = 키는 맞았는데 LLM이 아니라고 했다 / 키 없음 = LLM이 아니라고 했다)
+        console.log(`  [${n}] ~ 미도달 판정 — ${j.reason_ja}`);
       }
 
       // visible: 화면에 실제로 보여준 원본 요소들. obs.elements와 같은 순서·같은 번호다.
@@ -257,6 +358,8 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       let action = null;
       let actOk = false;
       let actErr: string | null = null;
+      /** 「#3 「転入届」」처럼 사람이 읽는 꼬리표. 로그와 진행 표시가 같은 문자열을 쓴다 */
+      let actDetail = "";
 
       try {
         const d = await decide(mission, obs, profile, history);
@@ -283,16 +386,16 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         // 그걸 그대로 찍으면 로그가 거짓말을 한다 (scroll인데 검색어가 보인다).
         // 번호는 constrain()에서 0부터 다시 매겼으므로 배열 첨자와 같다.
         const clicked = typeof action.index === "number" ? obs.elements[action.index] : undefined;
-        const detail =
+        actDetail =
           action.kind === "click"
             ? ` #${action.index}${clicked?.name ? ` 「${clicked.name}」` : ""}`
-            : action.kind === "scroll"
+            : action.kind === "scroll" || action.kind === "scroll_side"
               ? ` ${r.tool_note ?? ""}` // 모델이 요청한 값이 아니라 실제로 움직인 양
               : action.kind === "find_in_page" || action.kind === "site_search"
                 ? ` 「${action.query ?? ""}」`
                 : "";
         console.log(
-          `  [${n}] ${action.kind}${detail} — ${action.reason_ja}${r.ok ? "" : `  ⚠️ ${r.error}`}`,
+          `  [${n}] ${action.kind}${actDetail} — ${action.reason_ja}${r.ok ? "" : `  ⚠️ ${r.error}`}`,
         );
 
         // 인내는 「무언가를 눌렀다」에만 든다. 스크롤로 예산이 마르면 이탈률이 왜곡된다.
@@ -329,6 +432,31 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         llm_calls: billed.slice(billedMark),
         patience: patience.state(Date.now()),
       });
+
+      // ★ 기록을 남긴 **뒤에** 흘린다. 순서를 바꾸면 화면에는 보였는데 트레이스에는 없는
+      //   스텝이 생길 수 있고, 그러면 영상에 찍힌 것과 제출한 파일이 어긋난다.
+      {
+        const st = steps[steps.length - 1];
+        emit({
+          kind: "step",
+          n,
+          url: raw.url,
+          title: raw.title,
+          action: action?.kind ?? null,
+          detail: actDetail.trim(),
+          reason_ja: action?.reason_ja ?? "",
+          ok: actOk,
+          error: actErr,
+          screenshot_key: screenshotKey,
+          // 화면의 Before/After는 이 목록에서 나온다. 근거 없는 히트는 여기 못 들어온다
+          masked: st.constraint.masked.map((m) => m.surface),
+          elements_total: st.constraint.elements_total,
+          elements_in_viewport: st.constraint.elements_in_viewport,
+          clicks_left: st.patience.clicks_left,
+          seconds_left: st.patience.seconds_left,
+          threats: threats.length,
+        });
+      }
 
       if (outcome === "error") break;
 
@@ -373,7 +501,10 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         keyHit = keyMatch(mission.id, safe);
         llmHit = false;
         disagreed = false;
-        verdictReason = `審判の呼び出しに失敗したため、AI判定なし（キー照合のみ）: ${e instanceof Error ? e.message.slice(0, 120) : String(e)}`;
+        // 키가 없는 즉석 미션에서 심판까지 죽으면 **남는 판정이 하나도 없다.** 그렇게 쓴다.
+        verdictReason = keyed
+          ? `審判の呼び出しに失敗したため、AI判定なし（キー照合のみ）: ${e instanceof Error ? e.message.slice(0, 120) : String(e)}`
+          : `審判の呼び出しに失敗し、正解キーもないため、到達判定ができませんでした: ${e instanceof Error ? e.message.slice(0, 120) : String(e)}`;
         console.log(`  ⚠️ 심판 실패 — 스텝 기록은 보존한다: ${verdictReason}`);
       }
     }
@@ -389,6 +520,17 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     offBilled();
   }
 
+  /**
+   * ★ 키가 없었다는 사실을 **판정문 자체에** 박는다.
+   *   `Verdict`는 `core/types.ts`의 공유 계약이라 필드를 늘릴 수 없다 (절대규칙 10).
+   *   그런데 이 문장은 화면에 그대로 나간다. 아무 말도 안 붙이면 즉석 실행 결과가
+   *   105회 실측과 같은 급으로 읽힌다 — 실제로는 판정이 한 겹 얇다 (절대규칙 4).
+   */
+  if (!keyed) {
+    const notice = "※ このURLには人が用意した正解キーがないため、到達判定はAIのみ（キー照合なし）です。";
+    verdictReason = verdictReason ? `${verdictReason}\n${notice}` : notice;
+  }
+
   const verdict: Verdict = {
     outcome,
     reached: outcome === "reached",
@@ -399,6 +541,14 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     clicks: patience.clicks,
     seconds: Math.round((Date.now() - t0) / 1000),
   };
+
+  emit({
+    kind: "verdict",
+    outcome,
+    reached: verdict.reached,
+    reason_ja: verdictReason,
+    key_available: keyed,
+  });
 
   const trace: RunTrace = {
     run_id: runId,
@@ -426,12 +576,26 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     // 뺀 것을 적지 않으면 「이 사이트엔 이만큼만 문제가 있었다」로 읽힌다 (절대규칙 3)
     for (const s of d.ours) console.log(`             [제외  ] step ${String(s.step_n).padStart(2)}  사이트가 아니라 계측 고장: ${s.ours}`);
     if (d.dropped) console.log(`  ⚠️ 신호 ${d.dropped}건은 상한(${MAX_SIGNALS})을 넘어 리포트에서 뺐다`);
-    // 진단 호출도 과금이다. 원가에 넣지 않으면 「우리 도구는 싸다」가 거짓이 된다 (절대규칙 4)
+    // 진단 호출도 과금이다. 원가에 넣지 않으면 「우리 도구는 싸다」가 거짓이 된다 (절대규칙 4).
+    // ⚠️ 여기서 **직접** 넣어야 한다. 전역 싱크(offBilled)는 브라우저를 닫을 때 이미 끊겼고,
+    //    진단은 그 뒤에 돈다. 그래서 지금까지 by_step_type.diagnose가 0이었다 (2026-08-13 확인)
+    billed.push(...d.costs);
     trace.cost = aggregate(billed);
     writeFileSync(join(runDir, "trace.json"), JSON.stringify(trace, null, 2));
+    for (const f of d.findings) {
+      emit({ kind: "finding", step_n: f.step_n, severity: f.severity, cause_ja: f.cause_ja, fix_ja: f.fix_ja, evidence: f.evidence });
+    }
   } catch (e) {
     console.error(`  ⚠️ 진단 실패 — 계측은 남았다: ${e instanceof Error ? e.message : String(e)}`);
   }
+
+  emit({
+    kind: "done",
+    run_id: runId,
+    trace_path: join(runDir, "trace.json"),
+    cost_usd: trace.cost.total_usd,
+    steps: trace.steps.length,
+  });
   return trace;
 }
 

@@ -44,7 +44,23 @@ export type RawObservation = {
   text_viewport: string;
   elements: Element[];
   screenshot: Buffer | null;
-  scroll: { y: number; height: number };
+  scroll: ScrollState;
+};
+
+/**
+ * 스크롤 상태. 가로가 세로와 대등하게 들어온다.
+ *
+ * `overflow_x`가 이 파일에서 가장 중요한 한 줄이다. **가로 스크롤이라는 수단을 열지 말지를
+ * 이 값 하나가 정한다** (prompts.ts `allowedKinds`). 즉 「사람에게 가로 막대가 보이는가」를
+ * 우리가 여기서 판정하고 있다 — 그래서 창 폭과 문서 폭을 그 자리에서 재서 넣는다.
+ */
+export type ScrollState = {
+  y: number;
+  height: number;
+  x: number;
+  width: number;
+  /** 문서가 창보다 옆으로 넓은가 = 브라우저가 가로 막대를 띄우는 상태인가 */
+  overflow_x: boolean;
 };
 
 /**
@@ -60,7 +76,7 @@ const EXTRACT = `() => {
   //   그대로 createTreeWalker에 넘기면 TypeError로 실행 전체가 죽는다.
   //   실측: 2026-08-11 control 실행이 2스텝에서 이렇게 끊겼다. 사이트 탓이 아니라 우리 쪽 경합이다.
   //   빈 관측을 돌려주면 다음 스텝에서 다시 찍는다 — 죽는 것보다 한 스텝 낭비가 싸다.
-  if (!document.body) return { url: location.href, title: document.title, text: '', text_viewport: '', elements: [], scroll: { y: 0, height: 0 } };
+  if (!document.body) return { url: location.href, title: document.title, text: '', text_viewport: '', elements: [], scroll: { y: 0, height: 0, x: 0, width: 0, overflow_x: false } };
   const vw = window.innerWidth, vh = window.innerHeight;
   const out = [];
   let i = 0;
@@ -119,7 +135,18 @@ const EXTRACT = `() => {
     text: (document.body.innerText || '').replace(/\\n{3,}/g, '\\n\\n').trim(),
     text_viewport: seen.join('\\n'),
     elements: out,
-    scroll: { y: Math.round(window.scrollY), height: Math.round(document.body.scrollHeight) },
+    scroll: {
+      y: Math.round(window.scrollY),
+      height: Math.round(document.body.scrollHeight),
+      x: Math.round(window.scrollX),
+      // 가로는 body가 아니라 documentElement로 잰다. 넘치는 자식이 있어도 body 자신은
+      // 창 폭 그대로인 경우가 흔해서, body로 재면 「잘리지 않았다」로 잘못 나온다.
+      width: Math.round(document.documentElement.scrollWidth),
+      // +2px은 소수점 반올림 여유다. 1px 차이로 가로 스크롤을 열면 모델은 옆으로 밀고
+      // 아무 일도 안 일어난다 — 그 헛수고가 「제약 때문에 헤맸다」로 집계된다.
+      // 우리 도구가 만든 잡음을 측정값에 섞지 않는다.
+      overflow_x: document.documentElement.scrollWidth > window.innerWidth + 2,
+    },
   };
 }`;
 
@@ -130,7 +157,7 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
     text: string;
     text_viewport: string;
     elements: Element[];
-    scroll: { y: number; height: number };
+    scroll: ScrollState;
   };
   return {
     url: page.url(),

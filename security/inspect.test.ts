@@ -21,7 +21,8 @@ function obs(over: Partial<RawObservation> = {}): RawObservation {
     text_viewport: "",
     elements: [],
     screenshot: null,
-    scroll: { y: 0, height: 1000 },
+    // 위협 검사는 스크롤과 무관하다. 관측의 형태를 맞추기 위해서만 채운다
+    scroll: { y: 0, height: 1000, x: 0, width: 640, overflow_x: false },
     ...over,
   };
 }

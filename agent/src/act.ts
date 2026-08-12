@@ -133,6 +133,12 @@ export async function act(
   if (action.kind === "back" && t.back_limit !== null && backsUsed >= t.back_limit) {
     return fail(`back 한도 초과 (${t.back_limit})`);
   }
+  // 좌우 스크롤만 조건이 다르다. 프로필이 아니라 **화면이** 허락한다.
+  // 옆으로 잘리지도 않은 페이지에서 옆으로 밀면 아무 일도 안 일어나고, 그 빈 수가
+  // 「제약 때문에 헤맸다」로 집계된다. 스키마에서 이미 뺐지만 여기서 한 번 더 막는다.
+  if (action.kind === "scroll_side" && !raw.scroll.overflow_x) {
+    return fail("이 화면은 옆으로 잘려 있지 않다");
+  }
 
   switch (action.kind) {
     case "give_up":
@@ -153,6 +159,42 @@ export async function act(
       // 실제로 움직인 양을 돌려준다. 모델이 요청한 값과 다를 수 있고,
       // 「끝까지 내려갔다」고 착각한 채 다음 수를 두면 안 된다.
       return ok(false, `${screens > 0 ? "下" : "上"}に${Math.abs(screens)}画面分動いた`);
+    }
+
+    case "scroll_side": {
+      // 줌 200%는 창을 좁히는 것과 같다. 좁아진 창에 맞춰 다시 배치되지 않는 사이트에서는
+      // 오른쪽 끝(検索・お問い合わせ 같은 것들)이 화면 밖으로 나가고, 브라우저는 아래에
+      // 가로 막대를 띄운다. 그 막대를 끄는 동작이 여기다.
+      const vp = page.viewportSize();
+      const w = vp?.width ?? 400;
+      const asked = action.delta ?? 1;
+      const screens = asked === 0 ? 1 : Math.max(-3, Math.min(3, asked));
+      const dx = Math.round(screens * w * 0.85); // 세로와 같은 0.85배. 몇 글자를 겹쳐 남긴다
+
+      const before = (await page.evaluate("window.scrollX")) as number;
+      await page.mouse.wheel(dx, 0);
+      await page.waitForTimeout(600);
+      let after = (await page.evaluate("window.scrollX")) as number;
+
+      // 휠은 **커서 밑에 있는 것**을 굴린다. 커서 자리에 가로로 안 움직이는 요소(고정 헤더 등)가
+      // 있으면 문서는 그대로다. 사람은 그럴 때 아래 가로 막대를 끌면 그만이다 —
+      // 없는 능력을 주는 게 아니라, 있는 능력이 커서 위치 때문에 안 닿은 것을 잇는 것이다.
+      if (after === before) {
+        await page.evaluate(`window.scrollBy(${dx}, 0)`).catch(() => {});
+        await page.waitForTimeout(400);
+        after = (await page.evaluate("window.scrollX")) as number;
+      }
+
+      // ★ 요청한 값이 아니라 **실제로 움직인 양**을 돌려준다.
+      //   끝에 닿았는데 「움직였다」고 하면 모델은 같은 방향으로 계속 밀고,
+      //   그 헛수고가 「제약 때문에 헤맸다」로 집계된다. 우리 쪽 잡음을 측정에 섞지 않는다.
+      const moved = after - before;
+      return ok(
+        false,
+        moved === 0
+          ? `これ以上${screens > 0 ? "右" : "左"}には動かなかった`
+          : `${moved > 0 ? "右" : "左"}に${Math.abs(moved)}px動いた`,
+      );
     }
 
     case "back": {

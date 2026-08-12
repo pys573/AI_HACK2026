@@ -31,6 +31,10 @@ export const DIAGNOSE_SYSTEM = [
   "- fix_ja は、そのサイトの運営者が今週着手できる具体的な変更を1つだけ書いてください。",
   "  「分かりやすくする」「配慮する」のような、やることが決まらない文は書かないでください。",
   "- 断定できないことは書かないでください。推測を事実として書くと提案全体が信用を失います。",
+  // ✅ 2026-08-13 실측: 모델이 required는 지키면서 값을 빈 문자열로 채워 보낸 적이 있다.
+  //    스키마 검사는 「키가 있는가」만 보므로 통과하고, 화면에는 「説明の生成に失敗」만 남았다
+  "- 「詰まった箇所」の数だけ項目を作り、番号(n)は 1 から順に必ず対応させてください。",
+  "- cause_ja と fix_ja を空文字にしないでください。書けない箇所があれば、その項目自体を出さないでください。",
 ].join("\n");
 
 /**
@@ -117,15 +121,36 @@ export async function diagnose(trace: RunTrace): Promise<{ findings: Finding[]; 
   const { signals, ours, dropped } = detectSignals(trace);
   if (!signals.length) return { findings: [], costs: [], dropped, ours };
 
-  const r = await complete({
-    step_type: "diagnose",
-    system: DIAGNOSE_SYSTEM,
-    user: diagnoseUser(trace, signals),
-    schema: DIAGNOSE_SCHEMA,
-  });
+  const user = diagnoseUser(trace, signals);
+  const costs: CostRecord[] = [];
 
-  const items = ((r.parsed as { items?: unknown })?.items ?? []) as Array<{ n?: number; cause_ja?: string; fix_ja?: string }>;
-  const byN = new Map(items.filter((x) => typeof x.n === "number").map((x) => [x.n!, x]));
+  /**
+   * ★ 한 번 더 묻는 조건은 **「하나도 못 건졌을 때」뿐이다.**
+   *
+   *   `llm/orca.ts`의 스키마 검사는 최상위 required(=`items`가 있는가)만 본다. 그래서
+   *   `{"items":[{"n":1,"cause_ja":"","fix_ja":""}]}`는 **성공으로 통과한다.** 그러면
+   *   화면에는 「説明の生成に失敗」만 5줄 남는다 — 실측은 멀쩡한데 납품물만 빈손이다.
+   *   실제로 2026-08-13 실행 두 건이 그랬다.
+   *
+   *   부분적으로 비는 것까지 다시 묻지는 않는다. 원가가 배로 들고, 무엇보다
+   *   **모델이 못 쓰겠다고 한 칸을 억지로 채우게 만드는 것**은 없는 문제를 파는 짓이다.
+   */
+  const ask = async () => {
+    const r = await complete({ step_type: "diagnose", system: DIAGNOSE_SYSTEM, user, schema: DIAGNOSE_SCHEMA });
+    costs.push(r.cost);
+    const items = ((r.parsed as { items?: unknown })?.items ?? []) as Array<{ n?: number; cause_ja?: string; fix_ja?: string }>;
+    return new Map(
+      items
+        .filter((x) => typeof x.n === "number" && !!x.cause_ja?.trim())
+        .map((x) => [x.n!, x]),
+    );
+  };
+
+  let byN = await ask();
+  if (byN.size === 0) {
+    console.error("  ⚠️ 진단이 빈손으로 왔다 — 한 번만 다시 묻는다 (원가는 두 번 다 기록한다)");
+    byN = await ask();
+  }
 
   // ★ 모델이 빠뜨린 신호도 **버리지 않는다.** 설명이 없는 채로 실린다.
   //   빠뜨린 걸 조용히 지우면 「이 사이트엔 이만큼만 문제가 있었다」가 거짓이 된다.
@@ -141,5 +166,5 @@ export async function diagnose(trace: RunTrace): Promise<{ findings: Finding[]; 
     } satisfies Finding;
   });
 
-  return { findings, costs: [r.cost], dropped, ours };
+  return { findings, costs, dropped, ours };
 }

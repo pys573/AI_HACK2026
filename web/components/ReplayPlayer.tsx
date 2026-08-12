@@ -255,6 +255,7 @@ function actionJa(kind: string): string {
   const map: Record<string, string> = {
     click: "押した ",
     scroll: "画面をスクロールした",
+    scroll_side: "画面を横にスクロールした",
     back: "前のページへ戻った",
     site_search: "サイト内検索を使った",
     find_in_page: "ページ内を探した",

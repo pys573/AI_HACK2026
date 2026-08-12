@@ -1,12 +1,20 @@
 /**
- * 프로필 = 우리의 주장 그 자체. 화면에는 **사람 사진이 아니라 사양이 뜬다.**
+ * 프로필 = 우리의 주장 그 자체. 화면에는 **사람과 사양이 함께** 뜬다.
  *
- * 왜 사진을 안 쓰는가: 웃는 노인 사진을 붙이는 순간 화면이 「이 사람을 재현했다」고
- * 말하기 시작한다. 그건 우리가 하지 않는 주장이고(profiles/README.md), 質疑에서
- * 「어떻게 재현했다고 증명합니까」에 답할 수 없다. 사양은 증명할 필요가 없다 —
- * 파일에 적혀 있고, 실행이 그대로 따랐는지 트레이스로 확인된다.
+ * ★ 2026-08-12 방침 변경 (「심사위원 예상 반박과 대응.md」 §7).
+ *   원래는 사람 사진을 전부 뺐다. 사진이 「이 사람을 재현했다」는 주장으로 읽힐까 봐서다.
+ *   그건 과잉이었다 — 채점표에는 「자격 없는 주장을 안 했는가」라는 항목이 없고,
+ *   대신 ③完成度・デモ의 채점 관점이 **「触れて数十秒で価値がわかる」**이다.
+ *   사진을 빼서 이해를 늦춘 만큼 ③에서 잃는다.
  *
- * 카드에 뜨는 문장은 전부 **숫자에서 기계적으로 만든다.** 손으로 쓴 설명을 섞으면
+ *   그래서 규칙을 이렇게 바꾼다 — **누구를 위한 것인지는 대담하게, 숫자는 정확하게.**
+ *   · 사진과 사람 이름(高齢者·外国人住民…)은 **누구를 위한 계측인지**를 1초에 전달한다
+ *   · 바로 밑에 프로필 id·version·제약 사양이 붙는다. 그게 「재현했다」가 아니라
+ *     「이 조건으로 돌렸다」임을 같은 화면에서 못 박는다
+ *   · 이름·나이를 붙인 가공의 개인(「72歳の田中さん」)은 여전히 만들지 않는다.
+ *     그건 존재하지 않는 개인의 데이터를 있는 것처럼 보이게 하는 것이라 성격이 다르다
+ *
+ * 카드에 뜨는 **사양과 숫자**는 전부 파일에서 기계적으로 만든다. 손으로 쓴 설명을 섞으면
  * 프로필을 고쳤을 때 화면만 옛날 값으로 남는다.
  */
 
@@ -31,10 +39,51 @@ type Raw = {
   patience: { clicks: number; seconds: number };
 };
 
+/**
+ * 표시용 인물 정보. **여기만 손으로 쓴다.**
+ *
+ * 왜 profiles/*.json이 아니라 여기인가: 이건 계측 사양이 아니라 **화면 문구**다.
+ * 프로필 파일은 「무엇을 제한했는가」의 기록이고, 여기는 「누구를 위한 것인가」의 설명이다.
+ * 섞으면 사양 파일에 검증 불가능한 문장이 들어간다.
+ *
+ * ⚠️ busy-worker의 사진은 목업에서 「高校生」으로 준비된 것이다. 우리 프로필은
+ *    「시간이 없다(8클릭 / 2분)」를 재는 것이라 표시 이름을 인물 직업이 아니라
+ *    **상태**로 두었다. 회사원 사진으로 바꿀 거라면 이름도 같이 바꾼다.
+ */
+const PERSONA: Record<string, { name: string; photo: string; tags: string[] }> = {
+  "senior-70s": {
+    name: "高齢者",
+    photo: "/img/persona/senior-70s.jpg",
+    tags: ["カタカナ語が読めない", "小さな文字が苦手"],
+  },
+  "resident-n3": {
+    name: "外国人住民",
+    photo: "/img/persona/resident-n3.jpg",
+    tags: ["日本語に不安", "行政用語が難しい"],
+  },
+  "smartphone-novice": {
+    name: "デジタル初心者",
+    photo: "/img/persona/smartphone-novice.jpg",
+    tags: ["画面しか見ない", "操作に不慣れ"],
+  },
+  "busy-worker": {
+    name: "時間がない人",
+    photo: "/img/persona/busy-worker.jpg",
+    tags: ["すぐ諦める", "探し続けない"],
+  },
+};
+
 export type ProfileCard = {
   id: string;
   version: string;
+  /** 사양 이름. 「高齢者制約プロファイル」처럼 정확하지만 길다 */
   labelJa: string;
+  /** 화면에 크게 뜨는 사람 이름. 없으면(대조군) null */
+  personaJa: string | null;
+  /** 인물 사진. 없으면 null — 대조군은 사람이 아니라 기준선이라서 없다 */
+  photo: string | null;
+  /** 사진 밑에 붙는 짧은 상태 태그 */
+  personaTags: string[];
   /** 사양을 그대로 옮긴 짧은 줄들. 카드에 태그로 붙는다 */
   specs: string[];
   /** 어휘 근거 한 줄. 출처가 없으면 null이고, 없으면 화면도 안 그린다 */
@@ -91,6 +140,9 @@ export function loadProfileCards(ids: string[]): ProfileCard[] {
       id: p.id,
       version: p.version,
       labelJa: p.label.ja,
+      personaJa: PERSONA[p.id]?.name ?? null,
+      photo: PERSONA[p.id]?.photo ?? null,
+      personaTags: PERSONA[p.id]?.tags ?? [],
       specs: specsOf(p),
       evidenceJa: evidenceOf(p),
       isControl: p.id === "control",

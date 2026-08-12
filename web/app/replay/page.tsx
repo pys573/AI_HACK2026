@@ -25,7 +25,7 @@ export default async function ReplayPage({
 
   if (!replay) {
     return (
-      <Page back={{ href: "/report", label: "← 結果一覧へ" }}>
+      <Page back={{ href: "/report", label: "← 結果へ" }}>
         <div className="mx-auto max-w-2xl px-6 py-24 text-center">
           <h1 className="text-2xl font-bold">再生できる実行がありません</h1>
           <p className="mt-3 leading-relaxed text-fg-muted">
@@ -50,7 +50,7 @@ export default async function ReplayPage({
   });
 
   return (
-    <Page back={{ href: "/report", label: "← 結果一覧へ" }}>
+    <Page back={{ href: "/report", label: "← 結果へ" }}>
       <div className="mx-auto w-full max-w-6xl px-6 py-12">
         <h1 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
           迷った様子を再生する
@@ -132,7 +132,7 @@ export default async function ReplayPage({
             href="/report"
             className="rounded-full border border-line bg-surface px-7 py-3.5 text-sm font-bold transition hover:border-brand hover:text-brand"
           >
-            ← 結果一覧に戻る
+            ← 結果に戻る
           </Link>
         </div>
       </div>

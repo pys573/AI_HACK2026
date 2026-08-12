@@ -55,6 +55,15 @@ export type MissionKey = {
 export type ActionKind =
   | "click"
   | "scroll"
+  /**
+   * 좌우 스크롤. **화면이 실제로 옆으로 잘렸을 때만** 후보에 오른다 (prompts.ts `allowedKinds`).
+   *
+   * 줌 200%는 창을 좁히는 것과 같아서, 좁아진 창에 맞춰 다시 배치되지 않는 사이트에서는
+   * 오른쪽 끝이 화면 밖으로 나간다. 그때 브라우저는 가로 막대를 띄운다 — 즉 **사람에게는
+   * 있는 수단**이다. 그게 없으면 「사이트가 어려워서 못 찾았다」와 「우리가 옆으로 못 가서
+   * 못 찾았다」가 구별되지 않고, 계측값이 우리에게 유리한 쪽(=이탈률 과대)으로 기운다.
+   */
+  | "scroll_side"
   | "back"
   | "find_in_page"
   | "site_search"
@@ -68,7 +77,7 @@ export type Action = {
   kind: ActionKind;
   /** click: 관측 elements의 index */
   index?: number;
-  /** scroll: 픽셀. 음수는 위로 */
+  /** scroll: 화면 수(세로). 음수는 위로 / scroll_side: 화면 수(가로). 음수는 왼쪽 */
   delta?: number;
   /** find_in_page / site_search: 질의어 */
   query?: string;
@@ -91,7 +100,10 @@ export type ElementView = {
    * 「어디를 봤고 어디를 눌렀는가」를 그리기 위해서만 존재한다.
    * 모델에게 좌표를 주면 시각 정보를 준 것이 되어 프로필의 관측 제약이 무너진다.
    *
-   * y는 **문서 좌표**(scrollY 포함)다. 스크린샷 위에 그릴 때는 scroll.y를 빼야 한다.
+   * ⚠️ x와 y의 기준이 다르다. y는 **문서 좌표**(scrollY 포함)라 스크린샷 위에 그릴 때
+   * scroll.y를 빼야 하지만, **x는 화면 좌표**라 그대로 쓴다 (scroll.x를 빼면 안 된다).
+   * 좌우 스크롤이 생긴 뒤로 이 차이가 실제로 어긋남을 만든다 — 관측은 매 수마다 다시
+   * 찍히므로 x는 언제나 「지금 화면에서 몇 px 오른쪽」이다.
    * optional인 이유: 2026-08-12 이전 트레이스 28건에는 이 필드가 없다. 없으면 안 그린다.
    */
   box?: { x: number; y: number; w: number; h: number };
@@ -107,7 +119,11 @@ export type ObservationSnapshot = {
   title: string;
   text: string | null;
   elements: ElementView[];
-  scroll: { y: number; height: number };
+  /**
+   * x·width·overflow_x가 optional인 이유: 좌우 스크롤 도입(2026-08-13) 전의 트레이스에는
+   * 이 세 필드가 없다. 없으면 「가로로 잘린 적 없다」가 아니라 **「재지 않았다」**로 읽는다.
+   */
+  scroll: { y: number; height: number; x?: number; width?: number; overflow_x?: boolean };
   /** Supabase Storage 키. 이미지 자체는 트레이스에 넣지 않는다 */
   screenshot_key: string | null;
 };

@@ -2,89 +2,63 @@ import Image from "next/image";
 import { Page } from "@/components/Chrome";
 import { loadMatrix } from "@/lib/matrix";
 import { loadProfileCards } from "@/lib/profiles";
-import { ProfileCards } from "@/components/ProfileCards";
+import { Personas } from "@/components/Personas";
+import { RequestForm } from "@/components/RequestForm";
+import { ArtReduce, ArtCompare, ArtRewrite } from "@/components/StepArt";
 
 /**
  * ランディング。
  *
- * ★ 화면에 숫자를 손으로 쓰지 않는다. 전부 matrix.json에서 온다 —
- *   실행을 다시 돌리면 이 페이지도 같이 바뀐다. 어긋날 수 없는 구조가 방어선이다.
- *   데이터가 없으면 숫자 자리를 아예 안 그린다. 「—」로 채우면 0으로 읽힌다.
+ * ★ 2026-08-12. **이 화면에는 계측 숫자를 두지 않는다.**
+ *   원래는 히어로에 matrix.json에서 뽑은 「◯人に試させた / ◯人がたどり着けなかった」가
+ *   있었고, 프로필 카드마다 제약 사양·실측·출처가 붙어 있었다. 전부 뺐다.
+ *   숫자가 먼저 읽히면 **무슨 물건인지가 나중에 읽힌다.** 랜딩에서 그건 손해다
+ *   (③完成度・デモ의 채점 관점이 「触れて数十秒で価値がわかる」이다).
  *
- * 디자인(website design/landingpage.png)의 배치·색·흐름은 그대로 두고,
- * **문구와 숫자만** 실제로 말할 수 있는 것으로 바꿨다:
- *   「AIユーザーテスター」→ 制約プロファイル   (재현 주장을 안 한다)
- *   「実在のペルソナ視点で検証」→ 明示された制約スペックの下で
- *   「ペルソナ条件を再現」→ 見えるものを実際に減らす
- *   「監査したいサイト」→ 試したいサイト        (감사 프레임을 안 쓴다)
- *   인물 사진 → 제약 사양 그 자체              (사진은 그 자체로 「재현했다」가 된다)
+ *   그래서 역할을 3단으로 나눴다 —
+ *   · **여기(/)**            : 무엇을 하는 물건인지. 사람 4명, 세 줄 카피, URL 접수
+ *   · **`/report`**          : 결과를 20초에. 큰 숫자 3개 + 그래프 2개뿐
+ *   · **`/report/detail`**   : 전부. 제약 사양·전 실행 표·원가·보안·한계 고지
+ *   랜딩에서 결과로 가는 길은 **머리/발의 「結果」 링크**다. 절 안에는 링크를 두지 않는다
+ *   — 여기서 링크를 밟게 하면 아직 무슨 물건인지 모르는 채로 숫자 화면에 떨어진다.
  *
- * 랜딩은 **컨셉과 홍보**의 자리다. 숫자를 늘어놓는 곳이 아니다.
- * 첫 화면에는 한 사이트의 한 문장만 두고, 나머지 계측은 /report로 보낸다.
+ * ★ 남아 있는 유일한 숫자는 CTA의 離脱率이고, 그것도 matrix.json에서 온다.
+ *   **숫자를 손으로 쓰지 않는다**는 규칙은 그대로다 — 실행을 다시 돌리면 같이 바뀐다.
+ *
+ * ★ 여전히 안 쓰는 말: 「監査」「アクセシビリティ検査」.
+ *   이유는 오해가 아니라 불리한 비교다 (예산 프레임 / Lighthouse). `CLAUDE.md` 참조.
  */
-
-/** 첫 화면에 세우는 사이트. 데이터에 없으면 전체 합계로 떨어진다 */
-const HERO_SITE = "新宿区";
 
 export default function Home() {
   const m = loadMatrix();
   const cards = loadProfileCards(m?.profiles.map((p) => p.id) ?? []);
 
-  // ★ 머리기사도 손으로 쓰지 않는다.
-  //   지정한 사이트가 데이터에 있으면 그 사이트의 실측, 없으면 전체 합계.
-  //   대조군은 「제약이 없으면 되는가」의 대조라서 시행 수에서 뺀다.
-  const hero = m?.sites.find((s) => s.site_name === HERO_SITE) ?? null;
-  const heroCells = hero ? hero.cells.filter((c) => c.profile_id !== "control") : [];
-
-  const byProfile = m ? m.by_profile.filter((p) => p.id !== "control") : [];
-  const tried = hero ? heroCells.length : byProfile.reduce((a, p) => a + p.runs, 0);
-  const stuck = hero
-    ? heroCells.filter((c) => !c.reached).length
-    : byProfile.reduce((a, p) => a + (p.runs - p.reached), 0);
-  const where = hero ? `${hero.site_name}で` : "自治体サイトで";
-  const taskJa = hero?.task_ja ?? m?.sites[0]?.task_ja ?? "";
-
   return (
     <Page>
       {/* ── ヒーロー ─────────────────────────────────────── */}
-      <section className="brand-wash border-b border-line">
+      {/* overflow-hidden — 아래 이미지의 lg:scale-[1.12]가 1024px에서 화면 밖으로 4px 삐져나가
+          가로 스크롤바가 생긴다. 데모를 띄우는 노트북 폭이 딱 여기다 */}
+      <section className="brand-wash overflow-hidden border-b border-line">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
           <div>
-            {m && tried > 0 ? (
-              <h1 className="font-bold leading-[1.4] tracking-tight">
-                {/* ★ 用事の名前も回数も手で書かない。matrix.json から出す —
-                    別の用事を回した日にここだけ古いまま残ると、それは嘘になる。
-                    1行目だけ小さいのは、長くて折れても数字の2行が崩れないようにするため */}
-                {/* 1行目だけ小さいのは、用事の名前が長いからだ。数字の2行と同じ大きさにすると
-                    「を」だけ次の行に落ちて、下の数字の対比まで読みにくくなる */}
-                <span className="block text-balance text-[1.3rem] leading-snug sm:text-[1.5rem] lg:text-[1.3rem] xl:text-[1.5rem]">
-                  {where}「{taskJa}」を
-                </span>
-                <span className="block text-[1.7rem] sm:text-[2.35rem] lg:text-[1.85rem] xl:text-[2.35rem]">
-                  <span className="tnum text-brand">{tried}</span> 回、試させた。
-                </span>
-                <span className="block text-[1.7rem] sm:text-[2.35rem] lg:text-[1.85rem] xl:text-[2.35rem]">
-                  <span className="tnum text-blocked">{stuck}</span> 回、たどり着けなかった。
-                </span>
-              </h1>
-            ) : (
-              <h1 className="text-3xl font-bold leading-[1.35] tracking-tight sm:text-[2.6rem]">
-                どこでツマヅくか、
-                <br />
-                10人が先に試す。
-              </h1>
-            )}
-
-            {/* ★ 「特定ユーザーを再現するAI」とは書かない。
-                それは検証できない主張で、発表禁止語そのものだ (CLAUDE.md 表現の線)。
-                言えるのは「明示された制約の下で動いた」までである */}
-            <p className="mt-6 text-lg font-medium leading-relaxed sm:text-xl">
-              明示された制約の下で動くAIが
+            {/* ★ 2026-08-12. 여기 있던 「◯人に試させた / ◯人がたどり着けなかった」와
+                그 정의 각주를 뺐다. 실측 숫자를 첫 화면에 세우면 무슨 물건인지보다
+                숫자가 먼저 읽혀서, 3초 안에 전달되지 않았다.
+                숫자는 사라진 게 아니라 `/report`에 있다 — 거기가 계측의 자리다. */}
+            {/* ★ 줄바꿈 위치를 폭에 따라 바꾼다. 글자 크기만 줄이는 방식으로는 안 됐다 —
+                가장 긴 줄이 18자라 폰에서 그걸 넣으려면 h1이 18px까지 작아진다.
+                그래서 폰에서는 「見つけ、」를 아래로 내려 가장 긴 줄을 14자로 만들고,
+                대신 글자를 키웠다. 일본어는 어디서든 줄이 끊겨서, 두면 「見つ / け、」가 된다.
+                lg에서 2단 그리드가 걸려 폭이 절반이 되므로 거기서 한 번 줄이고 xl에서 되돌린다 */}
+            <h1 className="text-[1.35rem] font-bold leading-[1.5] tracking-tight sm:text-[2rem] lg:text-[1.5rem] xl:text-[1.8rem]">
+              特定ユーザーを再現するAIが
               <br />
-              ウェブサイトの「つまずき」を見つけ、
-              <br />
-              改善策まで提案する
-            </p>
+              ウェブサイトの「つまずき」を
+              <br className="sm:hidden" />
+              見つけ、
+              <br className="hidden sm:inline" />
+              改善策まで提案する。
+            </h1>
           </div>
 
           {/* 목업의 「분석 진척 68%」 자리. 이건 제품 이미지이지 계측값이 아니다 —
@@ -107,14 +81,19 @@ export default function Home() {
       <section className="border-b border-line bg-surface-2">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
-            さまざまな制約の下で試します
+            多様なタイプのユーザーの視点から試す。
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center leading-relaxed text-fg-muted">
-            人物を演じさせているのではありません。カードに書いてあるのが
-            <strong className="text-fg">実際に適用した設定そのもの</strong>で、
-            ファイルは <code className="font-mono text-[13px]">profiles/</code> にあります。
+          {/* ★ 이 두 줄이 제품의 정의다. 카테고리(「ユーザーの視点」)를 크게 말한 바로 밑에서
+              **그 시점을 어떻게 만드는가**를 못 박는다 — 연기가 아니라 접근 제한이다.
+              같은 화면 안에 있어야 위의 h2가 「연기하는 AI」로 읽히지 않는다.
+              주어를 제품명으로 둔다 — 「AIは演じない」가 아니라 「ツマヅキが演じさせない」다.
+              일반론이 아니라 **우리가 한 설계 선택**이라는 게 여기서 갈린다 */}
+          <p className="mx-auto mt-4 max-w-xl text-center text-sm leading-relaxed text-fg-muted sm:text-base">
+            ツマヅキはAIにペルソナを演じさせない。
+            <br />
+            情報のアクセスを実際に制約してテストする。
           </p>
-          <ProfileCards cards={cards} byProfile={m?.by_profile ?? []} notes={m?.profiles ?? []} />
+          <Personas cards={cards} />
         </div>
       </section>
 
@@ -124,38 +103,60 @@ export default function Home() {
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
             ツマヅキがすること
           </h2>
-          <ol className="mt-10 grid gap-5 md:grid-cols-3">
+          {/* ★ 2026-08-12. 가운데를 「記録する」에서 「比べる」로 바꿨다.
+              앞뒤만 있으면 세 장을 다 읽고 나오는 질문이 「わざと見えなくして、
+              できないと言っているだけでは」다. 우리는 그 답을 이미 갖고 있는데
+              (制約なしは全部到達する) 랜딩에 없었다. 記録は3枚目に畳んだ。
+              ⚠️ 여기에 実測値는 쓰지 않는다 — 랜딩은 「무엇인가」의 자리다 (CLAUDE.md).
+              19/19도 0%↔94%도 /report에 있다 */}
+          <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {[
               {
-                n: "01",
                 t: "見えるものを実際に減らす",
-                d: "調査に基づいて語を伏せ、画面を拡大し、検索を無効にします。「そのつもりで動いて」と頼むのではなく、渡すデータ自体を削ります。",
+                d: "調査に基づいて語を伏せる。画面を拡大する。検索を使わせない。プロファイルごとに削るものが違います。「そのつもりで動いて」と頼むのではなく、渡すデータ自体を削ります。",
+                art: <ArtReduce />,
               },
               {
-                n: "02",
-                t: "止まった場所を記録する",
-                d: "クリック・ページ遷移・滞在時間・AIがその場で書いた理由を、1手ずつ残します。あとから誰でも同じ記録を読み直せます。",
+                t: "制約なしと並べて走らせる",
+                d: "同じ用事を、制約ありとなしで走らせます。制約なしなら最後まで行けたのに、削ったとたん止まった — その差が出た場所だけを、ツマヅキとして数えます。",
+                art: <ArtCompare />,
               },
               {
-                n: "03",
-                t: "直す文を出す",
-                d: "止まった1件ごとに、何が止めたのかと、どう書きかえるのかを対にして出します。根拠の数字が必ず付きます。",
+                t: "止まった1手を、直す文にする",
+                d: "クリック・ページ遷移・滞在時間・その場の理由を1手ずつ残し、何が止めたのかと、どう書きかえるのかを対にして出します。根拠の数字が必ず付きます。",
+                art: <ArtRewrite />,
               },
             ].map((s) => (
-              <li key={s.n} className="card p-6">
-                <div className="tnum text-lg font-bold text-brand">{s.n}</div>
-                <h3 className="mt-2 font-bold">{s.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-fg-muted">{s.d}</p>
+              <li key={s.t} className="card flex flex-col items-center px-7 py-10 text-center">
+                {/* 원형 판 — 그림이 카드 위에서 떠 보이지 않게 받침을 깐다 */}
+                <div className="grid size-36 shrink-0 place-items-center rounded-full bg-[#eaf0fc] ring-1 ring-line">
+                  {s.art}
+                </div>
+                <h3 className="mt-7 text-lg font-bold leading-snug">{s.t}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-fg-muted">{s.d}</p>
               </li>
             ))}
           </ol>
 
-          <p className="mx-auto mt-12 max-w-3xl text-center text-xl font-bold leading-relaxed sm:text-2xl">
-            主観だった「使いにくさ」を、
+          {/* ★ 2026-08-12. 「大規模に」를 뺐다. 105회는 大規模가 아니다 —
+              말할 수 있는 것보다 크게 말한 자리였다. 우리가 실제로 하는 것은
+              **같은 기준으로 몇 번이고 재고, 보이게 하는 것**이다 (절대규칙 4). */}
+          {/* ★ 끊는 위치를 폭마다 바꾼다. 글자를 줄여서 맞추면 「3포인트 크게」가 무너지므로,
+              크기는 고정하고 **줄 수**로 맞춘다. 그대로 두면 「使いにくさ」/ を、처럼
+              조사만 다음 줄로 떨어진다 — 히어로 h1과 같은 문제다.
+                폰(<640)      5줄 — 한 줄에 최대 9자
+                태블릿(<1024) 4줄 — 27px로 커지므로 긴 줄은 여전히 못 넣는다
+                데스크톱      2줄 — 여기서만 문장이 통째로 들어간다 */}
+          <p className="mx-auto mt-12 max-w-4xl text-center text-[23px] font-bold leading-relaxed tracking-tight sm:text-[27px]">
+            主観的だった
+            <br className="sm:hidden" />
+            「使いにくさ」を、
             <br />
-            大規模に同一基準で計測する。
-            <br />
-            日本の <span className="text-brand">DX化</span> を前に進めます。
+            同じ基準で何度も
+            <br className="lg:hidden" />
+            測定・可視化して、
+            <br className="lg:hidden" />
+            日本の<span className="text-brand">DX化</span>を加速する。
           </p>
         </div>
       </section>
@@ -170,35 +171,33 @@ export default function Home() {
               試してみませんか？
             </h2>
             <p className="mt-3 text-sm text-white/75">
-              いまはデモ期間のため、この 5 サイトの実行結果を公開しています。
+              URLを入力するだけで、依頼できます。
             </p>
-          </div>
 
-          {/* ★ 입력창을 놓지 않는다. 지금 URL을 받아도 그 자리에서 돌릴 수 없다.
-              누를 수 있는데 아무 일도 안 일어나는 화면은 페이크다 (절대규칙 3). */}
-          <div className="rounded-2xl bg-white p-6 shadow-2xl">
-            <p className="text-center text-sm font-bold">実際に試した 5 サイト</p>
-            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {/* 실제로 돌린 5곳. 「今はこの5サイトを公開中」을 링크로 보여준다 */}
+            <p className="mt-6 text-xs font-medium text-white/60">実際に試した 5 サイト</p>
+            <ul className="mt-2 flex flex-wrap gap-2">
               {(m?.sites ?? []).map((s) => (
                 <li key={s.mission_id}>
                   <a
                     href={s.start_url}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5 text-sm transition hover:border-brand"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/25 px-3 py-1.5 text-xs text-white/90 transition hover:border-white/60"
                   >
                     <span className="font-medium">{s.site_name}</span>
-                    <span className="tnum text-xs text-fg-dim">
-                      {s.dropout_rate !== null ? `離脱 ${Math.round(s.dropout_rate * 100)}%` : ""}
-                    </span>
+                    {s.dropout_rate !== null && (
+                      <span className="tnum text-white/60">
+                        離脱 {Math.round(s.dropout_rate * 100)}%
+                      </span>
+                    )}
                   </a>
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-center text-xs text-fg-dim">
-              読み取り専用です。フォーム送信・ログイン・電子申請には一切入りません。
-            </p>
           </div>
+
+          <RequestForm />
         </div>
       </section>
     </Page>

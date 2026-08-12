@@ -46,6 +46,23 @@ export function loadMission(id: string): Mission {
 }
 
 /**
+ * 이 미션에 사람이 만든 정답 키가 있는가.
+ *
+ * ★ 즉석 미션(심사위원이 그 자리에서 넣은 URL)에는 키가 없다. 그때 판정은 **AI 하나뿐**이 되고,
+ *   그건 우리가 105회에 쓴 2단 판정보다 약하다. 약해졌다는 사실을 화면까지 들고 가야 해서
+ *   「키가 없다」와 「키는 있는데 안 맞았다」를 구별할 수 있어야 한다.
+ *   `loadKey`는 그대로 던지게 둔다 — 준비된 미션에서 키가 사라진 것은 버그이지 정상 경로가 아니다.
+ */
+export function hasKey(missionId: string): boolean {
+  try {
+    loadKey(missionId);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * ⚠️ 정답 키. **`judge.ts` 외에서 호출하지 않는다.**
  * 호출한 파일이 프롬프트를 만드는 파일이면, 그 순간 이 제품의 측정값은 전부 무효다.
  */

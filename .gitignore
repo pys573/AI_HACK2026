@@ -9,6 +9,8 @@ node_modules
 # 実行成果物（大きい・再生成可能）
 agent/data/runs/
 agent/data/screenshots/
+# その場で受け取ったURLの実行結果。計測105回とは別のフォルダに分けている（missions/README.md）
+agent/live/
 web/.next/
 web/out/
 web/node_modules/
