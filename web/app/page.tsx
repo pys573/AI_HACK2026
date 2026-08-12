@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Page } from "@/components/Chrome";
 import { loadMatrix } from "@/lib/matrix";
 import { loadProfileCards } from "@/lib/profiles";
@@ -15,10 +14,12 @@ import { RequestForm } from "@/components/RequestForm";
  *   숫자가 먼저 읽히면 **무슨 물건인지가 나중에 읽힌다.** 랜딩에서 그건 손해다
  *   (③完成度・デモ의 채점 관점이 「触れて数十秒で価値がわかる」이다).
  *
- *   그래서 역할을 나눴다 —
- *   · **여기(/)**       : 무엇을 하는 물건인지. 사람 4명, 세 줄 카피, URL 접수
- *   · **`/report`**     : 계측. 숫자·제약 사양·근거·출처·한계 고지가 전부 거기 있다
- *   두 번째 절 밑의 링크 한 줄이 그 둘을 잇는다. 그 링크는 지우지 않는다.
+ *   그래서 역할을 3단으로 나눴다 —
+ *   · **여기(/)**            : 무엇을 하는 물건인지. 사람 4명, 세 줄 카피, URL 접수
+ *   · **`/report`**          : 결과를 20초에. 큰 숫자 3개 + 그래프 2개뿐
+ *   · **`/report/detail`**   : 전부. 제약 사양·전 실행 표·원가·보안·한계 고지
+ *   랜딩에서 결과로 가는 길은 **머리/발의 「結果」 링크**다. 절 안에는 링크를 두지 않는다
+ *   — 여기서 링크를 밟게 하면 아직 무슨 물건인지 모르는 채로 숫자 화면에 떨어진다.
  *
  * ★ 남아 있는 유일한 숫자는 CTA의 離脱率이고, 그것도 matrix.json에서 온다.
  *   **숫자를 손으로 쓰지 않는다**는 규칙은 그대로다 — 실행을 다시 돌리면 같이 바뀐다.
@@ -79,17 +80,15 @@ export default function Home() {
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
             さまざまな人の視点で試します
           </h2>
-          {/* ★ 여기 있던 「ただし、人物を演じさせてはいません…」 단락을 뺐다.
-              아직 무슨 물건인지 모르는 사람에게 부정문부터 들이밀고 있었다.
-              같은 내용은 `profiles/README.md`와 `/report`에 남아 있다 */}
-          <Personas cards={cards} />
-
-          {/* 근거로 가는 길 한 줄. 이게 없으면 랜딩에서 계측으로 갈 방법이 없다 */}
-          <p className="mt-8 text-center text-sm">
-            <Link href="/report" className="text-brand hover:underline">
-              それぞれに何を制限したか・実際にどうなったか →
-            </Link>
+          {/* ★ 이 두 줄이 제품의 정의다. 카테고리(「人の視点」)를 크게 말한 바로 밑에서
+              **그 시점을 어떻게 만드는가**를 못 박는다 — 연기가 아니라 접근 제한이다.
+              같은 화면 안에 있어야 위의 h2가 「연기하는 AI」로 읽히지 않는다 */}
+          <p className="mx-auto mt-4 max-w-xl text-center text-sm leading-relaxed text-fg-muted sm:text-base">
+            AIエージェントにペルソナを演じさせない。
+            <br />
+            情報のアクセスを実際に制約してテストする。
           </p>
+          <Personas cards={cards} />
         </div>
       </section>
 

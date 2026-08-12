@@ -45,8 +45,9 @@ export function Footer() {
           <span className="text-sm font-bold">ツマヅキ / AI HACK 2026</span>
           <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-fg-muted">
             <Link href="/report" className="hover:text-fg">結果</Link>
+            <Link href="/report/detail" className="hover:text-fg">全データ</Link>
             <Link href="/replay" className="hover:text-fg">リプレイ</Link>
-            <Link href="/report#honesty" className="hover:text-fg">この数値の限界</Link>
+            <Link href="/report/detail#honesty" className="hover:text-fg">この数値の限界</Link>
             <a
               href="https://github.com/pys573/AI_HACK2026"
               className="hover:text-fg"
