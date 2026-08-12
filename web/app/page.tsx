@@ -37,11 +37,16 @@ export default function Home() {
       <section className="brand-wash border-b border-line">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1.15fr_1fr] lg:items-center">
           <div>
+            {/* 携帯幅では 1.7rem。3rem のままだと「たどり着けなかった。」の
+                「た。」だけ次の行に落ちて、数字の対比が読めなくなる */}
             {m && tried > 0 ? (
-              <h1 className="text-3xl font-bold leading-[1.35] tracking-tight sm:text-[2.35rem]">
-                {/* 用事の名前が途中で折れると別の語に読めるので、そこだけ折らない */}
-                自治体サイトで<span className="whitespace-nowrap">「転入届を出す」</span>を
-                <br />
+              <h1 className="text-[1.7rem] font-bold leading-[1.35] tracking-tight sm:text-[2.35rem]">
+                {/* ★ 用事の名前は手で書かない。matrix.json の task_ja をそのまま出す —
+                    別の用事を回した日にここだけ古いまま残ると、それは嘘になる。
+                    長いので小さい行に逃がす。ここで折れても数字の行は崩れない */}
+                <span className="block text-base font-bold leading-snug text-fg-muted sm:text-lg">
+                  自治体サイトで「{m.sites[0]?.task_ja}」
+                </span>
                 <span className="tnum text-brand">{tried}</span> 回、試させた。
                 <br />
                 <span className="tnum text-blocked">{stuck}</span> 回、たどり着けなかった。

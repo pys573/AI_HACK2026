@@ -39,6 +39,9 @@ export type FindingRow = {
 
 export type SiteBlock = {
   mission_id: string;
+  /** 用事の種類. 사이트 비교는 같은 task_id 안에서만 성립한다 */
+  task_id: string;
+  task_ja: string;
   site_name: string;
   start_url: string;
   goal_ja: string;
@@ -51,7 +54,10 @@ export type SiteBlock = {
 export type Matrix = {
   generated_at: string;
   profiles: Array<{ id: string; version: string; label_ja: string; note_ja: string | null }>;
+  /** 비교축(같은 用事)의 사이트들 */
   sites: SiteBlock[];
+  /** 비교축 밖의 用事. 없으면 빈 배열 */
+  other_tasks: SiteBlock[];
   totals: {
     runs: number;
     reached: number;

@@ -81,7 +81,8 @@ export default function Report() {
           </div>
           <div className="bg-surface px-6 py-5">
             <div className="text-[11px] text-fg-dim">用事（全サイト共通）</div>
-            <div className="mt-1 font-bold">転入届の持ち物と窓口を探す</div>
+            {/* 用事は matrix.json から。手で書くと、別の用事を回した日にここだけ嘘になる */}
+            <div className="mt-1 font-bold">{m.sites[0]?.task_ja}</div>
             <div className="mt-1 text-sm text-fg-muted">{m.sites[0]?.goal_ja}</div>
           </div>
         </div>
@@ -123,6 +124,9 @@ export default function Report() {
           マス単体ではなく、縦（プロファイル）と横（サイト）の合計を読んでください。
         </p>
         <Matrix matrix={m} cards={cards} />
+
+        {/* ── 用事を変えたら ─────────────────────────── */}
+        <OtherTasks matrix={m} />
 
         {/* ── 止まった場所 ───────────────────────────── */}
         <StuckList matrix={m} />
@@ -245,6 +249,60 @@ export default function Report() {
         <Honesty control={demo.control} senior={demo.senior} matched={demo.matched} />
       </Section>
     </Page>
+  );
+}
+
+/**
+ * 「転入届だけの話ではないのか」への答え。
+ *
+ * 比較軸（同じ用事を5サイト）に別の用事を混ぜると、棒の差がサイト由来か用事由来か
+ * 分からなくなる。だから混ぜずに、別枠で出す。
+ *
+ * ★ 対照群が到達していない用事は、赤で警告を出したうえで数字を**灰色**にする。
+ *   そこでは「制約が原因」と言えない — 正解キー側の問題かもしれない (절대규칙 3).
+ */
+function OtherTasks({ matrix }: { matrix: ReturnType<typeof loadMatrix> }) {
+  const rows = matrix?.other_tasks ?? [];
+  if (!rows.length) return null;
+
+  return (
+    <>
+      <h2 className="mt-14 text-xl font-bold">用事を変えても起きるのか</h2>
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-fg-muted">
+        上の表は<strong className="text-fg">同じ1つの用事</strong>を5サイトに通した結果です。
+        用事を変えると別の話になるので、混ぜずにここに置きます。
+      </p>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        {rows.map((s) => {
+          const n = s.cells.filter((c) => c.profile_id !== "control");
+          const failed = n.filter((c) => !c.reached).length;
+          const ctrl = s.cells.filter((c) => c.profile_id === "control");
+          return (
+            <div key={s.mission_id} className="card px-6 py-5">
+              <div className="text-[11px] text-fg-dim">
+                {s.site_name} / {s.mission_id}
+              </div>
+              <div className="mt-1 font-bold">{s.task_ja}</div>
+              <div
+                className={`tnum mt-3 text-3xl font-bold ${s.control_reached ? "text-blocked" : "text-fg-dim"}`}
+              >
+                {failed}
+                <span className="ml-1.5 text-sm font-medium text-fg-dim">/ {n.length} 回 たどり着けず</span>
+              </div>
+              <div className="mt-1 text-[11px] text-fg-dim">
+                対照群（制約なし）は {ctrl.filter((c) => c.reached).length}/{ctrl.length} 到達
+              </div>
+              {!s.control_reached && (
+                <p className="mt-3 rounded-lg bg-stumble/[0.08] px-3 py-2 text-[11px] leading-relaxed text-stumble">
+                  ⚠ 対照群も到達していません。この用事では「制約が原因」とは言えません
+                  — 正解キー側が厳しすぎる可能性を、この実行数では否定できません。
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 

@@ -52,8 +52,9 @@ export function SiteBars({ sites }: { sites: SiteBlock[] }) {
         })}
       </ul>
 
+      {/* 用事の名前を手で書かない。別の用事を回した日に、この行だけ古いまま残る */}
       <p className="mt-5 border-t border-line-soft pt-4 text-[11px] leading-relaxed text-fg-dim">
-        同じ用事（転入届の持ち物と窓口を探す）を、同じ制約セットで各サイトに通した結果です。
+        同じ用事（{ordered[0]?.task_ja}）を、同じ制約セットで各サイトに通した結果です。
         1マスあたりの実行回数は少なく、実行ごとに結果が変わることを確認しています。
       </p>
     </div>

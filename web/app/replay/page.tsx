@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Page } from "@/components/Chrome";
 import { ReplayPlayer } from "@/components/ReplayPlayer";
 import { listReplays, loadReplay } from "@/lib/replay";
-import { outcomeLabel } from "@/lib/matrix";
+import { outcomeLabel, loadMatrix } from "@/lib/matrix";
 
 /**
  * リプレイ画面（website design/play_screen.png）。
@@ -39,7 +39,15 @@ export default async function ReplayPage({
   }
 
   const o = outcomeLabel(replay.outcome);
-  const others = ids.map((id) => ({ id, on: id === runId }));
+
+  // 실행 id는 `<mission>__<profile>__<version>__<ts>` 다. 로마자 mission id를 그대로
+  // 버튼에 박으면 「hamamatsu-tennyu」가 되는데, 이건 심사위원이 읽을 글자가 아니다.
+  // 사이트 이름은 손으로 적지 않고 matrix.json에서 끌어온다 — 손으로 적으면 어긋난다.
+  const siteNames = new Map((loadMatrix()?.sites ?? []).map((s) => [s.mission_id, s.site_name]));
+  const others = ids.map((id) => {
+    const [mission, profile] = id.split("__");
+    return { id, on: id === runId, label: `${siteNames.get(mission) ?? mission} · ${profile}` };
+  });
 
   return (
     <Page back={{ href: "/report", label: "← 結果一覧へ" }}>
@@ -53,10 +61,12 @@ export default async function ReplayPage({
           押した場所の印は、記録された座標から描いています。
         </p>
 
-        {/* この実行は何か */}
-        <div className="card mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 px-6 py-4">
+        {/* この実行は何か。
+            ★ 用事は決め打ちしない。粗大ごみの実行に「転入届」と出たらそれは嘘になる —
+              トレースに書いてある goal_ja をそのまま出す (절대규칙 3) */}
+        <div className="card mt-8 px-6 py-4">
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
           <Field label="サイト" value={replay.siteName} />
-          <Field label="用事" value="転入届の持ち物と窓口を探す" />
           <Field
             label="制約プロファイル"
             value={`${replay.profileId} v${replay.profileVersion}`}
@@ -80,6 +90,13 @@ export default async function ReplayPage({
           </div>
           <Field label="クリック" value={`${replay.clicks} 回`} />
           <Field label="かかった時間" value={`${replay.seconds} 秒`} />
+          </div>
+          {replay.goalJa && (
+            <div className="mt-3 border-t border-line pt-3">
+              <div className="text-[11px] text-fg-dim">用事</div>
+              <div className="mt-0.5 text-sm font-bold leading-relaxed">{replay.goalJa}</div>
+            </div>
+          )}
         </div>
 
         {/* ほかの実行 */}
@@ -89,13 +106,13 @@ export default async function ReplayPage({
               <Link
                 key={x.id}
                 href={`/replay?run=${encodeURIComponent(x.id)}`}
-                className={`rounded-full border px-3.5 py-1.5 font-mono text-[11px] transition ${
+                className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition ${
                   x.on
                     ? "border-brand bg-brand/[0.08] text-brand"
                     : "border-line bg-surface text-fg-muted hover:border-brand hover:text-brand"
                 }`}
               >
-                {x.id.split("__").slice(0, 2).join(" · ")}
+                {x.label}
               </Link>
             ))}
           </div>
