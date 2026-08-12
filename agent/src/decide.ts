@@ -86,10 +86,12 @@ export async function decide(
     step_type: "decide" as const,
     system: DECIDE_SYSTEM,
     user: decideUser(mission, obs, history),
-    schema: actionSchema(profile),
+    // ★ obs를 넘긴다. 좌우 스크롤은 「지금 이 화면이 옆으로 잘려 있는가」로만 열린다 —
+    //   프로필로 정하는 것이 아니다 (prompts.ts allowedKinds).
+    schema: actionSchema(profile, obs),
   };
 
-  const kinds = allowedKinds(profile);
+  const kinds = allowedKinds(profile, obs);
 
   // ★ 모든 시도의 원가가 여기 쌓인다. 성공했든 실패했든 부른 호출은 전부 남는다.
   //   재시도가 붙은 스텝은 trace의 llm_calls가 2~3건이 된다 = 사후에 셀 수 있다 = 숨기지 않는다.

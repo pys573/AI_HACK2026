@@ -288,6 +288,7 @@ export function RunReport({ run }: { run: RunView }) {
 const ACTION_JA: Record<string, string> = {
   click: "リンクを押した",
   scroll: "画面を送った",
+  scroll_side: "画面を横に送った",
   back: "前のページに戻った",
   find_in_page: "ページ内を検索した",
   site_search: "サイト内を検索した",

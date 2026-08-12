@@ -142,7 +142,12 @@ function revisits(steps: Step[]): Signal[] {
   return out;
 }
 
-/** 같은 페이지에서 스크롤만 3회 이상 이어진 구간 */
+/**
+ * 같은 페이지에서 스크롤만 3회 이상 이어진 구간.
+ * 세로·가로를 한 덩어리로 본다 — 사람 쪽에서 보면 둘 다 「찾느라 계속 밀고 있다」다.
+ */
+const isScroll = (s: Step) => s.action?.kind === "scroll" || s.action?.kind === "scroll_side";
+
 function scrollRuns(steps: Step[]): Signal[] {
   const out: Signal[] = [];
   let run: Step[] = [];
@@ -150,8 +155,10 @@ function scrollRuns(steps: Step[]): Signal[] {
   const flush = () => {
     if (run.length >= 3) {
       const first = run[0];
-      const down = run.filter((s) => (s.action?.delta ?? 0) > 0).length;
-      const up = run.length - down;
+      const vert = run.filter((s) => s.action?.kind === "scroll");
+      const side = run.filter((s) => s.action?.kind === "scroll_side");
+      const down = vert.filter((s) => (s.action?.delta ?? 0) > 0).length;
+      const up = vert.length - down;
       // 화면에 몇 개가 보였는지를 같이 낸다 — 「왜 못 찾았나」의 근거가 여기 있다
       const seen = Math.round(run.reduce((a, s) => a + s.seen.elements.length, 0) / run.length);
       out.push({
@@ -159,9 +166,15 @@ function scrollRuns(steps: Step[]): Signal[] {
         step_n: first.n,
         url: pageOf(first),
         evidence: [
-          `${span(first.n, run[run.length - 1].n)}で、同じページをスクロールし続けている（下${down}回・上${up}回）`,
+          // 가로가 0이면 문구는 예전과 한 글자도 다르지 않다 — 기존 트레이스의 소견이 안 바뀐다
+          `${span(first.n, run[run.length - 1].n)}で、同じページをスクロールし続けている` +
+            `（下${down}回・上${up}回${side.length ? `・横${side.length}回` : ""}）`,
           `この間の1画面あたりの操作要素は平均${seen}個`,
           ...(up > 0 ? [`途中で上に戻っている（${up}回）= 通り過ぎたと本人が判断している`] : []),
+          // 가로로 밀었다는 것은 창에 안 들어간 부분을 찾고 있었다는 뜻이다. 원인이 다르므로 따로 적는다
+          ...(side.length
+            ? [`横に${side.length}回動かしている = 画面に収まりきらない部分を探している`]
+            : []),
         ],
         wasted_steps: run.length,
         // 3회는 「내려보는 중」이다. 6회면 그 페이지에 찾는 게 없다는 뜻이다
@@ -172,11 +185,11 @@ function scrollRuns(steps: Step[]): Signal[] {
   };
 
   for (const s of steps) {
-    const cont = s.action?.kind === "scroll" && run.length > 0 && pageOf(run[run.length - 1]) === pageOf(s);
-    if (s.action?.kind === "scroll" && (run.length === 0 || cont)) run.push(s);
+    const cont = isScroll(s) && run.length > 0 && pageOf(run[run.length - 1]) === pageOf(s);
+    if (isScroll(s) && (run.length === 0 || cont)) run.push(s);
     else {
       flush();
-      if (s.action?.kind === "scroll") run = [s];
+      if (isScroll(s)) run = [s];
     }
   }
   flush();
@@ -223,7 +236,7 @@ function actionFailures(steps: Step[]): Signal[] {
  * 조건: 화면 안 비율 10% 미만 + 그 페이지에서 실제로 스크롤이 일어났다.
  */
 function viewportStarved(steps: Step[]): Signal[] {
-  const scrolled = new Set(steps.filter((s) => s.action?.kind === "scroll").map(pageOf));
+  const scrolled = new Set(steps.filter(isScroll).map(pageOf));
   const cand = steps
     .filter((s) => scrolled.has(pageOf(s)) && s.constraint.elements_total > 0)
     .map((s) => ({ s, ratio: s.constraint.elements_in_viewport / s.constraint.elements_total }))
