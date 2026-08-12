@@ -51,7 +51,12 @@ export type Observation = {
   title: string;
   /** dom_text=false인 프로필에서는 null. 스크린샷만으로 판단해야 한다. */
   text: string | null;
-  elements: Array<Pick<Element, "index" | "role" | "name" | "in_viewport">>;
+  /**
+   * box는 리플레이 화면 전용이다. `decideUser()`(prompts.ts)는 index/role/name만
+   * 문자열로 엮으므로 좌표는 프롬프트에 실리지 않는다 — 모델은 이 값을 못 본다.
+   * 실어도 되는 이유가 이것이고, 이 조건이 깨지면 시각 정보를 준 것이 되어 제약이 무너진다.
+   */
+  elements: Array<Pick<Element, "index" | "role" | "name" | "in_viewport" | "box">>;
   screenshot: Buffer | null;
   scroll: { y: number; height: number };
 };
@@ -114,6 +119,7 @@ export function constrain(
     role: e.role,
     name: maskText(e.name, true),
     in_viewport: true,
+    box: e.box,
   }));
 
   // ★ `raw.text`(페이지 전체)가 아니라 `raw.text_viewport`(지금 화면)를 쓴다.

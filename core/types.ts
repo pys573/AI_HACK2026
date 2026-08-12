@@ -86,6 +86,15 @@ export type ElementView = {
   role: string;
   name: string;
   in_viewport: boolean;
+  /**
+   * 화면상 위치. **에이전트에게는 가지 않는다** — 리플레이 화면이 스크린샷 위에
+   * 「어디를 봤고 어디를 눌렀는가」를 그리기 위해서만 존재한다.
+   * 모델에게 좌표를 주면 시각 정보를 준 것이 되어 프로필의 관측 제약이 무너진다.
+   *
+   * y는 **문서 좌표**(scrollY 포함)다. 스크린샷 위에 그릴 때는 scroll.y를 빼야 한다.
+   * optional인 이유: 2026-08-12 이전 트레이스 28건에는 이 필드가 없다. 없으면 안 그린다.
+   */
+  box?: { x: number; y: number; w: number; h: number };
 };
 
 /**

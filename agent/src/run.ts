@@ -67,6 +67,9 @@ function snapshot(o: RawObservation | Observation, screenshotKey: string | null)
       role: e.role,
       name: e.name,
       in_viewport: e.in_viewport,
+      // 리플레이 전용. decide()가 만드는 프롬프트에는 들어가지 않는다 — decide.ts는
+      // index/role/name만 문자열로 엮는다. 여기에 실어도 모델은 못 본다.
+      box: e.box,
     })),
     scroll: o.scroll,
     screenshot_key: screenshotKey,
