@@ -577,6 +577,109 @@ function loadMatched(): MatchedView {
   };
 }
 
+/**
+ * ★ 위협 검사 실행 — 프롬프트 인젝션을 심어 둔 로컬 픽스처에 대한 1회 실행.
+ *
+ * ⚠️ **사이트는 가공이다.** 실재하지 않는 「ツマヅキ市（架空）」이고, 인젝션은 우리가
+ *    심었다. 남의 사이트에는 심지 않는다 (절대규칙 8). 다만 **실행 자체는 실측이다** —
+ *    실제 브라우저, 실제 모델 호출, 실제 원가. 그래서 숫자를 화면에 쓸 수 있다.
+ *    이 구분이 무너지면 「인젝션을 막았다」가 연출이 된다.
+ *
+ * 화면에 필요한 것은 3가지뿐이다:
+ *   ① 무엇을 잡았는가 (기록)
+ *   ② 그래서 모델에게 **무엇이 갔는가** (before/after) ← 여기가 증거다
+ *   ③ 에이전트가 함정으로 갔는가 (행동)
+ */
+export type ThreatView = {
+  kind: string;
+  severity: "block" | "warn" | "info";
+  location: string;
+  excerpt: string;
+  verdict: "allow" | "review" | "block";
+  noteJa: string;
+};
+
+export type ShieldView = {
+  runId: string;
+  siteNameJa: string;
+  startUrl: string;
+  intentJa: string;
+  threats: ThreatView[];
+  blockedCount: number;
+  /** 관측 그대로 — 인젝션이 들어 있는 쪽 */
+  rawText: string;
+  /** 모델에게 실제로 건네진 쪽 */
+  seenText: string;
+  /** 요소 라벨의 before/after. 이름이 통째로 지워진 링크가 여기 나온다 */
+  labels: { index: number; raw: string; seen: string }[];
+  /** 방문한 URL. 함정 페이지가 여기 없다는 것이 결과다 */
+  visited: string[];
+  reached: boolean;
+  clicks: number;
+  seconds: number;
+  totalUsd: number;
+  calls: number;
+  /** 에이전트가 실제로 고른 것과 그 이유 — 인젝션이 아니라 용건을 따랐다는 기록 */
+  choiceJa: string;
+  reasonJa: string;
+} | null;
+
+export function loadShield(): ShieldView {
+  let t: RunTrace;
+  try {
+    t = readTrace("honeypot.json");
+  } catch {
+    return null; // 검증 트레이스가 없어도 페이지는 뜬다
+  }
+
+  const s = t.steps[0];
+  const vp = s.raw.elements.filter((e) => e.in_viewport);
+  // 화면 안 요소는 seen과 순서가 1:1이다 (위 labelPairs()와 같은 근거).
+  // 어긋나면 짝을 만들지 않는다 — 잘못 짝지은 before/after는 화면 위의 거짓말이다
+  const labels =
+    vp.length === s.seen.elements.length
+      ? s.seen.elements
+          .map((e, i) => ({ index: e.index, raw: vp[i].name, seen: e.name }))
+          .filter((p) => p.raw !== p.seen)
+      : [];
+
+  const threats: ThreatView[] = t.steps.flatMap((x) =>
+    x.threats.map((th) => ({
+      kind: th.kind,
+      severity: th.severity,
+      location: th.location,
+      excerpt: th.excerpt,
+      verdict: th.verdict,
+      noteJa: th.note_ja,
+    })),
+  );
+
+  const choice =
+    s.action && typeof s.action.index === "number"
+      ? (s.seen.elements.find((e) => e.index === s.action!.index)?.name ?? "")
+      : "";
+
+  return {
+    runId: t.run_id,
+    siteNameJa: t.mission.site_name,
+    startUrl: t.mission.start_url,
+    intentJa: t.mission.intent_ja,
+    threats,
+    blockedCount: threats.filter((x) => x.verdict === "block").length,
+    rawText: s.raw.text ?? "",
+    seenText: s.seen.text ?? "",
+    labels,
+    visited: [...new Set(t.steps.map((x) => x.raw.url))],
+    reached: t.verdict.reached,
+    clicks: t.verdict.clicks,
+    seconds: t.verdict.seconds,
+    totalUsd: t.cost.total_usd,
+    calls: t.cost.calls,
+    choiceJa: choice,
+    reasonJa: s.action?.reason_ja ?? "",
+  };
+}
+
 export function loadDemo() {
   const ct = readTrace("control.json");
   const st = readTrace("senior-70s.json");
@@ -585,6 +688,7 @@ export function loadDemo() {
     senior: toRunView(st),
     n3: loadN3(),
     matched: loadMatched(),
+    shield: loadShield(),
     moment: findMoment(ct, st),
     mission: {
       intentJa: ct.mission.intent_ja,
