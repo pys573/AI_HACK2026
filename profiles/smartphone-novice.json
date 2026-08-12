@@ -5,7 +5,14 @@
   "purpose": "가장 강한 제약. DOM 텍스트를 아예 차단하고 스크린샷만 준다 — 시각 탐색만으로 태스크가 되는가.",
   "claims": "화면에 보이는 것(스크린샷)만으로 조작했을 때의 결과다. 접근성 트리·숨은 텍스트는 사용하지 않았다.",
   "does_not_claim": "실재하는 초보 사용자의 인지 과정을 재현했다고 주장하지 않는다.",
-  "lexicon": { "cohort": "senior", "mask_below": 20, "partial_below": null, "unknown": "keep" },
+  "lexicon": {
+    "kind": "comprehension_rate",
+    "cohort": "senior",
+    "mask_below": 20,
+    "partial_below": null,
+    "unknown": "keep",
+    "source": "NINJAL 外来語定着度調査 (CC BY 4.0)"
+  },
   "viewport": { "width": 375, "height": 667, "zoom": 1.5 },
   "observation": { "dom_text": false, "screenshot": true },
   "tools": { "find_in_page": false, "site_search": false, "back_limit": 3 },
