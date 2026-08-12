@@ -21,7 +21,8 @@
     "security:test": "node --test \"security/*.test.ts\"",
     "honeypot": "node security/honeypot.ts",
     "honeypot:live": "node security/honeypot-live.ts",
-    "honeypot:serve": "node fixtures/honeypot/serve.ts"
+    "honeypot:serve": "node fixtures/honeypot/serve.ts",
+    "web:data": "node scripts/build-web-data.ts"
   },
   "devDependencies": {
     "playwright": "^1.62.1"
