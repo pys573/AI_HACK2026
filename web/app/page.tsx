@@ -1,9 +1,8 @@
-import Link from "next/link";
+import Image from "next/image";
 import { Page } from "@/components/Chrome";
 import { loadMatrix } from "@/lib/matrix";
 import { loadProfileCards } from "@/lib/profiles";
 import { ProfileCards } from "@/components/ProfileCards";
-import { SiteBars } from "@/components/SiteBars";
 
 /**
  * ランディング。
@@ -19,37 +18,54 @@ import { SiteBars } from "@/components/SiteBars";
  *   「ペルソナ条件を再現」→ 見えるものを実際に減らす
  *   「監査したいサイト」→ 試したいサイト        (감사 프레임을 안 쓴다)
  *   인물 사진 → 제약 사양 그 자체              (사진은 그 자체로 「재현했다」가 된다)
+ *
+ * 랜딩은 **컨셉과 홍보**의 자리다. 숫자를 늘어놓는 곳이 아니다.
+ * 첫 화면에는 한 사이트의 한 문장만 두고, 나머지 계측은 /report로 보낸다.
  */
+
+/** 첫 화면에 세우는 사이트. 데이터에 없으면 전체 합계로 떨어진다 */
+const HERO_SITE = "新宿区";
+
 export default function Home() {
   const m = loadMatrix();
   const cards = loadProfileCards(m?.profiles.map((p) => p.id) ?? []);
 
-  // 머리기사는 「가장 많이 막힌 사이트」가 아니라 **모든 사이트의 합계**다.
-  // 최악의 사이트만 고르면 그건 고른 사람의 주장이지 계측이 아니다.
-  const constrained = m ? m.by_profile.filter((p) => p.id !== "control") : [];
-  const tried = constrained.reduce((a, p) => a + p.runs, 0);
-  const stuck = constrained.reduce((a, p) => a + (p.runs - p.reached), 0);
-  const control = m?.by_profile.find((p) => p.id === "control");
+  // ★ 머리기사도 손으로 쓰지 않는다.
+  //   지정한 사이트가 데이터에 있으면 그 사이트의 실측, 없으면 전체 합계.
+  //   대조군은 「제약이 없으면 되는가」의 대조라서 시행 수에서 뺀다.
+  const hero = m?.sites.find((s) => s.site_name === HERO_SITE) ?? null;
+  const heroCells = hero ? hero.cells.filter((c) => c.profile_id !== "control") : [];
+
+  const byProfile = m ? m.by_profile.filter((p) => p.id !== "control") : [];
+  const tried = hero ? heroCells.length : byProfile.reduce((a, p) => a + p.runs, 0);
+  const stuck = hero
+    ? heroCells.filter((c) => !c.reached).length
+    : byProfile.reduce((a, p) => a + (p.runs - p.reached), 0);
+  const where = hero ? `${hero.site_name}で` : "自治体サイトで";
+  const taskJa = hero?.task_ja ?? m?.sites[0]?.task_ja ?? "";
 
   return (
     <Page>
       {/* ── ヒーロー ─────────────────────────────────────── */}
       <section className="brand-wash border-b border-line">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1.15fr_1fr] lg:items-center">
+        <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
           <div>
-            {/* 携帯幅では 1.7rem。3rem のままだと「たどり着けなかった。」の
-                「た。」だけ次の行に落ちて、数字の対比が読めなくなる */}
             {m && tried > 0 ? (
-              <h1 className="text-[1.7rem] font-bold leading-[1.35] tracking-tight sm:text-[2.35rem]">
-                {/* ★ 用事の名前は手で書かない。matrix.json の task_ja をそのまま出す —
+              <h1 className="font-bold leading-[1.4] tracking-tight">
+                {/* ★ 用事の名前も回数も手で書かない。matrix.json から出す —
                     別の用事を回した日にここだけ古いまま残ると、それは嘘になる。
-                    長いので小さい行に逃がす。ここで折れても数字の行は崩れない */}
-                <span className="block text-base font-bold leading-snug text-fg-muted sm:text-lg">
-                  自治体サイトで「{m.sites[0]?.task_ja}」
+                    1行目だけ小さいのは、長くて折れても数字の2行が崩れないようにするため */}
+                {/* 1行目だけ小さいのは、用事の名前が長いからだ。数字の2行と同じ大きさにすると
+                    「を」だけ次の行に落ちて、下の数字の対比まで読みにくくなる */}
+                <span className="block text-balance text-[1.3rem] leading-snug sm:text-[1.5rem] lg:text-[1.3rem] xl:text-[1.5rem]">
+                  {where}「{taskJa}」を
                 </span>
-                <span className="tnum text-brand">{tried}</span> 回、試させた。
-                <br />
-                <span className="tnum text-blocked">{stuck}</span> 回、たどり着けなかった。
+                <span className="block text-[1.7rem] sm:text-[2.35rem] lg:text-[1.85rem] xl:text-[2.35rem]">
+                  <span className="tnum text-brand">{tried}</span> 回、試させた。
+                </span>
+                <span className="block text-[1.7rem] sm:text-[2.35rem] lg:text-[1.85rem] xl:text-[2.35rem]">
+                  <span className="tnum text-blocked">{stuck}</span> 回、たどり着けなかった。
+                </span>
               </h1>
             ) : (
               <h1 className="text-3xl font-bold leading-[1.35] tracking-tight sm:text-[2.6rem]">
@@ -59,45 +75,33 @@ export default function Home() {
               </h1>
             )}
 
-            <p className="mt-5 font-medium text-brand">
-              制約は演技ではありません。見えるものを実際に減らしています。
+            {/* ★ 「特定ユーザーを再現するAI」とは書かない。
+                それは検証できない主張で、発表禁止語そのものだ (CLAUDE.md 表現の線)。
+                言えるのは「明示された制約の下で動いた」までである */}
+            <p className="mt-6 text-lg font-medium leading-relaxed sm:text-xl">
+              明示された制約の下で動くAIが
+              <br />
+              ウェブサイトの「つまずき」を見つけ、
+              <br />
+              改善策まで提案する
             </p>
-            <p className="mt-3 max-w-xl leading-relaxed text-fg-muted">
-              明示された制約スペックの下で、AIが実際に自治体サイトを操作します。
-              主観だった「使いにくさ」を、同じ条件・同じ基準で数えます。
-            </p>
-
-            {m && control && (
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-fg-muted">
-                同じサイト・同じ用事で、制約なしの対照群は
-                <strong className="text-clear">
-                  {control.reached}/{control.runs} 到達
-                </strong>
-                しています。差の原因をサイトだけに押しつけないための対照です。
-              </p>
-            )}
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/report"
-                className="brand-solid rounded-full px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand/20 transition hover:brightness-110"
-              >
-                結果を見る
-              </Link>
-              <Link
-                href="/replay"
-                className="rounded-full border border-line bg-surface px-7 py-3.5 text-sm font-bold text-fg transition hover:border-brand hover:text-brand"
-              >
-                迷った様子を再生する
-              </Link>
-            </div>
           </div>
 
-          {/* 사이트별 이탈. 목업의 「분석 진척 68%」 자리 —
-              돌지도 않는 진행률 대신, 실제로 나온 결과를 둔다 */}
-          {m && <SiteBars sites={m.sites} />}
+          {/* 목업의 「분석 진척 68%」 자리. 이건 제품 이미지이지 계측값이 아니다 —
+              그래서 여기에 숫자를 붙이지 않는다. 실측은 전부 /report에 있다 */}
+          <Image
+            src="/img/hero-visual.png"
+            alt=""
+            width={1288}
+            height={860}
+            priority
+            /* 원본 PNG에 투명 여백이 넉넉히 들어 있어서, 그대로 두면 실제 그림이 작아 보인다.
+               자르는 대신 조금 키워서 목업의 비율에 맞춘다 */
+            className="h-auto w-full max-w-xl justify-self-center lg:max-w-none lg:scale-[1.12]"
+          />
         </div>
       </section>
+
 
       {/* ── 制約プロファイル ─────────────────────────────── */}
       <section className="border-b border-line bg-surface-2">
