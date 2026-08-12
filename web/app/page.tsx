@@ -4,6 +4,7 @@ import { loadMatrix } from "@/lib/matrix";
 import { loadProfileCards } from "@/lib/profiles";
 import { Personas } from "@/components/Personas";
 import { RequestForm } from "@/components/RequestForm";
+import { ArtReduce, ArtCompare, ArtRewrite } from "@/components/StepArt";
 
 /**
  * ランディング。
@@ -35,7 +36,9 @@ export default function Home() {
   return (
     <Page>
       {/* ── ヒーロー ─────────────────────────────────────── */}
-      <section className="brand-wash border-b border-line">
+      {/* overflow-hidden — 아래 이미지의 lg:scale-[1.12]가 1024px에서 화면 밖으로 4px 삐져나가
+          가로 스크롤바가 생긴다. 데모를 띄우는 노트북 폭이 딱 여기다 */}
+      <section className="brand-wash overflow-hidden border-b border-line">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
           <div>
             {/* ★ 2026-08-12. 여기 있던 「◯人に試させた / ◯人がたどり着けなかった」와
@@ -54,7 +57,7 @@ export default function Home() {
               <br className="sm:hidden" />
               見つけ、
               <br className="hidden sm:inline" />
-              改善策まで提案する
+              改善策まで提案する。
             </h1>
           </div>
 
@@ -78,13 +81,15 @@ export default function Home() {
       <section className="border-b border-line bg-surface-2">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
-            さまざまな人の視点で試します
+            多様なタイプのユーザーの視点から試す。
           </h2>
-          {/* ★ 이 두 줄이 제품의 정의다. 카테고리(「人の視点」)를 크게 말한 바로 밑에서
+          {/* ★ 이 두 줄이 제품의 정의다. 카테고리(「ユーザーの視点」)를 크게 말한 바로 밑에서
               **그 시점을 어떻게 만드는가**를 못 박는다 — 연기가 아니라 접근 제한이다.
-              같은 화면 안에 있어야 위의 h2가 「연기하는 AI」로 읽히지 않는다 */}
+              같은 화면 안에 있어야 위의 h2가 「연기하는 AI」로 읽히지 않는다.
+              주어를 제품명으로 둔다 — 「AIは演じない」가 아니라 「ツマヅキが演じさせない」다.
+              일반론이 아니라 **우리가 한 설계 선택**이라는 게 여기서 갈린다 */}
           <p className="mx-auto mt-4 max-w-xl text-center text-sm leading-relaxed text-fg-muted sm:text-base">
-            AIエージェントにペルソナを演じさせない。
+            ツマヅキはAIにペルソナを演じさせない。
             <br />
             情報のアクセスを実際に制約してテストする。
           </p>
@@ -98,38 +103,60 @@ export default function Home() {
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
             ツマヅキがすること
           </h2>
-          <ol className="mt-10 grid gap-5 md:grid-cols-3">
+          {/* ★ 2026-08-12. 가운데를 「記録する」에서 「比べる」로 바꿨다.
+              앞뒤만 있으면 세 장을 다 읽고 나오는 질문이 「わざと見えなくして、
+              できないと言っているだけでは」다. 우리는 그 답을 이미 갖고 있는데
+              (制約なしは全部到達する) 랜딩에 없었다. 記録は3枚目に畳んだ。
+              ⚠️ 여기에 実測値는 쓰지 않는다 — 랜딩은 「무엇인가」의 자리다 (CLAUDE.md).
+              19/19도 0%↔94%도 /report에 있다 */}
+          <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {[
               {
-                n: "01",
                 t: "見えるものを実際に減らす",
-                d: "調査に基づいて語を伏せ、画面を拡大し、検索を無効にします。「そのつもりで動いて」と頼むのではなく、渡すデータ自体を削ります。",
+                d: "調査に基づいて語を伏せる。画面を拡大する。検索を使わせない。プロファイルごとに削るものが違います。「そのつもりで動いて」と頼むのではなく、渡すデータ自体を削ります。",
+                art: <ArtReduce />,
               },
               {
-                n: "02",
-                t: "止まった場所を記録する",
-                d: "クリック・ページ遷移・滞在時間・AIがその場で書いた理由を、1手ずつ残します。あとから誰でも同じ記録を読み直せます。",
+                t: "制約なしと並べて走らせる",
+                d: "同じ用事を、制約ありとなしで走らせます。制約なしなら最後まで行けたのに、削ったとたん止まった — その差が出た場所だけを、ツマヅキとして数えます。",
+                art: <ArtCompare />,
               },
               {
-                n: "03",
-                t: "直す文を出す",
-                d: "止まった1件ごとに、何が止めたのかと、どう書きかえるのかを対にして出します。根拠の数字が必ず付きます。",
+                t: "止まった1手を、直す文にする",
+                d: "クリック・ページ遷移・滞在時間・その場の理由を1手ずつ残し、何が止めたのかと、どう書きかえるのかを対にして出します。根拠の数字が必ず付きます。",
+                art: <ArtRewrite />,
               },
             ].map((s) => (
-              <li key={s.n} className="card p-6">
-                <div className="tnum text-lg font-bold text-brand">{s.n}</div>
-                <h3 className="mt-2 font-bold">{s.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-fg-muted">{s.d}</p>
+              <li key={s.t} className="card flex flex-col items-center px-7 py-10 text-center">
+                {/* 원형 판 — 그림이 카드 위에서 떠 보이지 않게 받침을 깐다 */}
+                <div className="grid size-36 shrink-0 place-items-center rounded-full bg-[#eaf0fc] ring-1 ring-line">
+                  {s.art}
+                </div>
+                <h3 className="mt-7 text-lg font-bold leading-snug">{s.t}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-fg-muted">{s.d}</p>
               </li>
             ))}
           </ol>
 
-          <p className="mx-auto mt-12 max-w-3xl text-center text-xl font-bold leading-relaxed sm:text-2xl">
-            主観だった「使いにくさ」を、
+          {/* ★ 2026-08-12. 「大規模に」를 뺐다. 105회는 大規模가 아니다 —
+              말할 수 있는 것보다 크게 말한 자리였다. 우리가 실제로 하는 것은
+              **같은 기준으로 몇 번이고 재고, 보이게 하는 것**이다 (절대규칙 4). */}
+          {/* ★ 끊는 위치를 폭마다 바꾼다. 글자를 줄여서 맞추면 「3포인트 크게」가 무너지므로,
+              크기는 고정하고 **줄 수**로 맞춘다. 그대로 두면 「使いにくさ」/ を、처럼
+              조사만 다음 줄로 떨어진다 — 히어로 h1과 같은 문제다.
+                폰(<640)      5줄 — 한 줄에 최대 9자
+                태블릿(<1024) 4줄 — 27px로 커지므로 긴 줄은 여전히 못 넣는다
+                데스크톱      2줄 — 여기서만 문장이 통째로 들어간다 */}
+          <p className="mx-auto mt-12 max-w-4xl text-center text-[23px] font-bold leading-relaxed tracking-tight sm:text-[27px]">
+            主観的だった
+            <br className="sm:hidden" />
+            「使いにくさ」を、
             <br />
-            大規模に同一基準で計測する。
-            <br />
-            日本の <span className="text-brand">DX化</span> を前に進めます。
+            同じ基準で何度も
+            <br className="lg:hidden" />
+            測定・可視化して、
+            <br className="lg:hidden" />
+            日本の<span className="text-brand">DX化</span>を加速する。
           </p>
         </div>
       </section>
