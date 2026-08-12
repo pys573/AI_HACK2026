@@ -17,7 +17,7 @@ import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Batch, RunTrace } from "../../core/types.ts";
 import { BASELINE_MODEL } from "../../llm/pricing.ts";
-import { routingTable } from "../../llm/routing.ts";
+import { pinnedModel, routingTable } from "../../llm/routing.ts";
 import { loadMission } from "./mission.ts";
 import { loadProfile } from "./constrain.ts";
 import { routingOff } from "./llm-opts.ts";
@@ -65,7 +65,11 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
   }
 
   const createdAt = new Date().toISOString();
-  const batchId = `batch__${mission.id}__${Date.now()}`;
+  // ★ 모델을 못 박은 배치는 **이름부터 다르다.** 이 실행의 원가는 라우팅 절감의 증거가
+  //   아니고, 도달률도 평소의 라우팅 조건에서 나온 값이 아니다. 같은 `batch__` 이름을
+  //   쓰면 집계 스크립트가 조용히 섞어 넣고, 그 순간 두 실험이 하나로 뭉개진다.
+  const pin = pinnedModel();
+  const batchId = `${pin ? "batchfixed" : "batch"}__${mission.id}__${Date.now()}`;
   const batchDir = join(RUNS_DIR, batchId);
   mkdirSync(batchDir, { recursive: true });
 
@@ -80,7 +84,9 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
   console.log(`  대상   : ${mission.site_name} / ${mission.id}`);
   console.log(`  명단   : ${roster.join(", ")}`);
   console.log(`  구성   : ${roster.length}프로필 × ${variants}회 = ${plan.length}런 (순차 — 절대규칙 6)`);
-  console.log(`  라우팅  : ${routingOff() ? "OFF — 대조군 (ORCA_NO_ROUTING=1)" : "llm/routing.ts 표"}`);
+  console.log(
+    `  라우팅  : ${pin ? `못 박음 — 전원 ${pin} (ORCA_FORCE_MODEL). 이 배치의 원가는 절감의 증거가 아니다` : routingOff() ? "OFF — 대조군 (ORCA_NO_ROUTING=1)" : "llm/routing.ts 표"}`,
+  );
   for (const r of routingTable()) console.log(`             ${r.step_type.padEnd(9)} ${r.model.padEnd(32)} [${r.source}]`);
   // ★ 어림짐작이다. 실측이 아니다 (절대규칙 4). 스텝당 4초 대기 + LLM 왕복에서 나온 감이고,
   //   실제 소요는 아래 진행 표시가 말한다

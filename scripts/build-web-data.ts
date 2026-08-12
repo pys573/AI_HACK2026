@@ -84,6 +84,29 @@ export type SiteBlock = {
   control_reached: boolean;
 };
 
+/**
+ * 「差は制約のせいか、モデルのせいか」を切るための実験。
+ *
+ * 평소 배치는 대조군이 auto, 제약측이 라우팅 표(4종)다. 그래서 도달률 차이에
+ * 「모델이 달라서 아니냐」가 섞여 있고, **그 데이터만으로는 부정할 수 없다.**
+ * 전원을 한 모델에 못 박고 같은 차이가 남으면 그 반론이 닫힌다.
+ *
+ * ★ model은 설정값이 아니라 **트레이스에 실제로 남은 모델**을 읽는다.
+ *   설정을 읊으면 「돌지도 않은 모델」을 주장하게 된다 (절대규칙 4).
+ */
+export type FixedModelBlock = {
+  models: string[];
+  runs: number;
+  site_names: string[];
+  by_profile: Array<{ id: string; runs: number; reached: number; rate: number }>;
+  /**
+   * 비교 상대. **같은 사이트의** 라우팅 실행만 골라서 센다.
+   * 전체 평균과 나란히 두면 사이트 구성이 달라서 차이가 생기고, 그러면
+   * 모델을 고정한 효과인지 사이트가 달라서인지 또 모르게 된다.
+   */
+  routed_same_sites: Array<{ id: string; runs: number; reached: number; rate: number }>;
+};
+
 export type Matrix = {
   generated_at: string;
   /** 이 표에 들어간 프로필 순서 — 제약이 약한 쪽부터 */
@@ -102,6 +125,8 @@ export type Matrix = {
   };
   /** 프로필별 도달 — 랜딩의 머리기사가 여기서 나온다 */
   by_profile: Array<{ id: string; runs: number; reached: number; rate: number }>;
+  /** 모델을 못 박고 다시 돌린 결과. 안 돌렸으면 null */
+  model_fixed: FixedModelBlock | null;
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -291,6 +316,47 @@ function main() {
     else if (baseline !== null) baseline += b.summary.baseline_cost_usd;
   }
 
+  // ── 모델 고정 실험 ────────────────────────────────────────────
+  // `batchfixed__`는 위 집계에 **일부러 안 들어간다.** 라우팅 조건이 다르므로
+  // 도달률도 원가도 같은 표에 놓을 수 없다. 여기서 따로 센다.
+  const fixedDirs = readdirSync(RUNS).filter((d) => d.startsWith("batchfixed__"));
+  const fixedCells: Array<Cell & { site_name: string }> = [];
+  const fixedModels = new Set<string>();
+  for (const d of fixedDirs) {
+    const b = JSON.parse(readFileSync(join(RUNS, d, "batch.json"), "utf8")) as BatchFile;
+    if (b.run_ids.length <= 1) continue;
+    for (const rid of b.run_ids) {
+      const t = loadTrace(rid);
+      if (!t) continue;
+      fixedCells.push({ ...cellOf(t, rid), site_name: b.site_name });
+      // 실제로 나간 모델을 트레이스에서 읽는다. 설정을 읊지 않는다
+      for (const s of t.steps ?? []) for (const c of s.llm_calls ?? []) fixedModels.add(c.model);
+    }
+  }
+  const fixedSites = [...new Set(fixedCells.map((c) => c.site_name))];
+  const rateBy = (cells: Cell[]) =>
+    ORDER.map((id) => {
+      const cs = cells.filter((c) => c.profile_id === id);
+      return {
+        id,
+        runs: cs.length,
+        reached: cs.filter((c) => c.reached).length,
+        rate: cs.length ? cs.filter((c) => c.reached).length / cs.length : 0,
+      };
+    }).filter((p) => p.runs > 0);
+
+  const model_fixed: FixedModelBlock | null = fixedCells.length
+    ? {
+        models: [...fixedModels].sort(),
+        runs: fixedCells.length,
+        site_names: fixedSites,
+        by_profile: rateBy(fixedCells),
+        routed_same_sites: rateBy(
+          blocks.filter((s) => fixedSites.includes(s.site_name)).flatMap((s) => s.cells),
+        ),
+      }
+    : null;
+
   const matrix: Matrix = {
     generated_at: new Date().toISOString(),
     profiles: ORDER.filter((id) => everything.some((c) => c.profile_id === id)).map((id) => ({
@@ -311,6 +377,7 @@ function main() {
       masked_words: everything.reduce((a, c) => a + c.masked_words, 0),
     },
     by_profile,
+    model_fixed,
   };
 
   if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
@@ -364,6 +431,10 @@ function main() {
       `  [다른 用事] ${s.mission_id.padEnd(20)} ${c.filter((x) => !x.reached).length}/${c.length} 이탈` +
         (s.control_reached ? "" : "  ⚠️ 대조군 미도달 — 제약 탓이라고 말할 수 없다"),
     );
+  }
+  if (model_fixed) {
+    console.log(`모델 고정     : ${model_fixed.models.join(", ")} / ${model_fixed.runs}런 (${model_fixed.site_names.join("・")})`);
+    for (const p of model_fixed.by_profile) console.log(`  ${p.id.padEnd(18)} ${p.reached}/${p.runs}  ${(p.rate * 100).toFixed(0)}%`);
   }
   console.log(`replays.json : ${picks.length}런 (스크린샷 ${copied}장 복사)`);
   const b = matrix.totals.baseline_usd;

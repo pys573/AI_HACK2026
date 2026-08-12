@@ -20,7 +20,7 @@
 
 import type { CostRecord, LlmRequest, LlmResponse } from "../core/types.ts";
 import { estimateCost, FALLBACK_PRICES, type ModelPrice } from "./pricing.ts";
-import { AUTO_MODEL, resolveModel as tableResolveModel, routingDisabled } from "./routing.ts";
+import { AUTO_MODEL, pinnedModel, resolveModel as tableResolveModel, routingDisabled } from "./routing.ts";
 
 const BASE_URL = process.env.ORCAROUTER_BASE_URL ?? "https://api.orcarouter.ai/v1";
 const API_KEY = process.env.ORCAROUTER_API_KEY ?? "";
@@ -300,10 +300,14 @@ export async function complete(req: LlmRequest, opts: CompleteOptions = {}): Pro
   const timeoutMs = opts.timeoutMs ?? 60_000;
 
   // 라우팅의 유일한 결정 지점. 우선순위는 위가 강하다:
-  //   1. force_model         A/B 하네스가 못을 박은 경우 (「전량 opus-5였다면」 기준선)
-  //   2. ORCA_NO_ROUTING=1   실행 전체의 라우팅을 끈다 (대조군). 호출부가 뭘 넘겼든 이긴다
-  //   3. resolveModel:null   이 호출만 라우팅을 끈다
-  //   4. 기본                llm/routing.ts 실측 표
+  //   1. force_model         호출 단위로 못을 박은 경우 (「전량 opus-5였다면」 기준선)
+  //   2. ORCA_FORCE_MODEL    실행 전체를 한 모델에 못 박는다 (모델 교란 제거 실험)
+  //   3. ORCA_NO_ROUTING=1   실행 전체의 라우팅을 끈다 (대조군). 호출부가 뭘 넘겼든 이긴다
+  //   4. resolveModel:null   이 호출만 라우팅을 끈다
+  //   5. 기본                llm/routing.ts 실측 표
+  //
+  // ⚠️ 2가 3·4보다 강한 게 핵심이다. 「제약 때문인가 모델 때문인가」를 가르려면
+  //    **대조군까지** 같은 모델이어야 한다. 대조군만 auto로 빠지면 실험이 성립하지 않는다
   //
   // ⚠️ 2가 3보다 강한 게 핵심이다. 호출부마다 끄는 방식이면 새 호출부에서 한 번
   //    빠뜨리는 순간 「일부만 라우팅된」 실행이 되는데, 그래도 성공하고 숫자도 나온다.
@@ -312,6 +316,7 @@ export async function complete(req: LlmRequest, opts: CompleteOptions = {}): Pro
   //    그 상태의 절감은 우리 시책이 아니라 OrcaRouter의 것이다 (⑥에서 설명이 안 된다)
   const model =
     req.force_model ??
+    pinnedModel() ??
     (opts.resolveModel === null || routingDisabled() ? AUTO_MODEL : (opts.resolveModel ?? tableResolveModel)(req));
 
   const payload: Record<string, unknown> = {

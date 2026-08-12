@@ -102,16 +102,36 @@ function envOverride(step: StepType): string | undefined {
 }
 
 /**
+ * 실행 전체를 **한 모델에 못 박는다.** `ORCA_FORCE_MODEL=openai/gpt-5-mini`
+ *
+ * 왜 필요한가 (2026-08-12):
+ *   지금까지의 배치는 대조군이 auto 1종, 제약측이 표에 따라 여러 종이었다.
+ *   그래서 「도달률의 차이는 제약이 아니라 모델의 차이 아니냐」는 반론에
+ *   **이 데이터로는 답할 수 없다.** 전원을 같은 모델에 못 박고 같은 차이가
+ *   남으면, 그때 처음으로 「제약 때문이다」라고 말할 수 있다.
+ *
+ * ⚠️ 이것은 라우팅 끄기(ORCA_NO_ROUTING)보다 **강하다.** 대조군까지 못 박아야
+ *    의미가 있는 실험이기 때문이다. 대신 이 실행의 원가는 라우팅 절감의 증거가
+ *    아니다 — 그래서 배치 디렉터리 이름을 나누고 집계에서 뺀다.
+ */
+export function pinnedModel(): string | undefined {
+  const v = process.env.ORCA_FORCE_MODEL;
+  return v && v.trim() ? v.trim() : undefined;
+}
+
+/**
  * 이 표가 라우팅의 전부다. 미션도 프로필도 보지 않는다 — step_type만 본다.
  * 그래야 「왜 이 모델인가」가 미션과 무관하게 설명된다.
  */
 export function resolveModel(req: LlmRequest): string {
+  const pin = pinnedModel();
+  if (pin) return pin;
   if (routingDisabled()) return AUTO_MODEL;
   return envOverride(req.step_type) ?? MODEL_BY_STEP[req.step_type] ?? MODEL_BY_STEP.decide;
 }
 
 /** 이 모델이 어디서 정해졌는가. 리포트에 「왜 이 모델인가」를 쓰려면 이게 필요하다 */
-export type ModelSource = "table" | "env" | "disabled";
+export type ModelSource = "table" | "env" | "disabled" | "pinned";
 
 /**
  * 리포트·발표에 그대로 붙일 수 있는 형태. 근거 없는 표는 ⑥에서 0점이다.
@@ -120,10 +140,11 @@ export type ModelSource = "table" | "env" | "disabled";
  *    여기가 설정값을 그대로 읊으면, 대조군 실행의 리포트가 돌지도 않은 모델을 주장하게 된다.
  */
 export function routingTable(): Array<{ step_type: StepType; model: string; source: ModelSource }> {
+  const pinned = pinnedModel() !== undefined;
   const disabled = routingDisabled();
   return (Object.keys(MODEL_BY_STEP) as StepType[]).map((s) => ({
     step_type: s,
     model: resolveModel({ step_type: s, system: "", user: "" }),
-    source: disabled ? "disabled" : envOverride(s) !== undefined ? "env" : "table",
+    source: pinned ? "pinned" : disabled ? "disabled" : envOverride(s) !== undefined ? "env" : "table",
   }));
 }
