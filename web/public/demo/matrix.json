@@ -1,0 +1,2469 @@
+{
+ "generated_at": "2026-08-12T04:48:24.398Z",
+ "profiles": [
+  {
+   "id": "control",
+   "version": "1.0",
+   "label_ja": "制約なし（対照群）",
+   "note_ja": null
+  },
+  {
+   "id": "busy-worker",
+   "version": "1.0",
+   "label_ja": "時間がない人",
+   "note_ja": null
+  },
+  {
+   "id": "resident-n3",
+   "version": "1.1",
+   "label_ja": "日本語が母語でない人",
+   "note_ja": null
+  },
+  {
+   "id": "senior-70s",
+   "version": "1.0",
+   "label_ja": "高齢者",
+   "note_ja": null
+  },
+  {
+   "id": "smartphone-novice",
+   "version": "1.0",
+   "label_ja": "スマホに不慣れな人",
+   "note_ja": "このプロファイルは画面の見た目だけで判断する設計ですが、画像入力が未対応のため、実際には「本文なし・リンク名のみ」で動いています。数値はプロファイル通りの結果ではありません。"
+  }
+ ],
+ "sites": [
+  {
+   "mission_id": "shibuya-tennyu",
+   "site_name": "渋谷区",
+   "start_url": "https://www.city.shibuya.tokyo.jp/",
+   "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+   "cells": [
+    {
+     "run_id": "shibuya-tennyu__control__v0__1786504714723",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 23,
+     "steps": 3,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.008585500000000001,
+     "replayable": false
+    },
+    {
+     "run_id": "shibuya-tennyu__control__v0__1786508508418",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 26,
+     "steps": 3,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.0084405,
+     "replayable": true
+    },
+    {
+     "run_id": "shibuya-tennyu__busy-worker__v0__1786504874793",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 26,
+     "steps": 3,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.0066082499999999995,
+     "replayable": false
+    },
+    {
+     "run_id": "shibuya-tennyu__busy-worker__v0__1786508699202",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 23,
+     "steps": 3,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00783225,
+     "replayable": true
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786504779589",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 34,
+     "steps": 5,
+     "findings": 4,
+     "masked_words": 8,
+     "masked_in_controls": 5,
+     "cost_usd": 0.01068675,
+     "replayable": false
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786508571958",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 76,
+     "steps": 12,
+     "findings": 6,
+     "masked_words": 44,
+     "masked_in_controls": 26,
+     "cost_usd": 0.017881750000000002,
+     "replayable": true
+    },
+    {
+     "run_id": "shibuya-tennyu__senior-70s__v0__1786504742875",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 33,
+     "steps": 5,
+     "findings": 0,
+     "masked_words": 2,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00869225,
+     "replayable": false
+    },
+    {
+     "run_id": "shibuya-tennyu__senior-70s__v0__1786508539010",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 29,
+     "steps": 4,
+     "findings": 0,
+     "masked_words": 1,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00735375,
+     "replayable": true
+    },
+    {
+     "run_id": "shibuya-tennyu__smartphone-novice__v0__1786504844096",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 27,
+     "steps": 4,
+     "findings": 0,
+     "masked_words": 1,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00743075,
+     "replayable": false
+    },
+    {
+     "run_id": "shibuya-tennyu__smartphone-novice__v0__1786508669542",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 26,
+     "steps": 4,
+     "findings": 0,
+     "masked_words": 1,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00886525,
+     "replayable": true
+    }
+   ],
+   "findings": [
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786508571958",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shibuya.tokyo.jp/kurashi/jumin/ido/",
+     "cause_ja": "転入手続きのページで、必要な手続きと当日の持ち物にあたる情報が1画面に収まらず、下方向のスクロールを繰り返した末に上へ戻る動きが起きている。目的の項目がどこにあるかを画面上部で判断できる手がかりがない。",
+     "fix_ja": "このページの本文冒頭に「引っ越してきたとき／区内で引っ越したとき／持っていくもの」の3項目をページ内リンク（アンカーリンク）として並べた目次ブロックを設置し、各見出しに対応するidを付ける。",
+     "evidence": [
+      "ステップ3〜10で、同じページをスクロールし続けている（下7回・上1回）",
+      "この間の1画面あたりの操作要素は平均13個",
+      "途中で上に戻っている（1回）= 通り過ぎたと本人が判断している"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786504779589",
+     "profile_id": "resident-n3",
+     "step_n": 1,
+     "url": "https://www.city.shibuya.tokyo.jp/",
+     "cause_ja": "トップページの入口リンクのラベルに、利用者が読めない状態だった語「税金」がそのまま使われている。引っ越しに関わる用件がその先にあるかを、ラベルだけでは判断できない。",
+     "fix_ja": "トップページの「税金」リンクのラベル表記を、『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.82 の言い換え語を括弧で併記した表記に差し替える。",
+     "evidence": [
+      "「税金」がリンク・ボタンのラベルに含まれており、1画面（ステップ1）で読めない状態だった",
+      "「税金」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.82"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786504779589",
+     "profile_id": "resident-n3",
+     "step_n": 1,
+     "url": "https://www.city.shibuya.tokyo.jp/",
+     "cause_ja": "トップページの入口リンクのラベルに、利用者が読めない状態だった語「国民健康保険」がそのまま使われている。引っ越し後に必要な手続きの入口かどうかをラベルから読み取れない。",
+     "fix_ja": "トップページの「国民健康保険」リンクのラベル表記を、『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.38 の言い換え語を括弧で併記した表記に差し替える。",
+     "evidence": [
+      "「国民健康保険」がリンク・ボタンのラベルに含まれており、1画面（ステップ1）で読めない状態だった",
+      "「国民健康保険」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.38"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786504779589",
+     "profile_id": "resident-n3",
+     "step_n": 1,
+     "url": "https://www.city.shibuya.tokyo.jp/",
+     "cause_ja": "トップページの入口リンクのラベルに、利用者が読めない状態だった語「介護」がそのまま使われている。自分の用件と関係があるかをラベルだけで切り分けられない。",
+     "fix_ja": "トップページの「介護」リンクのラベル表記を、『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.10 の言い換え語を括弧で併記した表記に差し替える。",
+     "evidence": [
+      "「介護」がリンク・ボタンのラベルに含まれており、1画面（ステップ1）で読めない状態だった",
+      "「介護」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.10"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786508571958",
+     "profile_id": "resident-n3",
+     "step_n": 1,
+     "url": "https://www.city.shibuya.tokyo.jp/",
+     "cause_ja": "トップページのリンクラベルに「税金」が使われており、この語が読めない条件では、そのリンクの先に何があるか判断できない。",
+     "fix_ja": "トップページの「税金」リンクのラベルを「税金（ぜいきん／おかね）」のようにふりがな付きの表記に変更する。",
+     "evidence": [
+      "「税金」がリンク・ボタンのラベルに含まれており、1画面（ステップ1）で読めない状態だった",
+      "「税金」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.82"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786508571958",
+     "profile_id": "resident-n3",
+     "step_n": 1,
+     "url": "https://www.city.shibuya.tokyo.jp/",
+     "cause_ja": "トップページのリンクラベルに「国民健康保険」が使われており、この語が読めない条件では、そのリンクの先に何があるか判断できない。",
+     "fix_ja": "トップページの「国民健康保険」リンクのラベルに、ふりがなと「病気やけがのときの保険」という言い換えを併記する。",
+     "evidence": [
+      "「国民健康保険」がリンク・ボタンのラベルに含まれており、1画面（ステップ1）で読めない状態だった",
+      "「国民健康保険」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.38"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786508571958",
+     "profile_id": "resident-n3",
+     "step_n": 1,
+     "url": "https://www.city.shibuya.tokyo.jp/",
+     "cause_ja": "トップページのリンクラベルに「介護」が使われており、この語が読めない条件では、そのリンクの先に何があるか判断できない。",
+     "fix_ja": "トップページの「介護」リンクのラベルに、ふりがなと「お年寄りの世話・手伝い」という言い換えを併記する。",
+     "evidence": [
+      "「介護」がリンク・ボタンのラベルに含まれており、1画面（ステップ1）で読めない状態だった",
+      "「介護」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.10"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786508571958",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shibuya.tokyo.jp/kurashi/jumin/ido/",
+     "cause_ja": "転入手続きのページで「転入届」がリンクラベルに使われており、この語が読めない条件では、自分がその手続きの対象かどうかを判断できない。この語は複数画面にわたって現れている。",
+     "fix_ja": "「転入届」のリンクラベルを「転入届（ほかの市区町村から渋谷区に引っ越してきたとき）」に書き換え、ふりがなを付ける。",
+     "evidence": [
+      "「転入届」がリンク・ボタンのラベルに含まれており、2画面（ステップ3 / ステップ4）で読めない状態だった",
+      "「転入届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.97"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786508571958",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shibuya.tokyo.jp/kurashi/jumin/ido/",
+     "cause_ja": "転入手続きのページで「転居届」がリンクラベルに使われており、この語が読めない条件では、「転入届」との違いや自分がどちらを出すのかを判断できない。この語は複数画面にわたって現れている。",
+     "fix_ja": "「転居届」のリンクラベルを「転居届（渋谷区の中で引っ越したとき）」に書き換え、ふりがなを付ける。",
+     "evidence": [
+      "「転居届」がリンク・ボタンのラベルに含まれており、2画面（ステップ3 / ステップ4）で読めない状態だった",
+      "「転居届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.95"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shibuya-tennyu__resident-n3__v0__1786504779589",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.city.shibuya.tokyo.jp/search/?cx=2535a001409614bc2&ie=UTF-8&q=%E8%BB%A2%E5%85%A5%E6%89%8B%E7%B6%9A%E3%81%8D+%E6%8C%81%E3%81%A1%E7%89%A9#gsc.tab=0&gsc.q=%E8%BB%A2%E5%85%A5%E6%89%8B%E7%B6%9A%E3%81%8D%20%E6%8C%81%E3%81%A1%E7%89%A9&gsc.page=1",
+     "cause_ja": "サイト内検索の結果一覧に並ぶリンクのラベルに、利用者が読めない状態だった語「転入届」が含まれている。検索までたどり着いても、どの結果が目的のページかをラベルから判断できない。",
+     "fix_ja": "「転入届」を含むページのtitle要素と本文見出しを、『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.97 の言い換え語を括弧で併記した表記に書き換え、検索結果のリンク文言に反映させる。",
+     "evidence": [
+      "「転入届」がリンク・ボタンのラベルに含まれており、1画面（ステップ4）で読めない状態だった",
+      "「転入届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.97"
+     ],
+     "severity": "low"
+    }
+   ],
+   "dropout_rate": 0,
+   "control_reached": true
+  },
+  {
+   "mission_id": "oizumi-tennyu",
+   "site_name": "群馬県大泉町",
+   "start_url": "https://www.town.oizumi.gunma.jp/",
+   "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+   "cells": [
+    {
+     "run_id": "oizumi-tennyu__control__v0__1786504712880",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 25,
+     "steps": 4,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00844475,
+     "replayable": false
+    },
+    {
+     "run_id": "oizumi-tennyu__control__v0__1786508508419",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 29,
+     "steps": 4,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00835025,
+     "replayable": true
+    },
+    {
+     "run_id": "oizumi-tennyu__busy-worker__v0__1786505082343",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 2,
+     "seconds": 34,
+     "steps": 5,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00975375,
+     "replayable": false
+    },
+    {
+     "run_id": "oizumi-tennyu__busy-worker__v0__1786508812868",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 48,
+     "steps": 7,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.013489250000000001,
+     "replayable": true
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786504893291",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 32,
+     "steps": 5,
+     "findings": 3,
+     "masked_words": 8,
+     "masked_in_controls": 4,
+     "cost_usd": 0.008715750000000001,
+     "replayable": false
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786508594632",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 37,
+     "steps": 5,
+     "findings": 3,
+     "masked_words": 8,
+     "masked_in_controls": 4,
+     "cost_usd": 0.010647,
+     "replayable": true
+    },
+    {
+     "run_id": "oizumi-tennyu__senior-70s__v0__1786504743157",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 9,
+     "seconds": 134,
+     "steps": 20,
+     "findings": 4,
+     "masked_words": 14,
+     "masked_in_controls": 7,
+     "cost_usd": 0.028297000000000006,
+     "replayable": false
+    },
+    {
+     "run_id": "oizumi-tennyu__senior-70s__v0__1786508541604",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 37,
+     "steps": 5,
+     "findings": 1,
+     "masked_words": 2,
+     "masked_in_controls": 1,
+     "cost_usd": 0.010374,
+     "replayable": true
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786504950101",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 12,
+     "seconds": 103,
+     "steps": 17,
+     "findings": 4,
+     "masked_words": 5,
+     "masked_in_controls": 3,
+     "cost_usd": 0.0225135,
+     "replayable": false
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786508647714",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 12,
+     "seconds": 127,
+     "steps": 19,
+     "findings": 4,
+     "masked_words": 6,
+     "masked_in_controls": 2,
+     "cost_usd": 0.0271465,
+     "replayable": true
+    }
+   ],
+   "findings": [
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786508647714",
+     "profile_id": "smartphone-novice",
+     "step_n": 11,
+     "url": "https://www.town.oizumi.gunma.jp/index.html",
+     "cause_ja": "トップページから別ページへ移動しても目的の情報に届かず、そのつどトップページに戻って別の入口を試し直す往復が繰り返されていた。",
+     "fix_ja": "トップページの目的別メニューに「引っ越し・住所変更」の項目を新設し、転入・転出・転居の手続き一覧ページへ1クリックで移動できるようにする。",
+     "evidence": [
+      "同じページに4回入っている（ステップ6〜9 / ステップ11 / ステップ13〜16 / ステップ19）",
+      "そのうち6ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786504950101",
+     "profile_id": "smartphone-novice",
+     "step_n": 12,
+     "url": "https://www.town.oizumi.gunma.jp/index.html",
+     "cause_ja": "トップページから先に進んだあと、目的の情報に届かずトップページへ戻る動きが繰り返されており、トップページから転入手続きへ進む次の一手が定まっていない。",
+     "fix_ja": "トップページの目立つ位置に「引っこし・住所の変更」というリンクを追加し、転入・転出・転居の手続き一覧ページへ1クリックで移動できるようにする。",
+     "evidence": [
+      "同じページに2回入っている（ステップ5〜10 / ステップ12〜16）",
+      "そのうち5ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786504950101",
+     "profile_id": "smartphone-novice",
+     "step_n": 17,
+     "url": "https://www.town.oizumi.gunma.jp/sitesearch.html?start=0&num=20&q=&label=anzen&btnG=%E6%A4%9C%E7%B4%A2",
+     "cause_ja": "転入手続きと当日の持ち物にたどり着く導線が、最初の画面に入っていた操作要素の中に見当たらず、検索ページまで進んだところでクリック予算を使い切って終わっている。",
+     "fix_ja": "トップページの最初の画面に「引っこしの手続き」ボタンを1つ置き、転入届の窓口・受付時間・当日持っていくもの（本人確認書類など）を1ページにまとめた案内ページへ直接リンクする。",
+     "evidence": [
+      "17ステップ・クリック12回・103秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: ◯◯◯内検索｜大泉町",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786508647714",
+     "profile_id": "smartphone-novice",
+     "step_n": 19,
+     "url": "https://www.town.oizumi.gunma.jp/index.html",
+     "cause_ja": "トップページの最初の画面に入っていた操作要素が全体の一部にとどまり、転入手続きに直接向かう入口が見当たらなかったため、ページを行き来するだけでクリック予算を使い切り、持ち物や手続きの情報に到達できなかった。",
+     "fix_ja": "トップページの最初の画面（スクロールなしで見える範囲）に「引っ越しの手続き（転入）」という文言のリンクを1つ追加し、転入時の手続きと当日の持ち物を1ページにまとめた案内ページへ直接遷移させる。",
+     "evidence": [
+      "19ステップ・クリック12回・127秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: 大泉町公式トップページ",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "oizumi-tennyu__senior-70s__v0__1786504743157",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.town.oizumi.gunma.jp/li/theme/040/index.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック9回・134秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 引越・住まい｜群馬県大泉町",
+      "審判の判断: 現在のページは「引越・住まい」のテーマ一覧ページであり、転入届の必要な持ち物や受付窓口の詳細が記載されたページには到達していません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786504950101",
+     "profile_id": "smartphone-novice",
+     "step_n": 3,
+     "url": "https://www.town.oizumi.gunma.jp/",
+     "cause_ja": "リンク・ボタンのラベルに外来語「サイト」が含まれており、複数の画面でその語が読めない状態のままだった。",
+     "fix_ja": "「サイト内検索」というラベルを「このホームページの中をさがす」に書き換える（同じ語を使っている他のリンク・ボタンも同じ表記にそろえる）。",
+     "evidence": [
+      "「サイト」がリンク・ボタンのラベルに含まれており、3画面（ステップ3 / ステップ15 / ステップ16）で読めない状態だった",
+      "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "oizumi-tennyu__senior-70s__v0__1786504743157",
+     "profile_id": "senior-70s",
+     "step_n": 6,
+     "url": "https://www.town.oizumi.gunma.jp/important.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「サイト」がリンク・ボタンのラベルに含まれており、3画面（ステップ6 / ステップ8 / ステップ18）で読めない状態だった",
+      "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "oizumi-tennyu__senior-70s__v0__1786504743157",
+     "profile_id": "senior-70s",
+     "step_n": 7,
+     "url": "https://www.town.oizumi.gunma.jp/important.html",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ7〜10で、同じページをスクロールし続けている（下4回・上0回）",
+      "この間の1画面あたりの操作要素は平均7個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786508647714",
+     "profile_id": "smartphone-novice",
+     "step_n": 12,
+     "url": "https://www.town.oizumi.gunma.jp/sitesearch.html?start=0&num=20&q=&label=anzen&btnG=%E6%A4%9C%E7%B4%A2",
+     "cause_ja": "検索キーワードが空のまま分類の絞り込みだけが適用された検索結果ページに繰り返し戻っており、その結果一覧から目的の手続き情報へ進めていなかった。",
+     "fix_ja": "検索結果ページの上部に、現在適用されている絞り込み条件を文言で表示し、その横に「絞り込みを解除して検索し直す」ボタンを1つ設置する。",
+     "evidence": [
+      "同じページに3回入っている（ステップ10 / ステップ12 / ステップ17〜18）",
+      "そのうち3ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "oizumi-tennyu__senior-70s__v0__1786508541604",
+     "profile_id": "senior-70s",
+     "step_n": 3,
+     "url": "https://www.town.oizumi.gunma.jp/",
+     "cause_ja": "トップページのリンク・ボタンのラベルに外来語が含まれており、利用者の語彙条件ではその語が読めない状態だった。ラベルだけでは押した先に何があるか判断できず、引っ越し手続きの情報へ進めなかった。",
+     "fix_ja": "トップページの該当リンク・ボタンのラベルから「サイト」という語を削除し、押した先の動作が分かる和語表現(例:「このページの中をさがす」)に書き換える。",
+     "evidence": [
+      "「サイト」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786504893291",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.town.oizumi.gunma.jp/li/theme/040/index.html",
+     "cause_ja": "引っ越しに関するテーマ一覧で、リンクのラベルに含まれる「保育園」が語彙条件により読めない状態で、しかもこの語がラベルの中心になっていたため、そのリンクの先が自分の用事に関係するかを判断できなかった。同じ語が続く画面でも読めないままで、判断できない状態が繰り返された。",
+     "fix_ja": "該当ページのリンクラベルを「保育園（ほいくえん）　子どもをあずける ところ」のように、『やさしい日本語 書き換え例』No.116の言い換えとふりがなをラベル内に併記する形へ書き換える（リンク先URLは変更しない）。",
+     "evidence": [
+      "「保育園」がリンク・ボタンのラベルに含まれており、2画面（ステップ4 / ステップ5）で読めない状態だった",
+      "「保育園」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.116"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786508594632",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.town.oizumi.gunma.jp/li/theme/040/index.html",
+     "cause_ja": "遷移先を選ぶ手がかりがリンクのラベルだけであり、そのラベルに含まれる「保育園」が語彙条件で読めない語だったため、複数の画面にわたって、そのリンクを押すべきかどうかを判断できないまま止まっていた。",
+     "fix_ja": "当該ページの「保育園」を含むリンクラベルを『やさしい日本語 書き換え例』No.116に沿って「保育園（ほいくえん）：こどもをあずかるところ」の形に書き換え、リンクテキスト自体に読みと言い換えを入れる。",
+     "evidence": [
+      "「保育園」がリンク・ボタンのラベルに含まれており、2画面（ステップ4 / ステップ5）で読めない状態だった",
+      "「保育園」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.116"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786504893291",
+     "profile_id": "resident-n3",
+     "step_n": 5,
+     "url": "https://www.town.oizumi.gunma.jp/li/theme/040/index.html",
+     "cause_ja": "同じテーマ一覧のリンクのラベルに含まれる「公営住宅」が語彙条件により読めない状態で、この語がラベルの中心になっていたため、住まいに関する案内かどうかをラベルだけでは判断できなかった。",
+     "fix_ja": "該当ページのリンクラベルを「公営住宅（こうえいじゅうたく）　町が かして くれる 家」のように、『やさしい日本語 書き換え例』No.30の言い換えとふりがなをラベル内に併記する形へ書き換える。",
+     "evidence": [
+      "「公営住宅」がリンク・ボタンのラベルに含まれており、1画面（ステップ5）で読めない状態だった",
+      "「公営住宅」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.30"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786504893291",
+     "profile_id": "resident-n3",
+     "step_n": 5,
+     "url": "https://www.town.oizumi.gunma.jp/li/theme/040/index.html",
+     "cause_ja": "同じテーマ一覧のリンクのラベルに含まれる「国民健康保険」が語彙条件により読めない状態で、この語がラベルの中心になっていたため、役場で必要な手続きに当たるものかをラベルだけでは判断できなかった。",
+     "fix_ja": "該当ページのリンクラベルを「国民健康保険（こくみんけんこうほけん）　病気の ときの ための ほけん」のように、『やさしい日本語 書き換え例』No.38の言い換えとふりがなをラベル内に併記する形へ書き換える。",
+     "evidence": [
+      "「国民健康保険」がリンク・ボタンのラベルに含まれており、1画面（ステップ5）で読めない状態だった",
+      "「国民健康保険」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.38"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786508594632",
+     "profile_id": "resident-n3",
+     "step_n": 5,
+     "url": "https://www.town.oizumi.gunma.jp/li/theme/040/index.html",
+     "cause_ja": "リンクのラベルに含まれる「公営住宅」が語彙条件で読めない語であり、そのリンクが引っ越し後の住まいに関する情報につながるものかどうかを、ラベルから判断できなかった。",
+     "fix_ja": "当該ページの「公営住宅」を含むリンクラベルを『やさしい日本語 書き換え例』No.30に沿って「公営住宅（こうえいじゅうたく）：町が貸す家」に書き換える。",
+     "evidence": [
+      "「公営住宅」がリンク・ボタンのラベルに含まれており、1画面（ステップ5）で読めない状態だった",
+      "「公営住宅」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.30"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__resident-n3__v0__1786508594632",
+     "profile_id": "resident-n3",
+     "step_n": 5,
+     "url": "https://www.town.oizumi.gunma.jp/li/theme/040/index.html",
+     "cause_ja": "リンクのラベルに含まれる「国民健康保険」が語彙条件で読めない語であり、役場で手続きが必要な項目に当たるかどうかを、ラベルを見ただけでは確かめられなかった。",
+     "fix_ja": "当該ページの「国民健康保険」を含むリンクラベルを『やさしい日本語 書き換え例』No.38に沿って「国民健康保険（こくみんけんこうほけん）：病院のお金が安くなる制度」に書き換える。",
+     "evidence": [
+      "「国民健康保険」がリンク・ボタンのラベルに含まれており、1画面（ステップ5）で読めない状態だった",
+      "「国民健康保険」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.38"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__senior-70s__v0__1786504743157",
+     "profile_id": "senior-70s",
+     "step_n": 6,
+     "url": "https://www.town.oizumi.gunma.jp/important.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「アクセシビリティ」がリンク・ボタンのラベルに含まれており、2画面（ステップ6 / ステップ8）で読めない状態だった",
+      "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786508647714",
+     "profile_id": "smartphone-novice",
+     "step_n": 9,
+     "url": "https://www.town.oizumi.gunma.jp/index.html",
+     "cause_ja": "トップページのリンク・ボタンのラベルに外来語「サイト」が含まれており、今回の語彙条件ではその語が読めない状態のまま複数の画面で提示されていた。",
+     "fix_ja": "トップページの「サイト内検索」など「サイト」を含むリンク・ボタンのラベルを「町のページを探す」に書き換える。",
+     "evidence": [
+      "「サイト」がリンク・ボタンのラベルに含まれており、2画面（ステップ9 / ステップ16）で読めない状態だった",
+      "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "oizumi-tennyu__smartphone-novice__v0__1786504950101",
+     "profile_id": "smartphone-novice",
+     "step_n": 17,
+     "url": "https://www.town.oizumi.gunma.jp/sitesearch.html?start=0&num=20&q=&label=anzen&btnG=%E6%A4%9C%E7%B4%A2",
+     "cause_ja": "検索キーワードが空のまま検索結果ページに入っており、そのページから先へ進めずに一度離れたあと再び同じページへ戻ってきている。",
+     "fix_ja": "検索キーワードが空で検索結果ページが開かれたときは、結果欄に「転入届」「住民票」「国民健康保険」など、よく使われる手続きへのリンクボタンを一覧表示する。",
+     "evidence": [
+      "同じページに2回入っている（ステップ4 / ステップ17）",
+      "そのうち1ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "low"
+    }
+   ],
+   "dropout_rate": 0.375,
+   "control_reached": true
+  },
+  {
+   "mission_id": "hamamatsu-tennyu",
+   "site_name": "浜松市",
+   "start_url": "https://www.city.hamamatsu.shizuoka.jp/",
+   "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+   "cells": [
+    {
+     "run_id": "hamamatsu-tennyu__control__v0__1786504711051",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 33,
+     "steps": 4,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.01142075,
+     "replayable": false
+    },
+    {
+     "run_id": "hamamatsu-tennyu__control__v0__1786508508411",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 2,
+     "seconds": 25,
+     "steps": 2,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.00859925,
+     "replayable": true
+    },
+    {
+     "run_id": "hamamatsu-tennyu__busy-worker__v0__1786505132248",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 5,
+     "seconds": 50,
+     "steps": 6,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.019139,
+     "replayable": false
+    },
+    {
+     "run_id": "hamamatsu-tennyu__busy-worker__v0__1786508996998",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 33,
+     "steps": 4,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.0112575,
+     "replayable": true
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786504912226",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 5,
+     "seconds": 49,
+     "steps": 6,
+     "findings": 3,
+     "masked_words": 17,
+     "masked_in_controls": 8,
+     "cost_usd": 0.024445499999999995,
+     "replayable": false
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786508721401",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 17,
+     "seconds": 147,
+     "steps": 20,
+     "findings": 6,
+     "masked_words": 80,
+     "masked_in_controls": 28,
+     "cost_usd": 0.0360225,
+     "replayable": true
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786504748187",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 15,
+     "seconds": 132,
+     "steps": 20,
+     "findings": 5,
+     "masked_words": 38,
+     "masked_in_controls": 15,
+     "cost_usd": 0.028991000000000003,
+     "replayable": false
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786508537816",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 10,
+     "seconds": 150,
+     "steps": 20,
+     "findings": 6,
+     "masked_words": 32,
+     "masked_in_controls": 11,
+     "cost_usd": 0.030744,
+     "replayable": true
+    },
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786504979266",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 4,
+     "seconds": 130,
+     "steps": 20,
+     "findings": 5,
+     "masked_words": 4,
+     "masked_in_controls": 4,
+     "cost_usd": 0.0287155,
+     "replayable": false
+    },
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786508903843",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 6,
+     "seconds": 68,
+     "steps": 8,
+     "findings": 1,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.023430249999999996,
+     "replayable": true
+    }
+   ],
+   "findings": [
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786504979266",
+     "profile_id": "smartphone-novice",
+     "step_n": 2,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/index.html",
+     "cause_ja": "画面に入る操作要素が少ない（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ2の時点で、ページ内の操作要素175個のうち画面に入っていたのは7個（4%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は168個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786508903843",
+     "profile_id": "smartphone-novice",
+     "step_n": 2,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/index.html",
+     "cause_ja": "「くらし・手続き」トップは初期表示に入る操作要素がページ全体のごく一部にとどまり、引っ越しの手続きに関するリンクへ到達するにはスクロールが必要だった。目的のリンクが最初の画面に現れないため、どこを押せばよいか判断できないまま操作の手数が費やされた。",
+     "fix_ja": "「くらし・手続き」ページの本文最上部（初期表示に収まる位置）に「引越し（転入・転出・転居）の手続き」という見出しのリンクブロックを1つ追加し、転入手続きの案内ページへ直接遷移できるようにする。",
+     "evidence": [
+      "ステップ2の時点で、ページ内の操作要素175個のうち画面に入っていたのは7個（4%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は168個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786504979266",
+     "profile_id": "smartphone-novice",
+     "step_n": 5,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/index.html",
+     "cause_ja": "同じページに戻ってきている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "同じページに2回入っている（ステップ2〜3 / ステップ5〜20）",
+      "そのうち16ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786504979266",
+     "profile_id": "smartphone-novice",
+     "step_n": 5,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/index.html",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ5〜19で、同じページをスクロールし続けている（下9回・上6回）",
+      "この間の1画面あたりの操作要素は平均11個",
+      "途中で上に戻っている（6回）= 通り過ぎたと本人が判断している"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786508537816",
+     "profile_id": "senior-70s",
+     "step_n": 6,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/shiminkyodo/minkatu.html",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ6〜13で、同じページをスクロールし続けている（下8回・上0回）",
+      "この間の1画面あたりの操作要素は平均3個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786508537816",
+     "profile_id": "senior-70s",
+     "step_n": 7,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/shiminkyodo/minkatu.html",
+     "cause_ja": "画面に入る操作要素が少ない（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ7の時点で、ページ内の操作要素134個のうち画面に入っていたのは0個（0%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は134個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786504748187",
+     "profile_id": "senior-70s",
+     "step_n": 11,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/shiminkyodo/minkatu.html",
+     "cause_ja": "このページは最初に表示される範囲に操作できるリンクやボタンが一つも入っておらず、次に進む手がかりを得るためにスクロールが必須になっている。",
+     "fix_ja": "このページの本文冒頭に、ページ内の各見出しへ飛ぶリンク一覧（目次ブロック）を追加し、初期表示の範囲にリンクが入るようにする。",
+     "evidence": [
+      "ステップ11の時点で、ページ内の操作要素134個のうち画面に入っていたのは0個（0%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は134個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786508721401",
+     "profile_id": "resident-n3",
+     "step_n": 11,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/siminkj/sinsei/jyumin/honnin.html",
+     "cause_ja": "本人確認に関するページで、画面に表示されていた操作要素がごくわずかで、残りの大半はスクロールしないと触れられなかった。上部に何も選択肢が見えないため、次にどこへ進めばよいかを画面内で判断できない。",
+     "fix_ja": "このページの本文冒頭（最初の画面に収まる位置）に、ページ内の主要な項目へ飛ぶ目次リンクのリストを設置する。",
+     "evidence": [
+      "ステップ11の時点で、ページ内の操作要素35個のうち画面に入っていたのは1個（3%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は34個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786508537816",
+     "profile_id": "senior-70s",
+     "step_n": 16,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/shiminkyodo/minkatu.html",
+     "cause_ja": "同じページに戻ってきている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "同じページに2回入っている（ステップ2〜14 / ステップ16〜20）",
+      "そのうち5ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786504748187",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/hamalife/index.html",
+     "cause_ja": "引っ越しの手続きと持ち物を調べたいのに、トップページから転入手続きの案内へ直接つながる導線がなく、移住promotionのページに入り込んだまま目的の情報に届かず、クリックの上限に達した。",
+     "fix_ja": "トップページ最上部に「転入・転出の手続き」リンクを新設し、手続き一覧と当日の持ち物を書いたページへ1クリックで遷移できるようにする。",
+     "evidence": [
+      "20ステップ・クリック15回・132秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: 浜松市移住促進ホームページ　はじめよう、ハマライフ／浜松市",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786504979266",
+     "profile_id": "smartphone-novice",
+     "step_n": 20,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/index.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック4回・130秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 手続き・くらし／浜松市",
+      "審判の判断: 現在のページは「手続き・くらし」のカテゴリ一覧ページであり、転入届に必要な持ち物や受付窓口についての具体的な記載はありません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786508537816",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/shiminkyodo/minkatu.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック10回・150秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: みんなで応援地域活性化事業／浜松市",
+      "審判の判断: 現在のページは「みんなで応援地域活性化事業」に関する案内であり、転入届の届出に必要な持ち物や受付窓口に関する情報は掲載されていません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786508721401",
+     "profile_id": "resident-n3",
+     "step_n": 20,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/search/result.html?cx=004159546726129486960%3Aarursou64f4&ie=UTF-8&cof=FORID%3A9&q=%E5%BC%95%E8%B6%8A%E3%81%97+%E8%BB%A2%E5%85%A5%E5%B1%8A+%E6%8C%81%E3%81%A1%E7%89%A9",
+     "cause_ja": "検索結果と「引越しに関する手続き」の一覧ページを行き来する状態が続き、転入届の持ち物や受付窓口を書いたページまでたどり着けなかった。一覧ページのリンクは手続き名が並ぶだけで、どれを開けば持ち物が分かるのかがラベルから判別できない。",
+     "fix_ja": "「引越しに関する手続き」一覧ページの先頭に、市外から引っ越してくる人向けの導線ブロックを1つ追加し、「市の外から引っ越してくる人（転入）／持っていくもの・受付の窓口・受付の時間」というラベルで、持ち物と窓口を記載した詳細ページへ直接リンクする。",
+     "evidence": [
+      "20ステップ・クリック17回・147秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 検索結果／浜松市",
+      "審判の判断: 「引越しに関する手続き」の一覧ページにとどまっており、転入届に必要な持ち物や受付窓口の詳細な情報が記載されたページには到達していません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786504748187",
+     "profile_id": "senior-70s",
+     "step_n": 1,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/",
+     "cause_ja": "リンクやボタンのラベルに「ネット」という外来語が使われており、複数の画面でこの語が読めないまま表示され続けていた。",
+     "fix_ja": "トップページのリンク・ボタンのラベル内の「ネット」を「インターネット」に書き換える。",
+     "evidence": [
+      "「ネット」がリンク・ボタンのラベルに含まれており、8画面（ステップ1 / ステップ2 / ステップ3 / ステップ4 / ステップ12 / ステップ13 / ステップ14 / ステップ15）で読めない状態だった",
+      "「ネット」60歳以上の理解率 23.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786508537816",
+     "profile_id": "senior-70s",
+     "step_n": 1,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「ネット」がリンク・ボタンのラベルに含まれており、9画面（ステップ1 / ステップ3 / ステップ4 / ステップ15 / ステップ16 / ステップ17 / ステップ18 / ステップ19 / ステップ20）で読めない状態だった",
+      "「ネット」60歳以上の理解率 23.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786508721401",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/index.html",
+     "cause_ja": "「くらし・手続き」トップのリンクラベルに「税金」が使われており、複数の画面で読めない語のままだった。ラベルが読めないため、そのリンクの先に何があるかを判断できない。",
+     "fix_ja": "当該リンクのラベルを「税金（ぜいきん／市に はらう お金）」のように、ふりがなと言い換えを併記した表記に変更する。",
+     "evidence": [
+      "「税金」がリンク・ボタンのラベルに含まれており、3画面（ステップ3 / ステップ4 / ステップ12）で読めない状態だった",
+      "「税金」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.82"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786504748187",
+     "profile_id": "senior-70s",
+     "step_n": 5,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/shiminkyodo/minkatu.html",
+     "cause_ja": "リンクやボタンのラベルに「ユニバーサルデザイン」という外来語が使われており、複数の画面でこの語が読めないまま表示され続けていた。",
+     "fix_ja": "該当ページのリンク・ボタンのラベルを「ユニバーサルデザイン（だれもが使いやすい設計）」のように、かっこ書きの言い換えを付けた表記に変更する。",
+     "evidence": [
+      "「ユニバーサルデザイン」がリンク・ボタンのラベルに含まれており、7画面（ステップ5 / ステップ6 / ステップ7 / ステップ8 / ステップ9 / ステップ10 / ステップ16）で読めない状態だった",
+      "「ユニバーサルデザイン」60歳以上の理解率 18.9%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786508721401",
+     "profile_id": "resident-n3",
+     "step_n": 7,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/koseki/hikkoshi/index.html",
+     "cause_ja": "引越し手続きページのリンクラベルに「転入届」が使われており、複数の画面で読めない語のままだった。利用者が探しているのはまさにこの手続きだが、ラベルからそれと結び付けられない。",
+     "fix_ja": "当該リンクのラベルを「転入届（てんにゅうとどけ）：市の 外から 引っ越して きた とき」に変更する。",
+     "evidence": [
+      "「転入届」がリンク・ボタンのラベルに含まれており、4画面（ステップ7 / ステップ8 / ステップ9 / ステップ13）で読めない状態だった",
+      "「転入届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.97"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786508721401",
+     "profile_id": "resident-n3",
+     "step_n": 7,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/koseki/hikkoshi/index.html",
+     "cause_ja": "同じ引越し手続きページのリンクラベルに「転居届」が使われており、複数の画面で読めない語のままだった。「転入届」「転出届」と字面が似ているため、どれが自分の手続きか区別できない。",
+     "fix_ja": "当該リンクのラベルを「転居届（てんきょとどけ）：同じ 市の 中で 引っ越した とき」に変更する。",
+     "evidence": [
+      "「転居届」がリンク・ボタンのラベルに含まれており、3画面（ステップ7 / ステップ8 / ステップ9）で読めない状態だった",
+      "「転居届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.95"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786508721401",
+     "profile_id": "resident-n3",
+     "step_n": 7,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/koseki/hikkoshi/index.html",
+     "cause_ja": "同じ引越し手続きページのリンクラベルに「転出届」が使われており、最も多くの画面で読めない語のままだった。読めないまま滞在が続き、最後の数ステップまでこのページ周辺から抜け出せていない。",
+     "fix_ja": "当該リンクのラベルを「転出届（てんしゅつとどけ）：この 市から 外へ 引っ越す とき」に変更する。",
+     "evidence": [
+      "「転出届」がリンク・ボタンのラベルに含まれており、10画面（ステップ7 / ステップ8 / ステップ9 / ステップ14 / ステップ15 / ステップ16 / ステップ17 / ステップ18 / ステップ19 / ステップ20）で読めない状態だった",
+      "「転出届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.96"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__smartphone-novice__v0__1786504979266",
+     "profile_id": "smartphone-novice",
+     "step_n": 8,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/index.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「バイオマス」がリンク・ボタンのラベルに含まれており、4画面（ステップ8 / ステップ10 / ステップ12 / ステップ16）で読めない状態だった",
+      "「バイオマス」60歳以上の理解率 8.9%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786504748187",
+     "profile_id": "senior-70s",
+     "step_n": 12,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/",
+     "cause_ja": "トップページから進んだ先で目的の情報が見つからず、トップページへ戻る操作が繰り返されている。",
+     "fix_ja": "トップページの主要カテゴリリンクの下に、そのリンク先に含まれる代表的な手続き名（例:「転入届」「国民健康保険の加入」）を併記する。",
+     "evidence": [
+      "同じページに2回入っている（ステップ1 / ステップ12〜13）",
+      "そのうち2ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786504912226",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/koseki/hikkoshi/index.html",
+     "cause_ja": "引っ越しの手続き一覧ページで、遷移先を選ぶためのリンク・ボタンのラベルが「転入届」という語だけで示されている。この語は『やさしい日本語 書き換え例』の収録語であり、語彙条件により読めない状態だったため、自分が押すべきリンクかどうかを判断できないまま操作が止まった。",
+     "fix_ja": "当該ページの「転入届」リンクのラベルを「転入届（ほかの市から浜松市に引っこしてきた人の届出）」のように、届出の対象者を示すかっこ書きを併記した表記に書き換える。",
+     "evidence": [
+      "「転入届」がリンク・ボタンのラベルに含まれており、1画面（ステップ4）で読めない状態だった",
+      "「転入届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.97"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786504912226",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/koseki/hikkoshi/index.html",
+     "cause_ja": "同じページ内の「転居届」リンクも語だけのラベルになっており、この語も『やさしい日本語 書き換え例』の収録語で読めない状態だった。加えて「転入届」「転出届」と字面が近く、どれが自分の場合に当たるのか区別できなかった。",
+     "fix_ja": "「転居届」リンクのラベルを「転居届（浜松市の中で住所が変わる人の届出）」に書き換え、隣接する転入・転出のリンクと対象者の違いが並べて読める表記にする。",
+     "evidence": [
+      "「転居届」がリンク・ボタンのラベルに含まれており、1画面（ステップ4）で読めない状態だった",
+      "「転居届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.95"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__resident-n3__v0__1786504912226",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/kurashi-tetsuzuki/koseki/hikkoshi/index.html",
+     "cause_ja": "同じページの「転出届」リンクも語のみのラベルで、『やさしい日本語 書き換え例』の収録語にあたり読めない状態だった。そのため、引っ越し先の市でする手続きと今の市でする手続きのどちらのリンクなのかが判断できなかった。",
+     "fix_ja": "「転出届」リンクのラベルを「転出届（浜松市からほかの市へ引っこす人の届出）」に書き換える。",
+     "evidence": [
+      "「転出届」がリンク・ボタンのラベルに含まれており、1画面（ステップ4）で読めない状態だった",
+      "「転出届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.96"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "hamamatsu-tennyu__senior-70s__v0__1786508537816",
+     "profile_id": "senior-70s",
+     "step_n": 15,
+     "url": "https://www.city.hamamatsu.shizuoka.jp/",
+     "cause_ja": "同じページに戻ってきている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "同じページに2回入っている（ステップ1 / ステップ15）",
+      "そのうち1ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "low"
+    }
+   ],
+   "dropout_rate": 0.5,
+   "control_reached": true
+  },
+  {
+   "mission_id": "shinjuku-tennyu",
+   "site_name": "新宿区",
+   "start_url": "https://www.city.shinjuku.lg.jp/",
+   "goal_ja": "新宿区に引っ越してきたときの「転入届」について、届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+   "cells": [
+    {
+     "run_id": "shinjuku-tennyu__control__v0__1786504439288",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 5,
+     "seconds": 36,
+     "steps": 5,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.011255500000000002,
+     "replayable": false
+    },
+    {
+     "run_id": "shinjuku-tennyu__control__v0__1786508499495",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 36,
+     "steps": 5,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.0101475,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__control__v1__1786509022291",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 31,
+     "steps": 5,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.009446,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__busy-worker__v0__1786504839082",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 31,
+     "steps": 5,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.0084645,
+     "replayable": false
+    },
+    {
+     "run_id": "shinjuku-tennyu__busy-worker__v0__1786508984398",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 34,
+     "steps": 5,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.008947,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__busy-worker__v1__1786509547027",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_time",
+     "clicks": 6,
+     "seconds": 125,
+     "steps": 20,
+     "findings": 4,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.025297,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786504558262",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 3,
+     "seconds": 122,
+     "steps": 20,
+     "findings": 6,
+     "masked_words": 24,
+     "masked_in_controls": 14,
+     "cost_usd": 0.024088,
+     "replayable": false
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786508694158",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 35,
+     "steps": 5,
+     "findings": 4,
+     "masked_words": 20,
+     "masked_in_controls": 10,
+     "cost_usd": 0.010467,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v1__1786509367307",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 36,
+     "steps": 5,
+     "findings": 4,
+     "masked_words": 20,
+     "masked_in_controls": 10,
+     "cost_usd": 0.010564500000000001,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786504479536",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 5,
+     "seconds": 60,
+     "steps": 9,
+     "findings": 2,
+     "masked_words": 4,
+     "masked_in_controls": 2,
+     "cost_usd": 0.013531250000000003,
+     "replayable": false
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786508540128",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 8,
+     "seconds": 146,
+     "steps": 20,
+     "findings": 6,
+     "masked_words": 3,
+     "masked_in_controls": 1,
+     "cost_usd": 0.025279000000000003,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v1__1786509057571",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 11,
+     "seconds": 122,
+     "steps": 20,
+     "findings": 0,
+     "masked_words": 10,
+     "masked_in_controls": 5,
+     "cost_usd": 0.023177500000000004,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786504705669",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "error",
+     "clicks": 6,
+     "seconds": 98,
+     "steps": 15,
+     "findings": 4,
+     "masked_words": 1,
+     "masked_in_controls": 1,
+     "cost_usd": 0.017494250000000003,
+     "replayable": false
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786508755243",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "error",
+     "clicks": 5,
+     "seconds": 87,
+     "steps": 16,
+     "findings": 4,
+     "masked_words": 1,
+     "masked_in_controls": 1,
+     "cost_usd": 0.014524750000000001,
+     "replayable": true
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v1__1786509418415",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 4,
+     "seconds": 114,
+     "steps": 20,
+     "findings": 5,
+     "masked_words": 1,
+     "masked_in_controls": 1,
+     "cost_usd": 0.022818749999999992,
+     "replayable": true
+    }
+   ],
+   "findings": [
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786504479536",
+     "profile_id": "senior-70s",
+     "step_n": 1,
+     "url": "https://www.city.shinjuku.lg.jp/",
+     "cause_ja": "トップページを開いた時点で画面に入る操作要素がページ全体のごく一部にとどまり、引っ越し手続きに関する入口が最初の表示範囲の外にあった。残りに到達するにはスクロールが必要で、限られたクリック数と時間の中で目的の項目にたどり着けなかった。",
+     "fix_ja": "トップページのファーストビュー内(スクロールなしで見える範囲)に「引越し・住所変更の手続き」への直接リンクを1つ設置し、リンク先を living_03.html 等の該当ページにする。",
+     "evidence": [
+      "ステップ1の時点で、ページ内の操作要素270個のうち画面に入っていたのは9個（3%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は261個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786508755243",
+     "profile_id": "smartphone-novice",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "同じページで下方向のスクロールだけが続き、上方向に戻る操作がないまま目的の項目に行き着いていない。1画面に入る操作要素が少なく、探し続ける状態になっている。",
+     "fix_ja": "目次ページ最上部に、用件別（転入・転出・転居・世帯変更など）の見出しへ飛ぶページ内目次リンクのブロックを設置する。",
+     "evidence": [
+      "ステップ4〜9で、同じページをスクロールし続けている（下6回・上0回）",
+      "この間の1画面あたりの操作要素は平均8個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v1__1786509418415",
+     "profile_id": "smartphone-novice",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ4〜11で、同じページをスクロールし続けている（下8回・上0回）",
+      "この間の1画面あたりの操作要素は平均7個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786504558262",
+     "profile_id": "resident-n3",
+     "step_n": 10,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "ページ後半でも1画面に入る操作要素が少なく、目的の項目がどこにあるか画面内から判断できないまま下方向のスクロールが続いた。途中で上方向に戻る操作があり、目的の項目を通り過ぎたと利用者自身が判断している。",
+     "fix_ja": "このページの先頭に、ページ内の見出し（転入・転出・転居など）へ飛ぶ目次リンク一覧を設置し、スクロールせずに該当セクションへ移動できるようにする。",
+     "evidence": [
+      "ステップ10〜20で、同じページをスクロールし続けている（下9回・上2回）",
+      "この間の1画面あたりの操作要素は平均7個",
+      "途中で上に戻っている（2回）= 通り過ぎたと本人が判断している"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v1__1786509418415",
+     "profile_id": "smartphone-novice",
+     "step_n": 13,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "画面に入る操作要素が少ない（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ13の時点で、ページ内の操作要素76個のうち画面に入っていたのは1個（1%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は75個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786504705669",
+     "profile_id": "smartphone-novice",
+     "step_n": 15,
+     "url": "https://www.city.shinjuku.lg.jp/seikatsu/index07.html",
+     "cause_ja": "引っ越し時の手続きと持ち物を探す動線が見つからないまま、住まい関連の一覧ページで操作を終えている。今回の記録では到達失敗までの画面情報が判定側に渡っておらず、失敗の直接原因を一つに特定できる材料はない。",
+     "fix_ja": "「住まい：新宿区」ページの本文最上部に、転入・転出の手続き案内ページ（必要な持ち物の記載を含むページ）への案内リンクを1件追加する。",
+     "evidence": [
+      "15ステップ・クリック6回・98秒を使って到達できなかった（outcome: error）",
+      "最後にいたページ: 住まい：新宿区",
+      "審判の判断: [decide] 판단 재료 없음 (profile=smartphone-novice). dom_text=false 프로필은 스크린샷 입력(vision)이 필요하다. llm/orca.ts 미지원 — B-1 대기."
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786504705669",
+     "profile_id": "smartphone-novice",
+     "step_n": 15,
+     "url": "https://www.city.shinjuku.lg.jp/seikatsu/index07.html",
+     "cause_ja": "該当ステップの表示範囲に操作できる要素が一つも入っておらず、次に選ぶ候補を見るにはスクロールが必須になっている。ページ上部が操作要素以外の内容で占められている状態。",
+     "fix_ja": "当該ページ上部のバナー・お知らせ枠を下方へ移動し、主要カテゴリのリンク一覧が最初の表示画面内に収まる位置まで繰り上げる。",
+     "evidence": [
+      "ステップ15の時点で、ページ内の操作要素58個のうち画面に入っていたのは0個（0%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は58個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786508540128",
+     "profile_id": "senior-70s",
+     "step_n": 15,
+     "url": "https://www.city.shinjuku.lg.jp/",
+     "cause_ja": "画面に入る操作要素が少ない（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ15の時点で、ページ内の操作要素270個のうち画面に入っていたのは5個（2%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は265個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786508755243",
+     "profile_id": "smartphone-novice",
+     "step_n": 16,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "目的の情報に到達しないままエラーで終了しており、最後にいたのは戸籍・住民票・印鑑登録・マイナンバーカードの目次ページだった。審判は判断材料がなく（このプロファイルに必要な画面画像入力が未対応）、詰まった理由そのものはこの記録からは特定できていない。",
+     "fix_ja": "目次ページの先頭に「引っ越し（転入・転出・転居）の手続き」への直リンクを1本追加し、そのリンク先ページに当日持参する書類の一覧を箇条書きで明記する。",
+     "evidence": [
+      "16ステップ・クリック5回・87秒を使って到達できなかった（outcome: error）",
+      "最後にいたページ: 戸籍・住民票・印鑑登録・マイナンバーカード：新宿区",
+      "審判の判断: [decide] 판단 재료 없음 (profile=smartphone-novice). dom_text=false 프로필은 스크린샷 입력(vision)이 필요하다. llm/orca.ts 미지원 — B-1 대기."
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786508755243",
+     "profile_id": "smartphone-novice",
+     "step_n": 16,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "該当ステップの画面内に操作できる要素が1つも入っておらず、リンクに触れるにはスクロールが必要な状態だった。",
+     "fix_ja": "スマートフォン幅の表示で、冒頭のバナー・説明文領域を折りたたみ、主要手続きへのリンク一覧が最初の1画面内に収まる位置に来るようレイアウトを変更する。",
+     "evidence": [
+      "ステップ16の時点で、ページ内の操作要素75個のうち画面に入っていたのは0個（0%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は75個"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786504558262",
+     "profile_id": "resident-n3",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "住所変更の届出一覧ページは手続き名のリンクが並ぶだけで、転入届の持ち物や受付窓口といった当日必要な情報がページ内に書かれていない。そのため利用者は一覧をたどり続けたまま目的の情報に到達できなかった。",
+     "fix_ja": "住所変更の届出一覧ページの先頭に「引っ越してくる方（転入届）」のブロックを追加し、持ち物リスト（本人確認書類・前住所の市区町村で受け取る書類・印鑑など）と受付窓口・受付時間を一覧ページ本文に直接記載する。",
+     "evidence": [
+      "20ステップ・クリック3回・122秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 住所変更の届出：新宿区",
+      "審判の判断: 現在のページは住所変更に関する手続きの一覧ページであり、転入届に必要な具体的な持ち物や受付窓口の詳細は記載されていません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786508540128",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック8回・146秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 新宿区",
+      "審判の判断: 現在のページは新宿区のトップページであり、転入届に必要な持ち物や受付窓口に関する具体情報が記載されたページには到達していません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v1__1786509418415",
+     "profile_id": "smartphone-novice",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック4回・114秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 戸籍・住民票・印鑑登録・マイナンバーカード：新宿区",
+      "審判の判断: 現在のページは戸籍や住民票に関する各種手続きのカテゴリ一覧ページであり、転入届に必要な持ち物や受付窓口の具体的な情報が記載されたページには到達していません。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__busy-worker__v1__1786509547027",
+     "profile_id": "busy-worker",
+     "step_n": 20,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "入口となる分類ページから、転入時の手続き内容や当日の持ち物を説明するページへ直接たどれる導線がなく、カテゴリ一覧をたどる操作を繰り返すうちに時間の上限に達した。",
+     "fix_ja": "https://www.city.shinjuku.lg.jp/todokede/index.html の一覧より上（本文冒頭）に「引っ越してきたとき（転入）の手続きと持ち物」という文言のリンクを1本置き、持ち物一覧を含むページへ直接遷移させる。",
+     "evidence": [
+      "20ステップ・クリック6回・125秒を使って到達できなかった（outcome: gave_up_time）",
+      "最後にいたページ: 戸籍・住民票・印鑑登録・マイナンバーカード：新宿区",
+      "審判の判断: 時間予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786504558262",
+     "profile_id": "resident-n3",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "ページ前半でも1画面に入る操作要素が限られ、目的の手続きに当たったかどうかを画面内で確認できないままスクロールが続いた。途中で上方向に戻る操作があり、目的の項目を通り過ぎたと利用者自身が判断している。",
+     "fix_ja": "ページ冒頭に「引っ越してくる」「引っ越して出ていく」「区内で引っ越す」の3つの入口ボタンを横並びで配置し、最初の画面から該当セクションに直接遷移できるようにする。",
+     "evidence": [
+      "ステップ4〜8で、同じページをスクロールし続けている（下4回・上1回）",
+      "この間の1画面あたりの操作要素は平均10個",
+      "途中で上に戻っている（1回）= 通り過ぎたと本人が判断している"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786504558262",
+     "profile_id": "resident-n3",
+     "step_n": 5,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "リンクやボタンのラベルに「転出届」という語が使われており、この語が読めない条件では、そのリンクが自分の用事に該当するかを判断できない。同じ語が複数の画面にわたって表示され続けていた。",
+     "fix_ja": "「転出届」のリンクラベルを「転出届（この区から出ていくときの届出）」のように、括弧書きの言い換えを付けた表記に変更する。",
+     "evidence": [
+      "「転出届」がリンク・ボタンのラベルに含まれており、5画面（ステップ5 / ステップ9 / ステップ10 / ステップ13 / ステップ17）で読めない状態だった",
+      "「転出届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.96"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786508540128",
+     "profile_id": "senior-70s",
+     "step_n": 6,
+     "url": "https://www.city.shinjuku.lg.jp/",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ6〜8で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均10個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786504558262",
+     "profile_id": "resident-n3",
+     "step_n": 7,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "ページ内の操作要素の大半が最初の表示範囲の外にあり、画面に入っていたのはごく一部だった。残りの選択肢に触れるにはスクロールが必要で、全体像を画面内から把握できない。",
+     "fix_ja": "このページのリンク一覧を、1画面に収まるカテゴリ見出し（転入・転出・転居・その他）の折りたたみブロックにまとめ、見出しを開いたときだけ配下のリンクを表示する形に変更する。",
+     "evidence": [
+      "ステップ7の時点で、ページ内の操作要素62個のうち画面に入っていたのは4個（6%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は58個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786504705669",
+     "profile_id": "smartphone-novice",
+     "step_n": 8,
+     "url": "https://www.city.shinjuku.lg.jp/seikatsu/index07.html",
+     "cause_ja": "同一ページで下方向のスクロールだけが続いており、目的の項目に当たらないまま画面送りを繰り返している。1画面に入る操作要素が少なく、一覧して比較できない。",
+     "fix_ja": "当該ページの本文先頭に、ページ内の各見出しへ飛ぶアンカーリンク形式の目次を設置する。",
+     "evidence": [
+      "ステップ8〜11で、同じページをスクロールし続けている（下4回・上0回）",
+      "この間の1画面あたりの操作要素は平均9個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__busy-worker__v1__1786509547027",
+     "profile_id": "busy-worker",
+     "step_n": 9,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "ページが持つ操作要素のうち、最初に見える範囲に入るのはごく一部で、残りを見るにはスクロールが必要な構成になっている。",
+     "fix_ja": "index01.html のヘッダー下にある大きな余白・画像を縮め、リンク一覧を2カラム表示にして、1画面目に入る項目数を増やす。",
+     "evidence": [
+      "ステップ9〜11で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均7個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__busy-worker__v1__1786509547027",
+     "profile_id": "busy-worker",
+     "step_n": 10,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "一覧の途中でも、次に何が並んでいるかを見出し単位で確認できないため、下方向のスクロールを続けるしかなかった。",
+     "fix_ja": "index01.html の各項目グループにh2見出しを付け、見出し行を画面上部に固定表示（sticky）して現在位置が分かるようにする。",
+     "evidence": [
+      "ステップ10の時点で、ページ内の操作要素62個のうち画面に入っていたのは4個（6%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は58個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786508540128",
+     "profile_id": "senior-70s",
+     "step_n": 13,
+     "url": "https://www.city.shinjuku.lg.jp/",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ13〜15で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均10個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v1__1786509418415",
+     "profile_id": "smartphone-novice",
+     "step_n": 13,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ13〜17で、同じページをスクロールし続けている（下5回・上0回）",
+      "この間の1画面あたりの操作要素は平均1個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__busy-worker__v1__1786509547027",
+     "profile_id": "busy-worker",
+     "step_n": 13,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index01.html",
+     "cause_ja": "ページ内に目次がなく、目的の項目が下方にあるかどうかを確かめる手段が下方向のスクロールしかない状態が続いた。上方向へ戻る操作は行われていない。",
+     "fix_ja": "index01.html の本文冒頭に、ページ内の各見出しへ飛ぶアンカーリンクの目次ブロックを追加する。",
+     "evidence": [
+      "ステップ13〜16で、同じページをスクロールし続けている（下4回・上0回）",
+      "この間の1画面あたりの操作要素は平均4個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786508540128",
+     "profile_id": "senior-70s",
+     "step_n": 17,
+     "url": "https://www.city.shinjuku.lg.jp/",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ17〜19で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均6個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786504558262",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "リンクやボタンのラベルに「介護保険」という語が使われており、この語が読めない条件では、そのリンク先が何の手続きかを判断できない。",
+     "fix_ja": "「介護保険」のリンクラベルを「介護保険（年をとったときの介護のためのお金の制度）」のように、括弧書きの言い換えを付けた表記に変更する。",
+     "evidence": [
+      "「介護保険」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「介護保険」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.14"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786508694158",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "「介護保険」という語がリンクのラベルそのものに使われており、この語が読めない条件では、そのリンクの先に何があるのかを判断できない。用事（引っ越しの手続きと持ち物）と関係があるかどうかを確かめる手がかりがラベル以外になく、選択が止まった。",
+     "fix_ja": "living_03.html のリンク一覧で、ラベル「介護保険」を『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.14 の言い換え表現に差し替え、元の語「介護保険」は括弧書きで後ろに残す。",
+     "evidence": [
+      "「介護保険」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「介護保険」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.14"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786508694158",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "「税金」という語がリンクのラベルそのものに使われており、この語が読めない条件では、遷移先が自分の用事に関係するかを判断できない。ラベル以外に内容を示す説明文が添えられていないため、選択が止まった。",
+     "fix_ja": "living_03.html のリンク一覧で、ラベル「税金」を『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.82 の言い換え表現に差し替え、元の語「税金」は括弧書きで後ろに残す。",
+     "evidence": [
+      "「税金」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「税金」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.82"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786508694158",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "「介護」という語がリンクのラベルそのものに使われており、この語が読めない条件では、リンク先の内容を推測する手がかりがない。同じ画面に「介護保険」など似た語のリンクも並んでおり、どれを選ぶべきか決められないまま止まった。",
+     "fix_ja": "living_03.html のリンク一覧で、ラベル「介護」を『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.10 の言い換え表現に差し替え、元の語「介護」は括弧書きで後ろに残す。",
+     "evidence": [
+      "「介護」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「介護」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.10"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v0__1786508694158",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "「防犯」という語がリンクのラベルそのものに使われており、この語が読めない条件では、遷移先が何のページかを判断できない。ラベル以外に内容を説明する文がないため、選択が止まった。",
+     "fix_ja": "living_03.html のリンク一覧で、ラベル「防犯」を『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) No.119 の言い換え表現に差し替え、元の語「防犯」は括弧書きで後ろに残す。",
+     "evidence": [
+      "「防犯」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「防犯」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.119"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v1__1786509367307",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「介護保険」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「介護保険」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.14"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v1__1786509367307",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「税金」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「税金」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.82"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v1__1786509367307",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「介護」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「介護」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.10"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__resident-n3__v1__1786509367307",
+     "profile_id": "resident-n3",
+     "step_n": 3,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「防犯」がリンク・ボタンのラベルに含まれており、1画面（ステップ3）で読めない状態だった",
+      "「防犯」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.119"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786504479536",
+     "profile_id": "senior-70s",
+     "step_n": 4,
+     "url": "https://www.city.shinjuku.lg.jp/living_03.html",
+     "cause_ja": "リンク・ボタンのラベルに外来語「サイト」が含まれており、この語が読めない状態のまま2つの画面でどのリンクを選ぶか判断する必要があった。ラベルの語だけではリンク先の内容を判別できず、次の操作を決められなかった。",
+     "fix_ja": "living_03.html 内のリンク・ボタンラベルに含まれる「サイト」を「ページ」に置き換える(例:「関連サイト」→「関連ページ」)。",
+     "evidence": [
+      "「サイト」がリンク・ボタンのラベルに含まれており、2画面（ステップ4 / ステップ7）で読めない状態だった",
+      "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786508755243",
+     "profile_id": "smartphone-novice",
+     "step_n": 8,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "リンク・ボタンのラベルに外来語が使われており、その語が読めない条件では、リンク先に何があるのかをラベルから判別できない状態だった。",
+     "fix_ja": "「アクセシビリティ」のリンクラベルを「アクセシビリティ（文字サイズ・音声読み上げの設定）」に書き換える。",
+     "evidence": [
+      "「アクセシビリティ」がリンク・ボタンのラベルに含まれており、1画面（ステップ8）で読めない状態だった",
+      "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v1__1786509418415",
+     "profile_id": "smartphone-novice",
+     "step_n": 8,
+     "url": "https://www.city.shinjuku.lg.jp/todokede/index.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「アクセシビリティ」がリンク・ボタンのラベルに含まれており、1画面（ステップ8）で読めない状態だった",
+      "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__smartphone-novice__v0__1786504705669",
+     "profile_id": "smartphone-novice",
+     "step_n": 10,
+     "url": "https://www.city.shinjuku.lg.jp/seikatsu/index07.html",
+     "cause_ja": "リンク・ボタンのラベルに外来語が含まれており、その語が読めない条件下ではリンク先の内容を判断できないまま選択を迫られている。",
+     "fix_ja": "当該リンクのラベルを「アクセシビリティ（文字の大きさ・色の設定）」のように、日本語の説明を併記した表記に変更する。",
+     "evidence": [
+      "「アクセシビリティ」がリンク・ボタンのラベルに含まれており、1画面（ステップ10）で読めない状態だった",
+      "「アクセシビリティ」60歳以上の理解率 2.1%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "shinjuku-tennyu__senior-70s__v0__1786508540128",
+     "profile_id": "senior-70s",
+     "step_n": 14,
+     "url": "https://www.city.shinjuku.lg.jp/",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「パブリック・コメント」がリンク・ボタンのラベルに含まれており、1画面（ステップ14）で読めない状態だった",
+      "「パブリック・コメント」60歳以上の理解率 8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    }
+   ],
+   "dropout_rate": 0.5833333333333334,
+   "control_reached": true
+  },
+  {
+   "mission_id": "minato-tennyu",
+   "site_name": "港区",
+   "start_url": "https://www.city.minato.tokyo.jp/",
+   "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+   "cells": [
+    {
+     "run_id": "minato-tennyu__control__v0__1786504709522",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 4,
+     "seconds": 33,
+     "steps": 5,
+     "findings": 1,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.0092175,
+     "replayable": false
+    },
+    {
+     "run_id": "minato-tennyu__control__v0__1786508508424",
+     "profile_id": "control",
+     "profile_version": "1.0",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 3,
+     "seconds": 31,
+     "steps": 3,
+     "findings": 0,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.007829000000000001,
+     "replayable": true
+    },
+    {
+     "run_id": "minato-tennyu__busy-worker__v0__1786505190334",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 8,
+     "seconds": 77,
+     "steps": 12,
+     "findings": 2,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.0206695,
+     "replayable": false
+    },
+    {
+     "run_id": "minato-tennyu__busy-worker__v0__1786509094134",
+     "profile_id": "busy-worker",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 8,
+     "seconds": 84,
+     "steps": 12,
+     "findings": 2,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.016302999999999998,
+     "replayable": true
+    },
+    {
+     "run_id": "minato-tennyu__resident-n3__v0__1786504921764",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 15,
+     "seconds": 135,
+     "steps": 20,
+     "findings": 4,
+     "masked_words": 54,
+     "masked_in_controls": 23,
+     "cost_usd": 0.029983999999999997,
+     "replayable": false
+    },
+    {
+     "run_id": "minato-tennyu__resident-n3__v0__1786508688952",
+     "profile_id": "resident-n3",
+     "profile_version": "1.1",
+     "reached": true,
+     "outcome": "reached",
+     "clicks": 13,
+     "seconds": 126,
+     "steps": 18,
+     "findings": 0,
+     "masked_words": 92,
+     "masked_in_controls": 27,
+     "cost_usd": 0.03045975,
+     "replayable": true
+    },
+    {
+     "run_id": "minato-tennyu__senior-70s__v0__1786504758015",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 10,
+     "seconds": 142,
+     "steps": 20,
+     "findings": 2,
+     "masked_words": 5,
+     "masked_in_controls": 0,
+     "cost_usd": 0.027647,
+     "replayable": false
+    },
+    {
+     "run_id": "minato-tennyu__senior-70s__v0__1786508543992",
+     "profile_id": "senior-70s",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "max_steps",
+     "clicks": 14,
+     "seconds": 135,
+     "steps": 20,
+     "findings": 3,
+     "masked_words": 10,
+     "masked_in_controls": 3,
+     "cost_usd": 0.02717875,
+     "replayable": true
+    },
+    {
+     "run_id": "minato-tennyu__smartphone-novice__v0__1786505065936",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 12,
+     "seconds": 103,
+     "steps": 16,
+     "findings": 2,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.021069749999999998,
+     "replayable": false
+    },
+    {
+     "run_id": "minato-tennyu__smartphone-novice__v0__1786508964739",
+     "profile_id": "smartphone-novice",
+     "profile_version": "1.0",
+     "reached": false,
+     "outcome": "gave_up_clicks",
+     "clicks": 12,
+     "seconds": 107,
+     "steps": 15,
+     "findings": 3,
+     "masked_words": 0,
+     "masked_in_controls": 0,
+     "cost_usd": 0.022392500000000003,
+     "replayable": true
+    }
+   ],
+   "findings": [
+    {
+     "run_id": "minato-tennyu__busy-worker__v0__1786509094134",
+     "profile_id": "busy-worker",
+     "step_n": 7,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "同じページに戻ってきている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "同じページに2回入っている（ステップ3〜5 / ステップ7〜12）",
+      "そのうち6ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__smartphone-novice__v0__1786505065936",
+     "profile_id": "smartphone-novice",
+     "step_n": 11,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "AI検索ページに一度入って離れたあと、再び同じAI検索ページに戻ってきている。このページから目的の手続き案内へ進む先が定まらず、出発点に戻る往復が発生している。",
+     "fix_ja": "AI検索ページの検索入力欄の直下に「転入・転出・転居」など代表的な手続きへの固定リンク一覧を常時表示し、検索語を入力しなくても手続き案内ページへ1クリックで移動できるようにする。",
+     "evidence": [
+      "同じページに2回入っている（ステップ2〜8 / ステップ11〜16）",
+      "そのうち6ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__busy-worker__v0__1786505190334",
+     "profile_id": "busy-worker",
+     "step_n": 12,
+     "url": "https://www.city.minato.tokyo.jp/index.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "12ステップ・クリック8回・77秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: 港区ホームページ／トップページ",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__busy-worker__v0__1786509094134",
+     "profile_id": "busy-worker",
+     "step_n": 12,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "12ステップ・クリック8回・84秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: 港区ホームページ／AI検索する",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__smartphone-novice__v0__1786508964739",
+     "profile_id": "smartphone-novice",
+     "step_n": 15,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "15ステップ・クリック12回・107秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: 港区ホームページ／AI検索する",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__smartphone-novice__v0__1786505065936",
+     "profile_id": "smartphone-novice",
+     "step_n": 16,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "引っ越し（転入）の手続きと持ち物にたどり着く経路が、最初の画面に出ている操作要素の中に見当たらず、AI検索ページを経由する動き方しかできないまま操作予算を使い切っている。ページ全体の操作要素に対して初期表示に入っている数が少なく、目的の入口が初期表示の外にある状態。",
+     "fix_ja": "トップページの初期表示（スクロールせずに見える範囲）に「転入の手続き（持ち物一覧つき）」への直接リンクを1つ追加し、そのリンク先を必要書類・受付窓口・受付時間が1ページにまとまった案内ページにする。",
+     "evidence": [
+      "16ステップ・クリック12回・103秒を使って到達できなかった（outcome: gave_up_clicks）",
+      "最後にいたページ: 港区ホームページ／AI検索する",
+      "審判の判断: クリック予算を使い切った"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__senior-70s__v0__1786504758015",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "利用者が最後にいたのはAI検索の案内ページで、転入届の持ち物や受付窓口といった具体的な情報が載っていないページだった。そこから目的の手続きページへ進む導線を見つけられないまま、操作の上限に達している。",
+     "fix_ja": "AI検索の案内ページ(https://www.city.minato.tokyo.jp/ai_search/index.html)の本文冒頭に、転入届の手続きページ（必要な持ち物・受付窓口・受付時間を記載したページ）へのテキストリンクを1本設置する。",
+     "evidence": [
+      "20ステップ・クリック10回・142秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 港区ホームページ／AI検索する",
+      "審判の判断: 現在のページはAI検索の案内ページであり、転入届に必要な持ち物や受付窓口に関する具体情報が掲載されていないため。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__resident-n3__v0__1786504921764",
+     "profile_id": "resident-n3",
+     "step_n": 20,
+     "url": "https://www.city.minato.tokyo.jp/madoguchidxtan/hikkoshi.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック15回・135秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 港区ホームページ／転入・転居手続の来庁予約（引越し手続オンラインサービス）",
+      "審判の判断: 現在表示されているページは「転入・転居手続の来庁予約」に関する案内であり、転入届に必要な持ち物や具体的な受付窓口についての詳しい記載はなく、リンクが置かれている案内段階にとどまっているため。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__senior-70s__v0__1786508543992",
+     "profile_id": "senior-70s",
+     "step_n": 20,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "最後まで到達できなかった（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "20ステップ・クリック14回・135秒を使って到達できなかった（outcome: max_steps）",
+      "最後にいたページ: 港区ホームページ／AI検索する",
+      "審判の判断: 現在のページはAI検索の入力画面であり、転入届に必要な持ち物や受付窓口に関する具体情報が記載されたページではないため。"
+     ],
+     "severity": "high"
+    },
+    {
+     "run_id": "minato-tennyu__control__v0__1786504709522",
+     "profile_id": "control",
+     "step_n": 4,
+     "url": "https://www.city.minato.tokyo.jp/kurashi/index.html",
+     "cause_ja": "「暮らし」の一覧ページは操作できるリンクが多いのに、スクロールせずに見える範囲に入っていたのはごく一部だった。引っ越しに関する手続きの入口が最初の画面の外にあり、利用者はどこを押せば転入手続きにたどり着くか判断できずに止まっている。",
+     "fix_ja": "https://www.city.minato.tokyo.jp/kurashi/index.html のページ最上部（スクロール前に見える位置）に「引越しの手続き（転入・転出・転居）」への固定リンクブロックを1つ追加し、そこから当日の持ち物を記載したページへ直接遷移させる。",
+     "evidence": [
+      "ステップ4の時点で、ページ内の操作要素163個のうち画面に入っていたのは13個（8%）",
+      "残りに触れるにはスクロールが要る",
+      "同じ条件で画面に入らなかった要素は150個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "minato-tennyu__resident-n3__v0__1786504921764",
+     "profile_id": "resident-n3",
+     "step_n": 5,
+     "url": "https://www.city.minato.tokyo.jp/search/result.html?cx=80bbbf66cd8f304c8&ie=UTF-8&cof=FORID%3A9&q=%E6%B8%AF%E5%8C%BA%E3%81%B8%E8%BB%A2%E5%85%A5%EF%BC%88%E5%BC%95%E8%B6%8A%E3%81%97%EF%BC%89%E3%81%99%E3%82%8B%E9%9A%9B%E3%81%AB%E5%BD%B9%E6%89%80%E3%81%A7%E8%A1%8C%E3%81%86%E6%89%8B%E7%B6%9A%E3%81%8D%E3%81%A8%E3%80%81%E5%BD%93%E6%97%A5%E6%8C%81%E3%81%A3%E3%81%A6%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE%E3%82%92%E6%95%99%E3%81%88%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84#gsc.tab=0&gsc.q=%E6%B8%AF%E5%8C%BA%E3%81%B8%E8%BB%A2%E5%85%A5%EF%BC%88%E5%BC%95%E8%B6%8A%E3%81%97%EF%BC%89%E3%81%99%E3%82%8B%E9%9A%9B%E3%81%AB%E5%BD%B9%E6%89%80%E3%81%A7%E8%A1%8C%E3%81%86%E6%89%8B%E7%B6%9A%E3%81%8D%E3%81%A8%E3%80%81%E5%BD%93%E6%97%A5%E6%8C%81%E3%81%A3%E3%81%A6%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE%E3%82%92%E6%95%99%E3%81%88%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84&gsc.page=1",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「転出届」がリンク・ボタンのラベルに含まれており、3画面（ステップ5 / ステップ10 / ステップ11）で読めない状態だった",
+      "「転出届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.96"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "minato-tennyu__busy-worker__v0__1786505190334",
+     "profile_id": "busy-worker",
+     "step_n": 7,
+     "url": "https://www.city.minato.tokyo.jp/search/result.html?cx=80bbbf66cd8f304c8&ie=UTF-8&cof=FORID%3A9&q=%E6%B8%AF%E5%8C%BA%E3%81%AB%E5%BC%95%E3%81%A3%E8%B6%8A%E3%81%99%E9%9A%9B%E3%81%AE%E5%BD%B9%E6%89%80%E3%81%A7%E3%81%AE%E6%89%8B%E7%B6%9A%E3%81%8D%EF%BC%88%E8%BB%A2%E5%85%A5%E5%B1%8A%E3%81%AA%E3%81%A9%EF%BC%89%E3%81%A8%E5%BD%93%E6%97%A5%E6%8C%81%E3%81%A3%E3%81%A6%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE%E3%82%92%E6%95%99%E3%81%88%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84#gsc.tab=0&gsc.q=%E6%B8%AF%E5%8C%BA%E3%81%AB%E5%BC%95%E3%81%A3%E8%B6%8A%E3%81%99%E9%9A%9B%E3%81%AE%E5%BD%B9%E6%89%80%E3%81%A7%E3%81%AE%E6%89%8B%E7%B6%9A%E3%81%8D%EF%BC%88%E8%BB%A2%E5%85%A5%E5%B1%8A%E3%81%AA%E3%81%A9%EF%BC%89%E3%81%A8%E5%BD%93%E6%97%A5%E6%8C%81%E3%81%A3%E3%81%A6%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE%E3%82%92%E6%95%99%E3%81%88%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84&gsc.page=1",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ7〜9で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均13個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "minato-tennyu__senior-70s__v0__1786504758015",
+     "profile_id": "senior-70s",
+     "step_n": 8,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "同じページ内で下方向のスクロールを繰り返した後に上へ戻っており、目的の項目を画面上で判別できず読み直している。1画面あたりに現れる操作要素が少なく、どこに何があるかがスクロール中に把握できない状態だった。",
+     "fix_ja": "同ページの最上部に、そのページ内の見出しを列挙したページ内目次（各見出しへのアンカーリンク付き）を追加する。",
+     "evidence": [
+      "ステップ8〜12で、同じページをスクロールし続けている（下4回・上1回）",
+      "この間の1画面あたりの操作要素は平均9個",
+      "途中で上に戻っている（1回）= 通り過ぎたと本人が判断している"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "minato-tennyu__senior-70s__v0__1786508543992",
+     "profile_id": "senior-70s",
+     "step_n": 12,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "スクロールを続けている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "ステップ12〜14で、同じページをスクロールし続けている（下3回・上0回）",
+      "この間の1画面あたりの操作要素は平均13個"
+     ],
+     "severity": "medium"
+    },
+    {
+     "run_id": "minato-tennyu__resident-n3__v0__1786504921764",
+     "profile_id": "resident-n3",
+     "step_n": 10,
+     "url": "https://www.city.minato.tokyo.jp/search/result.html?cx=80bbbf66cd8f304c8&ie=UTF-8&cof=FORID%3A9&q=%E8%BB%A2%E5%85%A5+%E6%89%8B%E7%B6%9A%E3%81%8D+%E6%8C%81%E3%81%A3%E3%81%A6%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE#gsc.tab=0&gsc.q=%E8%BB%A2%E5%85%A5%20%E6%89%8B%E7%B6%9A%E3%81%8D%20%E6%8C%81%E3%81%A3%E3%81%A6%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE&gsc.page=1",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「転入届」がリンク・ボタンのラベルに含まれており、2画面（ステップ10 / ステップ19）で読めない状態だった",
+      "「転入届」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.97"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "minato-tennyu__smartphone-novice__v0__1786508964739",
+     "profile_id": "smartphone-novice",
+     "step_n": 14,
+     "url": "https://www.city.minato.tokyo.jp/onlineservice/index.html",
+     "cause_ja": "同じページに戻ってきている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "同じページに2回入っている（ステップ5〜6 / ステップ14）",
+      "そのうち1ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "minato-tennyu__senior-70s__v0__1786508543992",
+     "profile_id": "senior-70s",
+     "step_n": 15,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「サイト」がリンク・ボタンのラベルに含まれており、2画面（ステップ15 / ステップ16）で読めない状態だった",
+      "「サイト」60歳以上の理解率 7.8%（国立国語研究所 外来語定着度調査）"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "minato-tennyu__smartphone-novice__v0__1786508964739",
+     "profile_id": "smartphone-novice",
+     "step_n": 15,
+     "url": "https://www.city.minato.tokyo.jp/ai_search/index.html",
+     "cause_ja": "同じページに戻ってきている（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "同じページに2回入っている（ステップ7〜10 / ステップ15）",
+      "そのうち1ステップは一度離れたあとに戻ってきたもの"
+     ],
+     "severity": "low"
+    },
+    {
+     "run_id": "minato-tennyu__resident-n3__v0__1786504921764",
+     "profile_id": "resident-n3",
+     "step_n": 19,
+     "url": "https://www.city.minato.tokyo.jp/madoguchidxtan/hikkoshi.html",
+     "cause_ja": "リンクのラベルに読めない語がある（説明の生成に失敗。根拠は下記のとおり実測値である）",
+     "fix_ja": "",
+     "evidence": [
+      "「ハザードマップ」がリンク・ボタンのラベルに含まれており、1画面（ステップ19）で読めない状態だった",
+      "「ハザードマップ」『やさしい日本語 書き換え例』(出入国在留管理庁・文化庁 2020) 収録語 No.111"
+     ],
+     "severity": "low"
+    }
+   ],
+   "dropout_rate": 0.875,
+   "control_reached": true
+  }
+ ],
+ "totals": {
+  "runs": 55,
+  "reached": 34,
+  "cost_usd": 0.91112725,
+  "baseline_usd": 10.034300000000002,
+  "findings": 113,
+  "masked_words": 516
+ },
+ "by_profile": [
+  {
+   "id": "control",
+   "runs": 11,
+   "reached": 11,
+   "rate": 1
+  },
+  {
+   "id": "busy-worker",
+   "runs": 11,
+   "reached": 8,
+   "rate": 0.7272727272727273
+  },
+  {
+   "id": "resident-n3",
+   "runs": 11,
+   "reached": 8,
+   "rate": 0.7272727272727273
+  },
+  {
+   "id": "senior-70s",
+   "runs": 11,
+   "reached": 4,
+   "rate": 0.36363636363636365
+  },
+  {
+   "id": "smartphone-novice",
+   "runs": 11,
+   "reached": 3,
+   "rate": 0.2727272727272727
+  }
+ ]
+}

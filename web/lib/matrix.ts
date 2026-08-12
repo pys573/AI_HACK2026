@@ -1,0 +1,93 @@
+/**
+ * scripts/build-web-data.ts가 만든 집계를 읽는다. **서버에서만 돈다.**
+ *
+ * 여기서도 숫자를 만들지 않는다. 만드는 곳은 build-web-data.ts 한 곳이다.
+ * 이 파일은 읽고 라벨을 붙일 뿐이다 (절대규칙 3·4).
+ */
+
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+
+const DEMO = join(process.cwd(), "public", "demo");
+
+export type Cell = {
+  run_id: string;
+  profile_id: string;
+  profile_version: string;
+  reached: boolean;
+  outcome: string;
+  clicks: number;
+  seconds: number;
+  steps: number;
+  findings: number;
+  masked_words: number;
+  masked_in_controls: number;
+  cost_usd: number;
+  replayable: boolean;
+};
+
+export type FindingRow = {
+  run_id: string;
+  profile_id: string;
+  step_n: number;
+  url: string;
+  cause_ja: string;
+  fix_ja: string;
+  evidence: string[];
+  severity: "high" | "medium" | "low";
+};
+
+export type SiteBlock = {
+  mission_id: string;
+  site_name: string;
+  start_url: string;
+  goal_ja: string;
+  cells: Cell[];
+  findings: FindingRow[];
+  dropout_rate: number | null;
+  control_reached: boolean;
+};
+
+export type Matrix = {
+  generated_at: string;
+  profiles: Array<{ id: string; version: string; label_ja: string; note_ja: string | null }>;
+  sites: SiteBlock[];
+  totals: {
+    runs: number;
+    reached: number;
+    cost_usd: number;
+    baseline_usd: number | null;
+    findings: number;
+    masked_words: number;
+  };
+  by_profile: Array<{ id: string; runs: number; reached: number; rate: number }>;
+};
+
+export function loadMatrix(): Matrix | null {
+  const p = join(DEMO, "matrix.json");
+  if (!existsSync(p)) return null;
+  return JSON.parse(readFileSync(p, "utf8")) as Matrix;
+}
+
+/**
+ * 왜 멈췄는가를 일본어 한 마디로.
+ * ★ error는 「제약이 세서 실패」가 **아니다.** 우리 쪽 미구현이다.
+ *   같은 ×로 칠하면 사이트 탓으로 읽힌다 — 그러면 거짓말이 된다.
+ */
+export function outcomeLabel(o: string): { ja: string; tone: "clear" | "stumble" | "blocked" | "neutral" } {
+  if (o === "reached") return { ja: "到達", tone: "clear" };
+  if (o.startsWith("gave_up")) return { ja: "諦めた", tone: "blocked" };
+  if (o === "max_steps") return { ja: "手数上限", tone: "stumble" };
+  if (o === "error") return { ja: "計測不能", tone: "neutral" };
+  return { ja: o, tone: "neutral" };
+}
+
+export function pct(n: number): string {
+  return `${Math.round(n * 100)}`;
+}
+
+export function mmss(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return m > 0 ? `${m}分${String(s).padStart(2, "0")}秒` : `${s}秒`;
+}

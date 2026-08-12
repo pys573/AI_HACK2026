@@ -1,27 +1,36 @@
 @import "tailwindcss";
 
 /**
- * 계기판(instrument panel)처럼 보이게 한다.
- * 이건 마케팅 사이트가 아니라 「측정 결과를 읽는 화면」이다.
- * 색은 3개만 쓴다 — 통과(청록) / ツマヅキ(호박) / 차단(적).
+ * 밝은 화면 + 파랑 1색.
+ *
+ * 토큰 **이름은 바꾸지 않는다.** 기존 컴포넌트 8개(BeforeAfter·CostPanel·Threats…)가
+ * 전부 이 이름으로 색을 부르고 있어서, 값만 갈면 그대로 따라온다.
+ * 이름까지 갈면 화면 8개를 동시에 고쳐야 하고, 기능 동결(8/13)까지 그럴 시간이 없다.
+ *
+ * 색의 뜻은 그대로다 — 도달(초록) / ツマヅキ(호박) / 가려짐·막힘(빨강) + 브랜드(파랑).
  */
 @theme {
-  --color-ink: #0a0b0d;
-  --color-surface: #131519;
-  --color-surface-2: #1a1d23;
-  --color-line: #262a32;
-  --color-line-soft: #1e222a;
+  --color-ink: #f4f7fc;
+  --color-surface: #ffffff;
+  --color-surface-2: #f7f9fd;
+  --color-line: #dde3ee;
+  --color-line-soft: #e8edf6;
 
-  --color-fg: #e9eaec;
-  --color-fg-muted: #8b909a;
-  --color-fg-dim: #5d626c;
+  --color-fg: #0d1220;
+  --color-fg-muted: #5a6478;
+  --color-fg-dim: #8d97ab;
 
-  /* 제약 없음 — 도달한 쪽 */
-  --color-clear: #34d399;
-  /* ツマヅキ — 제약 걸린 쪽. 브랜드 색 */
-  --color-stumble: #f5a524;
-  /* 가려진 것 · 막힌 것 */
-  --color-blocked: #f87171;
+  /* 도달한 쪽 */
+  --color-clear: #0f9d63;
+  /* ツマヅキ — 제약 걸린 쪽 */
+  --color-stumble: #c2740a;
+  /* 가려진 것 · 막힌 것 · 이탈 */
+  --color-blocked: #d92d20;
+
+  /* 브랜드. 계측값이 아닌 것(버튼·강조)에만 쓴다 —
+     결과 색(초록/호박/빨강)과 섞이면 「이 파랑은 무슨 뜻인가」가 생긴다 */
+  --color-brand: #1447e6;
+  --color-brand-deep: #0a2fa8;
 
   --font-sans: var(--font-noto-sans-jp), system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
@@ -29,7 +38,7 @@
 
 html {
   background: var(--color-ink);
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
@@ -47,7 +56,7 @@ body {
 /* 마스킹된 글자 — 「가려졌다」가 한눈에 보여야 한다 */
 .masked {
   color: var(--color-blocked);
-  background: color-mix(in oklab, var(--color-blocked) 12%, transparent);
+  background: color-mix(in oklab, var(--color-blocked) 10%, transparent);
   border-radius: 3px;
   padding: 0 2px;
 }
@@ -58,3 +67,19 @@ body {
   100% { box-shadow: 0 0 0 0 transparent; }
 }
 .pulse-ring { animation: pulse-ring 1.6s ease-out infinite; }
+
+/* 히어로·CTA의 파란 면 */
+.brand-wash {
+  background:
+    radial-gradient(1200px 400px at 78% 18%, rgba(20, 71, 230, 0.10), transparent 62%),
+    linear-gradient(180deg, #ffffff 0%, #eef3fd 100%);
+}
+.brand-solid {
+  background: linear-gradient(135deg, var(--color-brand-deep) 0%, var(--color-brand) 55%, #2f63f0 100%);
+}
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(13, 18, 32, 0.04), 0 8px 24px -16px rgba(13, 18, 32, 0.18);
+}

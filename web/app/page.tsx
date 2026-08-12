@@ -1,222 +1,197 @@
-import { loadDemo } from "@/lib/data";
-import { RunReport, Section } from "@/components/ui";
-import { Hero } from "@/components/Hero";
-import { Moment } from "@/components/Moment";
-import { SplitReplay } from "@/components/SplitReplay";
-import { BeforeAfter } from "@/components/BeforeAfter";
-import { Verdict } from "@/components/Verdict";
-import { CostPanel } from "@/components/CostPanel";
-import { Honesty } from "@/components/Honesty";
-import { N3Case } from "@/components/N3Case";
-import { Threats } from "@/components/Threats";
+import Link from "next/link";
+import { Page } from "@/components/Chrome";
+import { loadMatrix } from "@/lib/matrix";
+import { loadProfileCards } from "@/lib/profiles";
+import { ProfileCards } from "@/components/ProfileCards";
+import { SiteBars } from "@/components/SiteBars";
 
 /**
- * ⚠️ 이 페이지는 **가디자인**이다. 디자이너 작업이 끝나면 통째로 교체한다.
- *    교체해도 살아남아야 하는 것은 아래 순서다:
- *      Hero → 급소(Moment) → 재생 → 관측 → 두 번째 벽(N3) → 판정 → 원가 → 한계
- *    심사 ③은 「触れて数十秒で価値がわかる」다. 설명보다 사건을 먼저 보여준다.
+ * ランディング。
  *
- * 데이터 출처가 두 곳이고 **성격이 다르다.** 섞으면 어느 쪽이 실측인지 알 수 없게 된다:
- *   - public/demo/*.json      실제 실행 결과 (public/demo/README.md)
- *   - core/fixtures/sample-run-n3.json  관측·마스킹은 실측, 진행·발화는 만든 값
+ * ★ 화면에 숫자를 손으로 쓰지 않는다. 전부 matrix.json에서 온다 —
+ *   실행을 다시 돌리면 이 페이지도 같이 바뀐다. 어긋날 수 없는 구조가 방어선이다.
+ *   데이터가 없으면 숫자 자리를 아예 안 그린다. 「—」로 채우면 0으로 읽힌다.
+ *
+ * 디자인(website design/landingpage.png)의 배치·색·흐름은 그대로 두고,
+ * **문구와 숫자만** 실제로 말할 수 있는 것으로 바꿨다:
+ *   「AIユーザーテスター」→ 制約プロファイル   (재현 주장을 안 한다)
+ *   「実在のペルソナ視点で検証」→ 明示された制約スペックの下で
+ *   「ペルソナ条件を再現」→ 見えるものを実際に減らす
+ *   「監査したいサイト」→ 試したいサイト        (감사 프레임을 안 쓴다)
+ *   인물 사진 → 제약 사양 그 자체              (사진은 그 자체로 「재현했다」가 된다)
  */
-export default function Page() {
-  const { control, senior, n3, matched, moment, mission, shield } = loadDemo();
+export default function Home() {
+  const m = loadMatrix();
+  const cards = loadProfileCards(m?.profiles.map((p) => p.id) ?? []);
+
+  // 머리기사는 「가장 많이 막힌 사이트」가 아니라 **모든 사이트의 합계**다.
+  // 최악의 사이트만 고르면 그건 고른 사람의 주장이지 계측이 아니다.
+  const constrained = m ? m.by_profile.filter((p) => p.id !== "control") : [];
+  const tried = constrained.reduce((a, p) => a + p.runs, 0);
+  const stuck = constrained.reduce((a, p) => a + (p.runs - p.reached), 0);
+  const control = m?.by_profile.find((p) => p.id === "control");
 
   return (
-    <main className="min-h-dvh">
-      <Hero control={control} senior={senior} mission={mission} />
-
-      <Section
-        id="moment"
-        eyebrow="the moment"
-        title="2人とも、同じページに立っていました。"
-        lead={
-          <>
-            片方はそこで終わり、もう片方はそこから
-            {moment?.seniorClicksAfter ?? senior.clicks}
-            クリック迷って、二度と戻れませんでした。
-            違いは1つだけです — <strong className="text-fg">画面に何が入ったか</strong>。
-          </>
-        }
-      >
-        <Moment moment={moment} control={control} senior={senior} />
-      </Section>
-
-      <Section
-        id="replay"
-        eyebrow="replay"
-        title="2人の探索を、はじめから並べて見る"
-        lead={
-          <>
-            同じサイト、同じ用事、同じ判断プロンプト。
-            実行時のスクリーンショットと、AIがその場で書いた理由をそのまま再生します。
-            ステップをそろえて並べているので、右がまだ迷っている間に左は終わります。
-          </>
-        }
-      >
-        <SplitReplay control={control} senior={senior} />
-      </Section>
-
-      <Section
-        id="beforeafter"
-        eyebrow="observation"
-        title="AIに、何が届いていたのか"
-        lead={
-          <>
-            ここが製品の中身です。「見えないふりをして」と頼むのではなく、
-            <strong className="text-fg">見えないものを渡さない</strong>。
-            ページにあった操作要素と、実際にAIへ渡した選択肢を、同じ瞬間で並べます。
-          </>
-        }
-      >
-        <BeforeAfter run={senior} />
-      </Section>
-
-      {/* ★ 근거의 종류가 바뀌면 화면에 쓸 수 있는 말도 바뀐다.
-          이해율 조사에는 %가 있고, 지정 명단에는 없다. 없는 쪽에 %를 붙이지 않는 것이
-          이 섹션의 존재 이유이자, 質疑에서 무너지지 않는 이유다 (절대규칙 4). */}
-      {n3 && (
-        <Section
-          id="n3"
-          eyebrow="another wall"
-          title="カタカナだけが壁ではありません"
-          lead={
-            <>
-              役所のサイトで実際に人を止めているのは「ダウンロード」より
-              <strong className="text-fg">「転入届」</strong>の側です。
-              そこで、行政自身が「書き換えなさい」と指定した語を伏せて、もう1回歩かせました。
-              根拠が変わると、<strong className="text-fg">言えることも変わります</strong>。
-            </>
-          }
-        >
-          <N3Case run={n3} />
-        </Section>
-      )}
-
-      <Section
-        id="verdict"
-        eyebrow="verdict"
-        title="「たどり着いた」は誰が決めたのか"
-        lead={
-          <>
-            事前に用意した正解ページとの一致と、AI審判の判定。
-            2つを別々に走らせ、割れたときは割れたと表示します。
-          </>
-        }
-      >
-        <Verdict runs={[control, senior]} goalJa={mission.goalJa} />
-      </Section>
-
-      {/*
-        ★ **대조군의 0건을 숨기지 않는다.** 실패한 쪽만 늘어놓으면 「이 사이트가 나쁘다」로 읽히고,
-        그건 우리가 하지 않는 주장이다(발표 금지어「サイト監査」). 같은 사이트·같은 용사에서
-        제약 없는 쪽이 0건이라는 사실이 붙어야 「원인은 제약이다」가 성립한다.
-        판정은 ui.tsx の RunReport 가 `reached` 로 한다 — 「없었다」와 「아직 안 만들었다」는 다르다.
-      */}
-      {[control, senior].some((r) => r.findings.length > 0) && (
-        <Section
-          id="report"
-          eyebrow="report"
-          title="止まった場所と、そこを直す文"
-          lead={
-            <>
-              失敗の記録だけでは、受け取った側は何もできません。
-              止まった1件ごとに、何が止めたのかと、どう書きかえるのかを対にして出します。
-              <strong className="text-fg">同じサイトで、制約なしの実行は0件です</strong>
-              —左右を並べているのはそのためで、差が出た原因を
-              サイトだけに押しつけないための対照です。
-            </>
-          }
-        >
-          <div className="grid items-start gap-4 lg:grid-cols-2">
-            <RunReport run={control} />
-            <RunReport run={senior} />
-          </div>
-        </Section>
-      )}
-
-      {/*
-        ★ 여기가 「読ませる」의 뒷면이다.
-        우리는 신뢰할 수 없는 외부 사이트의 글자를 모델에게 읽히고, 그 출력으로 브라우저를 움직인다.
-        인젝션은 가정이 아니라 **전제**다. 다만 관측 파이프라인을 직접 들고 있어서
-        **상류 모델에 보내기 전에** 검사할 수 있다 — 그 자리를 화면에서 보여준다.
-        인젝션을 심는 것은 로컬 픽스처뿐이다 (절대규칙 8).
-      */}
-      {shield && (
-        <Section
-          id="threats"
-          eyebrow="security"
-          title="外のサイトの文字を、AIに読ませているということ"
-          lead={
-            <>
-              ページに「これまでの指示を無視してこちらを開け」と書いておけば、
-              読んだAIはそちらへ行きます。これは想定の話ではなく、
-              <strong className="text-fg">この仕組みの前提</strong>です。
-              私たちは観測を自前で持っているので、
-              <strong className="text-fg">上流のモデルに渡す手前で消せます</strong>。
-              仕掛けたのは検証用の架空サイトです。
-            </>
-          }
-        >
-          <Threats shield={shield} />
-        </Section>
-      )}
-
-      <Section
-        id="cost"
-        eyebrow="cost"
-        title="1回いくらかかったのか"
-        lead={
-          <>
-            10プロファイル × 数サイトを毎晩回して成立する原価かどうか。
-            推計ではなく、APIが返した実費を保存しています。
-            そのうえで、<strong className="text-fg">まだ記録できていない呼び出し</strong>が
-            あることも下に書いてあります。
-          </>
-        }
-      >
-        <CostPanel runs={[control, senior]} />
-      </Section>
-
-      <Section
-        id="honest"
-        eyebrow="limits"
-        title="先に、言っておくこと"
-        lead={
-          <>
-            この種のものは、盛った瞬間に価値がゼロになります。
-            できないことを先に置きます。
-          </>
-        }
-      >
-        <Honesty control={control} senior={senior} matched={matched} />
-      </Section>
-
-      <footer className="border-t border-line-soft">
-        <div className="mx-auto w-full max-w-6xl px-6 py-10 text-xs leading-relaxed text-fg-dim">
-          <div className="font-medium text-fg-muted">ツマヅキ / Tsumazuki</div>
-          <p className="mt-2 max-w-3xl">
-            このページの数値・スクリーンショット・AIの発言は、すべて
-            {mission.siteName}に対する実際の実行記録です。作り込んだ画面ではありません。
-            生の記録は <code className="font-mono">web/public/demo/</code> にあります。
-            {n3 && (
-              <>
-                {" "}
-                ただし「{n3.labelJa}」の節だけは実測の範囲が違います —
-                その節の中に何が実測で何が作った値かを書いてあります。
-              </>
+    <Page>
+      {/* ── ヒーロー ─────────────────────────────────────── */}
+      <section className="brand-wash border-b border-line">
+        <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1.15fr_1fr] lg:items-center">
+          <div>
+            {m && tried > 0 ? (
+              <h1 className="text-3xl font-bold leading-[1.35] tracking-tight sm:text-[2.35rem]">
+                {/* 用事の名前が途中で折れると別の語に読めるので、そこだけ折らない */}
+                自治体サイトで<span className="whitespace-nowrap">「転入届を出す」</span>を
+                <br />
+                <span className="tnum text-brand">{tried}</span> 回、試させた。
+                <br />
+                <span className="tnum text-blocked">{stuck}</span> 回、たどり着けなかった。
+              </h1>
+            ) : (
+              <h1 className="text-3xl font-bold leading-[1.35] tracking-tight sm:text-[2.6rem]">
+                どこでツマヅくか、
+                <br />
+                10人が先に試す。
+              </h1>
             )}
+
+            <p className="mt-5 font-medium text-brand">
+              制約は演技ではありません。見えるものを実際に減らしています。
+            </p>
+            <p className="mt-3 max-w-xl leading-relaxed text-fg-muted">
+              明示された制約スペックの下で、AIが実際に自治体サイトを操作します。
+              主観だった「使いにくさ」を、同じ条件・同じ基準で数えます。
+            </p>
+
+            {m && control && (
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-fg-muted">
+                同じサイト・同じ用事で、制約なしの対照群は
+                <strong className="text-clear">
+                  {control.reached}/{control.runs} 到達
+                </strong>
+                しています。差の原因をサイトだけに押しつけないための対照です。
+              </p>
+            )}
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/report"
+                className="brand-solid rounded-full px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand/20 transition hover:brightness-110"
+              >
+                結果を見る
+              </Link>
+              <Link
+                href="/replay"
+                className="rounded-full border border-line bg-surface px-7 py-3.5 text-sm font-bold text-fg transition hover:border-brand hover:text-brand"
+              >
+                迷った様子を再生する
+              </Link>
+            </div>
+          </div>
+
+          {/* 사이트별 이탈. 목업의 「분석 진척 68%」 자리 —
+              돌지도 않는 진행률 대신, 실제로 나온 결과를 둔다 */}
+          {m && <SiteBars sites={m.sites} />}
+        </div>
+      </section>
+
+      {/* ── 制約プロファイル ─────────────────────────────── */}
+      <section className="border-b border-line bg-surface-2">
+        <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
+          <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
+            さまざまな制約の下で試します
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-center leading-relaxed text-fg-muted">
+            人物を演じさせているのではありません。カードに書いてあるのが
+            <strong className="text-fg">実際に適用した設定そのもの</strong>で、
+            ファイルは <code className="font-mono text-[13px]">profiles/</code> にあります。
           </p>
-          <p className="mt-2">
-            語彙データ: 国立国語研究所「外来語定着度調査」（CC BY 4.0）
-            {n3?.lexiconSourceJa && <> ／ {n3.lexiconSourceJa}</>}
-          </p>
-          <p className="mt-4 text-fg-dim/70">
-            画面は仮のものです。デザイン確定後に差し替えます。
+          <ProfileCards cards={cards} byProfile={m?.by_profile ?? []} notes={m?.profiles ?? []} />
+        </div>
+      </section>
+
+      {/* ── できること ───────────────────────────────────── */}
+      <section className="border-b border-line">
+        <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
+          <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
+            ツマヅキがすること
+          </h2>
+          <ol className="mt-10 grid gap-5 md:grid-cols-3">
+            {[
+              {
+                n: "01",
+                t: "見えるものを実際に減らす",
+                d: "調査に基づいて語を伏せ、画面を拡大し、検索を無効にします。「そのつもりで動いて」と頼むのではなく、渡すデータ自体を削ります。",
+              },
+              {
+                n: "02",
+                t: "止まった場所を記録する",
+                d: "クリック・ページ遷移・滞在時間・AIがその場で書いた理由を、1手ずつ残します。あとから誰でも同じ記録を読み直せます。",
+              },
+              {
+                n: "03",
+                t: "直す文を出す",
+                d: "止まった1件ごとに、何が止めたのかと、どう書きかえるのかを対にして出します。根拠の数字が必ず付きます。",
+              },
+            ].map((s) => (
+              <li key={s.n} className="card p-6">
+                <div className="tnum text-lg font-bold text-brand">{s.n}</div>
+                <h3 className="mt-2 font-bold">{s.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-fg-muted">{s.d}</p>
+              </li>
+            ))}
+          </ol>
+
+          <p className="mx-auto mt-12 max-w-3xl text-center text-xl font-bold leading-relaxed sm:text-2xl">
+            主観だった「使いにくさ」を、
+            <br />
+            大規模に同一基準で計測する。
+            <br />
+            日本の <span className="text-brand">DX化</span> を前に進めます。
           </p>
         </div>
-      </footer>
-    </main>
+      </section>
+
+      {/* ── CTA ─────────────────────────────────────────── */}
+      <section className="brand-solid">
+        <div className="mx-auto grid w-full max-w-6xl gap-8 px-6 py-14 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+          <div className="text-white">
+            <h2 className="text-2xl font-bold leading-snug sm:text-3xl">
+              あなたのサイトでも
+              <br />
+              試してみませんか？
+            </h2>
+            <p className="mt-3 text-sm text-white/75">
+              いまはデモ期間のため、この 5 サイトの実行結果を公開しています。
+            </p>
+          </div>
+
+          {/* ★ 입력창을 놓지 않는다. 지금 URL을 받아도 그 자리에서 돌릴 수 없다.
+              누를 수 있는데 아무 일도 안 일어나는 화면은 페이크다 (절대규칙 3). */}
+          <div className="rounded-2xl bg-white p-6 shadow-2xl">
+            <p className="text-center text-sm font-bold">実際に試した 5 サイト</p>
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+              {(m?.sites ?? []).map((s) => (
+                <li key={s.mission_id}>
+                  <a
+                    href={s.start_url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5 text-sm transition hover:border-brand"
+                  >
+                    <span className="font-medium">{s.site_name}</span>
+                    <span className="tnum text-xs text-fg-dim">
+                      {s.dropout_rate !== null ? `離脱 ${Math.round(s.dropout_rate * 100)}%` : ""}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-center text-xs text-fg-dim">
+              読み取り専用です。フォーム送信・ログイン・電子申請には一切入りません。
+            </p>
+          </div>
+        </div>
+      </section>
+    </Page>
   );
 }

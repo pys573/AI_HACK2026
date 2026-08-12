@@ -1,0 +1,3875 @@
+{
+  "run_id": "shibuya-tennyu__control__v0__1786508508418",
+  "batch_id": "batch__shibuya-tennyu__1786508508417",
+  "created_at": "2026-08-12T04:21:48.981Z",
+  "mission": {
+    "id": "shibuya-tennyu",
+    "track": "public",
+    "site_id": "shibuya",
+    "site_name": "渋谷区",
+    "start_url": "https://www.city.shibuya.tokyo.jp/",
+    "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+    "intent_ja": "来月この区に引っ越します。役所で何をすればいいのか、当日何を持っていけばいいのかを知りたい。",
+    "max_steps": 20
+  },
+  "profile_id": "control",
+  "profile_version": "1.0",
+  "variant": 0,
+  "steps": [
+    {
+      "n": 1,
+      "ts": "2026-08-12T04:22:00.216Z",
+      "raw": {
+        "url": "https://www.city.shibuya.tokyo.jp/",
+        "title": "渋谷区公式サイト | 渋谷区ポータル",
+        "text": "渋谷区議会\n渋谷区教育委員会\nトップ\nごみ・資源\n地域交通\n住民票・戸籍\n税金\n国民健康保険\n高齢者介護\n防災ポータル\nネウボラ\n学校・教育\nシブカツ\n図書館\n事業者向け\n調べる\n手続き\nお問い合わせ\nページトップ",
+        "elements": [
+          {
+            "index": 0,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": true,
+            "box": {
+              "x": 1017,
+              "y": 3,
+              "w": 89,
+              "h": 28
+            }
+          },
+          {
+            "index": 1,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": true,
+            "box": {
+              "x": 1126,
+              "y": 3,
+              "w": 123,
+              "h": 28
+            }
+          },
+          {
+            "index": 2,
+            "role": "button",
+            "name": "トップ",
+            "in_viewport": true,
+            "box": {
+              "x": 0,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 3,
+            "role": "link",
+            "name": "ごみ・資源",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 4,
+            "role": "link",
+            "name": "地域交通",
+            "in_viewport": true,
+            "box": {
+              "x": 239,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 5,
+            "role": "link",
+            "name": "住民票・戸籍",
+            "in_viewport": true,
+            "box": {
+              "x": 447,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 6,
+            "role": "link",
+            "name": "税金",
+            "in_viewport": true,
+            "box": {
+              "x": 656,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 7,
+            "role": "link",
+            "name": "国民健康保険",
+            "in_viewport": true,
+            "box": {
+              "x": 864,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 8,
+            "role": "link",
+            "name": "高齢者介護",
+            "in_viewport": true,
+            "box": {
+              "x": 1072,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 9,
+            "role": "link",
+            "name": "防災ポータル",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 10,
+            "role": "link",
+            "name": "ネウボラ",
+            "in_viewport": true,
+            "box": {
+              "x": 239,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 11,
+            "role": "link",
+            "name": "学校・教育",
+            "in_viewport": true,
+            "box": {
+              "x": 447,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 12,
+            "role": "link",
+            "name": "シブカツ",
+            "in_viewport": true,
+            "box": {
+              "x": 656,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 13,
+            "role": "link",
+            "name": "図書館",
+            "in_viewport": true,
+            "box": {
+              "x": 864,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 14,
+            "role": "link",
+            "name": "事業者向け",
+            "in_viewport": true,
+            "box": {
+              "x": 1072,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 15,
+            "role": "link",
+            "name": "施設案内",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 16,
+            "role": "link",
+            "name": "広報紙",
+            "in_viewport": true,
+            "box": {
+              "x": 239,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 17,
+            "role": "link",
+            "name": "イベント",
+            "in_viewport": true,
+            "box": {
+              "x": 447,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 18,
+            "role": "link",
+            "name": "ふるさと納税",
+            "in_viewport": true,
+            "box": {
+              "x": 656,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 19,
+            "role": "link",
+            "name": "区長の部屋",
+            "in_viewport": true,
+            "box": {
+              "x": 864,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 20,
+            "role": "link",
+            "name": "渋谷区議会",
+            "in_viewport": true,
+            "box": {
+              "x": 1072,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 21,
+            "role": "button",
+            "name": "調べる",
+            "in_viewport": true,
+            "box": {
+              "x": 320,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 22,
+            "role": "button",
+            "name": "手続き",
+            "in_viewport": true,
+            "box": {
+              "x": 640,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 23,
+            "role": "button",
+            "name": "お問い合わせ",
+            "in_viewport": true,
+            "box": {
+              "x": 960,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 24,
+            "role": "link",
+            "name": "2026年8月3日 令和8年熊本地震義援金を受け付けています",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1087,
+              "w": 593,
+              "h": 128
+            }
+          },
+          {
+            "index": 25,
+            "role": "link",
+            "name": "2026年7月30日 しぶや区ニュース令和8年8月1日号を公開しました",
+            "in_viewport": false,
+            "box": {
+              "x": 656,
+              "y": 1087,
+              "w": 593,
+              "h": 128
+            }
+          },
+          {
+            "index": 26,
+            "role": "link",
+            "name": "2026年5月20日 熱中症に気をつけましょう",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1245,
+              "w": 593,
+              "h": 128
+            }
+          },
+          {
+            "index": 27,
+            "role": "link",
+            "name": "2025年11月10日 閲覧支援ツールで見え方を調整することができます",
+            "in_viewport": false,
+            "box": {
+              "x": 656,
+              "y": 1245,
+              "w": 593,
+              "h": 128
+            }
+          },
+          {
+            "index": 28,
+            "role": "section",
+            "name": "Gallery",
+            "in_viewport": false,
+            "box": {
+              "x": 16,
+              "y": 1443,
+              "w": 1249,
+              "h": 600
+            }
+          },
+          {
+            "index": 29,
+            "role": "button",
+            "name": "渋谷シティダッシュボード",
+            "in_viewport": false,
+            "box": {
+              "x": 5026,
+              "y": 1443,
+              "w": 1218,
+              "h": 600
+            }
+          },
+          {
+            "index": 30,
+            "role": "button",
+            "name": "渋谷区キャッシュレス決済アプリ ハチペイ",
+            "in_viewport": false,
+            "box": {
+              "x": 6275,
+              "y": 1443,
+              "w": 1218,
+              "h": 600
+            }
+          },
+          {
+            "index": 31,
+            "role": "button",
+            "name": "きれいなまち渋谷をみんなでつくる条例",
+            "in_viewport": false,
+            "box": {
+              "x": 7524,
+              "y": 1443,
+              "w": 1218,
+              "h": 600
+            }
+          },
+          {
+            "index": 32,
+            "role": "button",
+            "name": "スライド停止",
+            "in_viewport": false,
+            "box": {
+              "x": 1166,
+              "y": 2015,
+              "w": 98,
+              "h": 18
+            }
+          },
+          {
+            "index": 33,
+            "role": "button",
+            "name": "新着情報",
+            "in_viewport": false,
+            "box": {
+              "x": 0,
+              "y": 2103,
+              "w": 427,
+              "h": 60
+            }
+          },
+          {
+            "index": 34,
+            "role": "button",
+            "name": "しぶや区ニュース ウェブテキスト版",
+            "in_viewport": false,
+            "box": {
+              "x": 427,
+              "y": 2103,
+              "w": 427,
+              "h": 60
+            }
+          },
+          {
+            "index": 35,
+            "role": "button",
+            "name": "渋谷のニュース",
+            "in_viewport": false,
+            "box": {
+              "x": 853,
+              "y": 2103,
+              "w": 427,
+              "h": 60
+            }
+          },
+          {
+            "index": 36,
+            "role": "link",
+            "name": "渋谷区基本構想 イメージ",
+            "in_viewport": false,
+            "box": {
+              "x": 0,
+              "y": 2128,
+              "w": 624,
+              "h": 352
+            }
+          },
+          {
+            "index": 37,
+            "role": "link",
+            "name": "策定までの経緯",
+            "in_viewport": false,
+            "box": {
+              "x": 656,
+              "y": 2434,
+              "w": 128,
+              "h": 32
+            }
+          },
+          {
+            "index": 38,
+            "role": "link",
+            "name": "ページトップ",
+            "in_viewport": true,
+            "box": {
+              "x": 1179,
+              "y": 750,
+              "w": 70,
+              "h": 50
+            }
+          },
+          {
+            "index": 39,
+            "role": "link",
+            "name": "9000020131130",
+            "in_viewport": false,
+            "box": {
+              "x": 111,
+              "y": 2966,
+              "w": 149,
+              "h": 16
+            }
+          },
+          {
+            "index": 40,
+            "role": "link",
+            "name": "マイポータルへログイン（別ウィンドウで開きます）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3033,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 41,
+            "role": "link",
+            "name": "区役所へのアクセス",
+            "in_viewport": false,
+            "box": {
+              "x": 447,
+              "y": 3033,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 42,
+            "role": "link",
+            "name": "各種お問い合わせ",
+            "in_viewport": false,
+            "box": {
+              "x": 864,
+              "y": 3033,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 43,
+            "role": "link",
+            "name": "サイトマップ",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3130,
+              "w": 80,
+              "h": 24
+            }
+          },
+          {
+            "index": 44,
+            "role": "link",
+            "name": "サイトポリシー",
+            "in_viewport": false,
+            "box": {
+              "x": 131,
+              "y": 3130,
+              "w": 90,
+              "h": 24
+            }
+          },
+          {
+            "index": 45,
+            "role": "link",
+            "name": "アクセシビリティ方針",
+            "in_viewport": false,
+            "box": {
+              "x": 241,
+              "y": 3130,
+              "w": 124,
+              "h": 24
+            }
+          },
+          {
+            "index": 46,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3193,
+              "w": 89,
+              "h": 28
+            }
+          },
+          {
+            "index": 47,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": false,
+            "box": {
+              "x": 140,
+              "y": 3193,
+              "w": 123,
+              "h": 28
+            }
+          },
+          {
+            "index": 48,
+            "role": "link",
+            "name": "渋谷区LINE公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3239,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 49,
+            "role": "link",
+            "name": "渋谷区X公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 90,
+              "y": 3239,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 50,
+            "role": "link",
+            "name": "渋谷区Facebook公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 149,
+              "y": 3239,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 51,
+            "role": "link",
+            "name": "渋谷区Instagram公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 208,
+              "y": 3239,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 52,
+            "role": "link",
+            "name": "渋谷区TikTok公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 266,
+              "y": 3239,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 53,
+            "role": "link",
+            "name": "渋谷区YouTube公式チャンネル",
+            "in_viewport": false,
+            "box": {
+              "x": 325,
+              "y": 3239,
+              "w": 30,
+              "h": 30
+            }
+          }
+        ],
+        "scroll": {
+          "y": 0,
+          "height": 3321
+        },
+        "screenshot_key": "shibuya-tennyu__control__v0__1786508508418/step-01.png"
+      },
+      "seen": {
+        "url": "https://www.city.shibuya.tokyo.jp/",
+        "title": "渋谷区公式サイト | 渋谷区ポータル",
+        "text": "渋谷区議会\n渋谷区教育委員会\nトップ\nごみ・資源\n地域交通\n住民票・戸籍\n税金\n国民健康保険\n高齢者介護\n防災ポータル\nネウボラ\n学校・教育\nシブカツ\n図書館\n事業者向け\n調べる\n手続き\nお問い合わせ\nページトップ",
+        "elements": [
+          {
+            "index": 0,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": true,
+            "box": {
+              "x": 1017,
+              "y": 3,
+              "w": 89,
+              "h": 28
+            }
+          },
+          {
+            "index": 1,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": true,
+            "box": {
+              "x": 1126,
+              "y": 3,
+              "w": 123,
+              "h": 28
+            }
+          },
+          {
+            "index": 2,
+            "role": "button",
+            "name": "トップ",
+            "in_viewport": true,
+            "box": {
+              "x": 0,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 3,
+            "role": "link",
+            "name": "ごみ・資源",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 4,
+            "role": "link",
+            "name": "地域交通",
+            "in_viewport": true,
+            "box": {
+              "x": 239,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 5,
+            "role": "link",
+            "name": "住民票・戸籍",
+            "in_viewport": true,
+            "box": {
+              "x": 447,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 6,
+            "role": "link",
+            "name": "税金",
+            "in_viewport": true,
+            "box": {
+              "x": 656,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 7,
+            "role": "link",
+            "name": "国民健康保険",
+            "in_viewport": true,
+            "box": {
+              "x": 864,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 8,
+            "role": "link",
+            "name": "高齢者介護",
+            "in_viewport": true,
+            "box": {
+              "x": 1072,
+              "y": 341,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 9,
+            "role": "link",
+            "name": "防災ポータル",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 10,
+            "role": "link",
+            "name": "ネウボラ",
+            "in_viewport": true,
+            "box": {
+              "x": 239,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 11,
+            "role": "link",
+            "name": "学校・教育",
+            "in_viewport": true,
+            "box": {
+              "x": 447,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 12,
+            "role": "link",
+            "name": "シブカツ",
+            "in_viewport": true,
+            "box": {
+              "x": 656,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 13,
+            "role": "link",
+            "name": "図書館",
+            "in_viewport": true,
+            "box": {
+              "x": 864,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 14,
+            "role": "link",
+            "name": "事業者向け",
+            "in_viewport": true,
+            "box": {
+              "x": 1072,
+              "y": 525,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 15,
+            "role": "link",
+            "name": "施設案内",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 16,
+            "role": "link",
+            "name": "広報紙",
+            "in_viewport": true,
+            "box": {
+              "x": 239,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 17,
+            "role": "link",
+            "name": "イベント",
+            "in_viewport": true,
+            "box": {
+              "x": 447,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 18,
+            "role": "link",
+            "name": "ふるさと納税",
+            "in_viewport": true,
+            "box": {
+              "x": 656,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 19,
+            "role": "link",
+            "name": "区長の部屋",
+            "in_viewport": true,
+            "box": {
+              "x": 864,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 20,
+            "role": "link",
+            "name": "渋谷区議会",
+            "in_viewport": true,
+            "box": {
+              "x": 1072,
+              "y": 709,
+              "w": 177,
+              "h": 152
+            }
+          },
+          {
+            "index": 21,
+            "role": "button",
+            "name": "調べる",
+            "in_viewport": true,
+            "box": {
+              "x": 320,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 22,
+            "role": "button",
+            "name": "手続き",
+            "in_viewport": true,
+            "box": {
+              "x": 640,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 23,
+            "role": "button",
+            "name": "お問い合わせ",
+            "in_viewport": true,
+            "box": {
+              "x": 960,
+              "y": 206,
+              "w": 320,
+              "h": 91
+            }
+          },
+          {
+            "index": 24,
+            "role": "link",
+            "name": "ページトップ",
+            "in_viewport": true,
+            "box": {
+              "x": 1179,
+              "y": 750,
+              "w": 70,
+              "h": 50
+            }
+          }
+        ],
+        "scroll": {
+          "y": 0,
+          "height": 3321
+        },
+        "screenshot_key": "shibuya-tennyu__control__v0__1786508508418/step-01.png"
+      },
+      "constraint": {
+        "profile": "control",
+        "profile_version": "1.0",
+        "masked": [],
+        "masked_in_controls": 0,
+        "dom_text_withheld": false,
+        "elements_total": 54,
+        "elements_in_viewport": 25,
+        "chars_before": 107,
+        "chars_after": 107
+      },
+      "threats": [],
+      "action": {
+        "kind": "click",
+        "reason_ja": "転入届や必要な持ち物などが載っていそうなので、まず「住民票・戸籍」を開いて手続き内容を確認したい。",
+        "index": 5
+      },
+      "action_ok": true,
+      "action_error": null,
+      "llm_calls": [
+        {
+          "step_type": "decide",
+          "model": "gpt-5-mini-2025-08-07",
+          "prompt_tokens": 941,
+          "completion_tokens": 264,
+          "cached_tokens": 0,
+          "cost_usd": 0.00076325,
+          "cost_source": "api",
+          "latency_ms": 4157,
+          "route": null,
+          "mode": "balanced",
+          "retries": 0
+        }
+      ],
+      "patience": {
+        "clicks": 1,
+        "clicks_left": 29,
+        "seconds": 11,
+        "seconds_left": 889
+      }
+    },
+    {
+      "n": 2,
+      "ts": "2026-08-12T04:22:05.139Z",
+      "raw": {
+        "url": "https://www.city.shibuya.tokyo.jp/kurashi/#jumin",
+        "title": "くらし | 渋谷区ポータル",
+        "text": "カテゴリ一覧\n住民票\n住所の異動\n旧姓（旧氏）併記\n住民票の写しの請求・閲覧\n印鑑登録\n印鑑登録の手続き\n印鑑登録証明書の請求\n戸籍\n戸籍の届出\n戸籍の証明\nよくあるご質問\n申請・各種申し込み一覧\n住民戸籍窓口等 混雑状況\n施設案内\nページトップ",
+        "elements": [
+          {
+            "index": 0,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": false,
+            "box": {
+              "x": 1028,
+              "y": 3,
+              "w": 81,
+              "h": 28
+            }
+          },
+          {
+            "index": 1,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": false,
+            "box": {
+              "x": 1128,
+              "y": 3,
+              "w": 120,
+              "h": 28
+            }
+          },
+          {
+            "index": 2,
+            "role": "link",
+            "name": "TOP",
+            "in_viewport": false,
+            "box": {
+              "x": 1135,
+              "y": 174,
+              "w": 26,
+              "h": 12
+            }
+          },
+          {
+            "index": 3,
+            "role": "button",
+            "name": "住民票",
+            "in_viewport": false,
+            "box": {
+              "x": 34,
+              "y": 410,
+              "w": 105,
+              "h": 47
+            }
+          },
+          {
+            "index": 4,
+            "role": "button",
+            "name": "印鑑登録",
+            "in_viewport": false,
+            "box": {
+              "x": 159,
+              "y": 410,
+              "w": 120,
+              "h": 47
+            }
+          },
+          {
+            "index": 5,
+            "role": "button",
+            "name": "戸籍",
+            "in_viewport": false,
+            "box": {
+              "x": 298,
+              "y": 410,
+              "w": 90,
+              "h": 47
+            }
+          },
+          {
+            "index": 6,
+            "role": "button",
+            "name": "外国人住民の手続き",
+            "in_viewport": false,
+            "box": {
+              "x": 408,
+              "y": 410,
+              "w": 194,
+              "h": 47
+            }
+          },
+          {
+            "index": 7,
+            "role": "button",
+            "name": "証明書自動交付",
+            "in_viewport": false,
+            "box": {
+              "x": 622,
+              "y": 410,
+              "w": 164,
+              "h": 47
+            }
+          },
+          {
+            "index": 8,
+            "role": "button",
+            "name": "住民基本台帳ネットワークシステム",
+            "in_viewport": false,
+            "box": {
+              "x": 34,
+              "y": 477,
+              "w": 298,
+              "h": 47
+            }
+          },
+          {
+            "index": 9,
+            "role": "button",
+            "name": "窓口での本人確認・委任状",
+            "in_viewport": false,
+            "box": {
+              "x": 352,
+              "y": 477,
+              "w": 239,
+              "h": 47
+            }
+          },
+          {
+            "index": 10,
+            "role": "button",
+            "name": "マイナンバー",
+            "in_viewport": false,
+            "box": {
+              "x": 611,
+              "y": 477,
+              "w": 149,
+              "h": 47
+            }
+          },
+          {
+            "index": 11,
+            "role": "button",
+            "name": "住民税",
+            "in_viewport": false,
+            "box": {
+              "x": 780,
+              "y": 477,
+              "w": 105,
+              "h": 47
+            }
+          },
+          {
+            "index": 12,
+            "role": "button",
+            "name": "その他の税・公売情報",
+            "in_viewport": false,
+            "box": {
+              "x": 34,
+              "y": 544,
+              "w": 209,
+              "h": 47
+            }
+          },
+          {
+            "index": 13,
+            "role": "button",
+            "name": "国民健康保険",
+            "in_viewport": false,
+            "box": {
+              "x": 263,
+              "y": 544,
+              "w": 149,
+              "h": 47
+            }
+          },
+          {
+            "index": 14,
+            "role": "button",
+            "name": "国民年金",
+            "in_viewport": false,
+            "box": {
+              "x": 432,
+              "y": 544,
+              "w": 120,
+              "h": 47
+            }
+          },
+          {
+            "index": 15,
+            "role": "button",
+            "name": "後期高齢者医療",
+            "in_viewport": false,
+            "box": {
+              "x": 571,
+              "y": 544,
+              "w": 164,
+              "h": 47
+            }
+          },
+          {
+            "index": 16,
+            "role": "button",
+            "name": "税・保険料の納付方法",
+            "in_viewport": false,
+            "box": {
+              "x": 34,
+              "y": 611,
+              "w": 209,
+              "h": 47
+            }
+          },
+          {
+            "index": 17,
+            "role": "button",
+            "name": "ごみ・資源",
+            "in_viewport": false,
+            "box": {
+              "x": 263,
+              "y": 611,
+              "w": 134,
+              "h": 47
+            }
+          },
+          {
+            "index": 18,
+            "role": "button",
+            "name": "住宅",
+            "in_viewport": false,
+            "box": {
+              "x": 417,
+              "y": 611,
+              "w": 90,
+              "h": 47
+            }
+          },
+          {
+            "index": 19,
+            "role": "button",
+            "name": "仕事",
+            "in_viewport": false,
+            "box": {
+              "x": 527,
+              "y": 611,
+              "w": 90,
+              "h": 47
+            }
+          },
+          {
+            "index": 20,
+            "role": "button",
+            "name": "動物・ペット",
+            "in_viewport": false,
+            "box": {
+              "x": 637,
+              "y": 611,
+              "w": 149,
+              "h": 47
+            }
+          },
+          {
+            "index": 21,
+            "role": "button",
+            "name": "地域交通（自転車・自動車・バス）",
+            "in_viewport": false,
+            "box": {
+              "x": 34,
+              "y": 678,
+              "w": 298,
+              "h": 47
+            }
+          },
+          {
+            "index": 22,
+            "role": "button",
+            "name": "旅行支援",
+            "in_viewport": false,
+            "box": {
+              "x": 352,
+              "y": 678,
+              "w": 120,
+              "h": 47
+            }
+          },
+          {
+            "index": 23,
+            "role": "button",
+            "name": "公衆浴場",
+            "in_viewport": false,
+            "box": {
+              "x": 491,
+              "y": 678,
+              "w": 120,
+              "h": 47
+            }
+          },
+          {
+            "index": 24,
+            "role": "button",
+            "name": "寄附",
+            "in_viewport": false,
+            "box": {
+              "x": 631,
+              "y": 678,
+              "w": 90,
+              "h": 47
+            }
+          },
+          {
+            "index": 25,
+            "role": "button",
+            "name": "外国人向け情報",
+            "in_viewport": false,
+            "box": {
+              "x": 741,
+              "y": 678,
+              "w": 164,
+              "h": 47
+            }
+          },
+          {
+            "index": 26,
+            "role": "button",
+            "name": "くらしに関する情報",
+            "in_viewport": false,
+            "box": {
+              "x": 34,
+              "y": 745,
+              "w": 194,
+              "h": 47
+            }
+          },
+          {
+            "index": 27,
+            "role": "button",
+            "name": "くらしの相談窓口",
+            "in_viewport": false,
+            "box": {
+              "x": 248,
+              "y": 745,
+              "w": 179,
+              "h": 47
+            }
+          },
+          {
+            "index": 28,
+            "role": "link",
+            "name": "2026年8月3日 都営住宅の入居者を募集します くらし",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 956,
+              "w": 905,
+              "h": 146
+            }
+          },
+          {
+            "index": 29,
+            "role": "link",
+            "name": "2026年6月12日 令和8年度国民健康保険料を通知しました くらし",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1102,
+              "w": 905,
+              "h": 146
+            }
+          },
+          {
+            "index": 30,
+            "role": "link",
+            "name": "2026年6月1日 「資格情報のお知らせ」または「資格確認書」を一斉発送します（国民健康保険） くらし",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1248,
+              "w": 905,
+              "h": 146
+            }
+          },
+          {
+            "index": 31,
+            "role": "link",
+            "name": "新着情報一覧",
+            "in_viewport": false,
+            "box": {
+              "x": 341,
+              "y": 1444,
+              "w": 285,
+              "h": 60
+            }
+          },
+          {
+            "index": 32,
+            "role": "div",
+            "name": "住民票 住所の異動 旧姓（旧氏）併記 住民票の写しの請求・閲覧",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1696,
+              "w": 905,
+              "h": 238
+            }
+          },
+          {
+            "index": 33,
+            "role": "tab",
+            "name": "住民票",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1696,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 34,
+            "role": "link",
+            "name": "住所の異動",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1769,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 35,
+            "role": "link",
+            "name": "旧姓（旧氏）併記",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 1769,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 36,
+            "role": "link",
+            "name": "住民票の写しの請求・閲覧",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1852,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 37,
+            "role": "tab",
+            "name": "印鑑登録",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1988,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 38,
+            "role": "link",
+            "name": "印鑑登録の手続き",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 2061,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 39,
+            "role": "link",
+            "name": "印鑑登録証明書の請求",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 2061,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 40,
+            "role": "tab",
+            "name": "戸籍",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 2196,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 41,
+            "role": "link",
+            "name": "戸籍の届出",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 2270,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 42,
+            "role": "link",
+            "name": "戸籍の証明",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 2270,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 43,
+            "role": "tab",
+            "name": "外国人住民の手続き",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 2405,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 44,
+            "role": "link",
+            "name": "外国人住民の手続き",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 2478,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 45,
+            "role": "tab",
+            "name": "証明書自動交付",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 2614,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 46,
+            "role": "link",
+            "name": "証明書自動交付",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 2687,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 47,
+            "role": "tab",
+            "name": "住民基本台帳ネットワークシステム",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 2823,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 48,
+            "role": "link",
+            "name": "住民基本台帳ネットワークシステム",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 2896,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 49,
+            "role": "tab",
+            "name": "窓口での本人確認・委任状",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3032,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 50,
+            "role": "link",
+            "name": "窓口での本人確認・委任状",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3105,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 51,
+            "role": "tab",
+            "name": "マイナンバー",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3240,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 52,
+            "role": "link",
+            "name": "マイナンバー制度",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3314,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 53,
+            "role": "link",
+            "name": "マイナンバーカード・個人番号通知書",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 3314,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 54,
+            "role": "link",
+            "name": "マイナンバーの利用",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3396,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 55,
+            "role": "tab",
+            "name": "住民税",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3532,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 56,
+            "role": "link",
+            "name": "課税・申告",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3605,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 57,
+            "role": "link",
+            "name": "住民税の納付",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 3605,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 58,
+            "role": "link",
+            "name": "住民税納課税証明書",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3688,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 59,
+            "role": "link",
+            "name": "手続き・届出",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 3688,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 60,
+            "role": "link",
+            "name": "給与支払者（特別徴収）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3770,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 61,
+            "role": "link",
+            "name": "税制改正",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 3770,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 62,
+            "role": "link",
+            "name": "パンフレット東京23区の住民税",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3853,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 63,
+            "role": "tab",
+            "name": "その他の税・公売情報",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 3988,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 64,
+            "role": "link",
+            "name": "軽自動車税",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4061,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 65,
+            "role": "link",
+            "name": "国税と都税",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 4061,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 66,
+            "role": "link",
+            "name": "たばこ税",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4144,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 67,
+            "role": "link",
+            "name": "公売情報",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 4144,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 68,
+            "role": "tab",
+            "name": "国民健康保険",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4280,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 69,
+            "role": "link",
+            "name": "国民健康保険",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4353,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 70,
+            "role": "link",
+            "name": "国民健康保険料",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 4353,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 71,
+            "role": "link",
+            "name": "国民健康保険給付",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4435,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 72,
+            "role": "link",
+            "name": "国民健康保険保健事業",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 4435,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 73,
+            "role": "tab",
+            "name": "国民年金",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4571,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 74,
+            "role": "link",
+            "name": "国民年金制度",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4644,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 75,
+            "role": "link",
+            "name": "国民年金の資格・免除",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 4644,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 76,
+            "role": "link",
+            "name": "国民年金の給付",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4727,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 77,
+            "role": "link",
+            "name": "年金相談",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 4727,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 78,
+            "role": "tab",
+            "name": "後期高齢者医療",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4862,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 79,
+            "role": "link",
+            "name": "後期高齢者医療制度",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 4936,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 80,
+            "role": "link",
+            "name": "資格",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 4936,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 81,
+            "role": "link",
+            "name": "保険料",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5018,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 82,
+            "role": "link",
+            "name": "給付・保健事業",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 5018,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 83,
+            "role": "tab",
+            "name": "税・保険料の納付方法",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5154,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 84,
+            "role": "link",
+            "name": "納付方法",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5227,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 85,
+            "role": "tab",
+            "name": "ごみ・資源",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5363,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 86,
+            "role": "link",
+            "name": "家庭から出るごみ・資源",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5436,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 87,
+            "role": "link",
+            "name": "事業者から出るごみ・資源",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 5436,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 88,
+            "role": "link",
+            "name": "有料ごみ手数料",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5518,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 89,
+            "role": "link",
+            "name": "リサイクル",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 5518,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 90,
+            "role": "link",
+            "name": "リサイクルイベント",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5601,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 91,
+            "role": "link",
+            "name": "リサイクル意識啓発",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 5601,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 92,
+            "role": "link",
+            "name": "ごみ減量・リサイクルに関する取り組み",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5684,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 93,
+            "role": "link",
+            "name": "生ごみ減量・食品ロス削減に関する取り組み",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 5684,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 94,
+            "role": "link",
+            "name": "一定規模以上の建築物を建設するとき必要なごみの手続き",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5766,
+              "w": 435,
+              "h": 108
+            }
+          },
+          {
+            "index": 95,
+            "role": "link",
+            "name": "計画・調査など",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 5766,
+              "w": 435,
+              "h": 108
+            }
+          },
+          {
+            "index": 96,
+            "role": "link",
+            "name": "数字で見る渋谷区のごみ",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 5874,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 97,
+            "role": "link",
+            "name": "その他",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 5874,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 98,
+            "role": "tab",
+            "name": "住宅",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6010,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 99,
+            "role": "link",
+            "name": "住宅情報",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6083,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 100,
+            "role": "link",
+            "name": "住宅に関わる助成・融資などの支援",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 6083,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 101,
+            "role": "link",
+            "name": "マンション施策",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6166,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 102,
+            "role": "link",
+            "name": "空家対策など",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 6166,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 103,
+            "role": "tab",
+            "name": "仕事",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6301,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 104,
+            "role": "link",
+            "name": "就職",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6375,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 105,
+            "role": "link",
+            "name": "中小企業の福利厚生",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 6375,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 106,
+            "role": "tab",
+            "name": "動物・ペット",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6510,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 107,
+            "role": "link",
+            "name": "動物の死体処理",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6583,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 108,
+            "role": "link",
+            "name": "犬と猫のマイクロチップ情報登録",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 6583,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 109,
+            "role": "link",
+            "name": "犬について",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6666,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 110,
+            "role": "link",
+            "name": "猫について",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 6666,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 111,
+            "role": "link",
+            "name": "動物衛生",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6749,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 112,
+            "role": "tab",
+            "name": "地域交通（自転車・自動車・バス）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6884,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 113,
+            "role": "link",
+            "name": "自転車",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 6957,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 114,
+            "role": "link",
+            "name": "自動車",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 6957,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 115,
+            "role": "link",
+            "name": "ハチ公バス",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7040,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 116,
+            "role": "link",
+            "name": "その他地域交通",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 7040,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 117,
+            "role": "tab",
+            "name": "旅行支援",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7176,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 118,
+            "role": "link",
+            "name": "宿泊サービス補助",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7249,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 119,
+            "role": "tab",
+            "name": "公衆浴場",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7384,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 120,
+            "role": "link",
+            "name": "公衆浴場施設",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7458,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 121,
+            "role": "link",
+            "name": "公衆浴場サービス",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 7458,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 122,
+            "role": "tab",
+            "name": "寄附",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7593,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 123,
+            "role": "link",
+            "name": "寄附",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7666,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 124,
+            "role": "tab",
+            "name": "外国人向け情報",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7802,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 125,
+            "role": "link",
+            "name": "外国人向け情報",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 7875,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 126,
+            "role": "tab",
+            "name": "くらしに関する情報",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 8011,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 127,
+            "role": "link",
+            "name": "区役所・都庁・官公署（官公署など）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 8084,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 128,
+            "role": "link",
+            "name": "ライフライン（水道光熱通信医療）",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 8084,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 129,
+            "role": "link",
+            "name": "生活・環境",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 8167,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 130,
+            "role": "link",
+            "name": "地域",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 8167,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 131,
+            "role": "tab",
+            "name": "くらしの相談窓口",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 8302,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 132,
+            "role": "link",
+            "name": "対象者別の相談先",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 8375,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 133,
+            "role": "link",
+            "name": "くらしに関する相談先",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 8375,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 134,
+            "role": "link",
+            "name": "仕事・事業に関する相談先",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 8458,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 135,
+            "role": "link",
+            "name": "よくあるご質問 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1701,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 136,
+            "role": "link",
+            "name": "申請・各種申し込み一覧",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1776,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 137,
+            "role": "link",
+            "name": "住民戸籍窓口等 混雑状況 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1851,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 138,
+            "role": "link",
+            "name": "施設案内",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1925,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 139,
+            "role": "link",
+            "name": "ページトップ",
+            "in_viewport": true,
+            "box": {
+              "x": 1179,
+              "y": 2301,
+              "w": 70,
+              "h": 50
+            }
+          },
+          {
+            "index": 140,
+            "role": "link",
+            "name": "9000020131130",
+            "in_viewport": false,
+            "box": {
+              "x": 111,
+              "y": 9026,
+              "w": 149,
+              "h": 16
+            }
+          },
+          {
+            "index": 141,
+            "role": "link",
+            "name": "マイポータルへログイン（別ウィンドウで開きます）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 9093,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 142,
+            "role": "link",
+            "name": "区役所へのアクセス",
+            "in_viewport": false,
+            "box": {
+              "x": 447,
+              "y": 9093,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 143,
+            "role": "link",
+            "name": "各種お問い合わせ",
+            "in_viewport": false,
+            "box": {
+              "x": 864,
+              "y": 9093,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 144,
+            "role": "link",
+            "name": "サイトマップ",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 9191,
+              "w": 80,
+              "h": 24
+            }
+          },
+          {
+            "index": 145,
+            "role": "link",
+            "name": "サイトポリシー",
+            "in_viewport": false,
+            "box": {
+              "x": 131,
+              "y": 9191,
+              "w": 90,
+              "h": 24
+            }
+          },
+          {
+            "index": 146,
+            "role": "link",
+            "name": "アクセシビリティ方針",
+            "in_viewport": false,
+            "box": {
+              "x": 241,
+              "y": 9191,
+              "w": 123,
+              "h": 24
+            }
+          },
+          {
+            "index": 147,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 9254,
+              "w": 81,
+              "h": 28
+            }
+          },
+          {
+            "index": 148,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": false,
+            "box": {
+              "x": 132,
+              "y": 9254,
+              "w": 120,
+              "h": 28
+            }
+          },
+          {
+            "index": 149,
+            "role": "link",
+            "name": "渋谷区LINE公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 9300,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 150,
+            "role": "link",
+            "name": "渋谷区X公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 90,
+              "y": 9300,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 151,
+            "role": "link",
+            "name": "渋谷区Facebook公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 149,
+              "y": 9300,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 152,
+            "role": "link",
+            "name": "渋谷区Instagram公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 208,
+              "y": 9300,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 153,
+            "role": "link",
+            "name": "渋谷区TikTok公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 266,
+              "y": 9300,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 154,
+            "role": "link",
+            "name": "渋谷区YouTube公式チャンネル",
+            "in_viewport": false,
+            "box": {
+              "x": 325,
+              "y": 9300,
+              "w": 30,
+              "h": 30
+            }
+          }
+        ],
+        "scroll": {
+          "y": 1551,
+          "height": 9382
+        },
+        "screenshot_key": "shibuya-tennyu__control__v0__1786508508418/step-02.png"
+      },
+      "seen": {
+        "url": "https://www.city.shibuya.tokyo.jp/kurashi/#jumin",
+        "title": "くらし | 渋谷区ポータル",
+        "text": "カテゴリ一覧\n住民票\n住所の異動\n旧姓（旧氏）併記\n住民票の写しの請求・閲覧\n印鑑登録\n印鑑登録の手続き\n印鑑登録証明書の請求\n戸籍\n戸籍の届出\n戸籍の証明\nよくあるご質問\n申請・各種申し込み一覧\n住民戸籍窓口等 混雑状況\n施設案内\nページトップ",
+        "elements": [
+          {
+            "index": 0,
+            "role": "div",
+            "name": "住民票 住所の異動 旧姓（旧氏）併記 住民票の写しの請求・閲覧",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1696,
+              "w": 905,
+              "h": 238
+            }
+          },
+          {
+            "index": 1,
+            "role": "tab",
+            "name": "住民票",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1696,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 2,
+            "role": "link",
+            "name": "住所の異動",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1769,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 3,
+            "role": "link",
+            "name": "旧姓（旧氏）併記",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 1769,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 4,
+            "role": "link",
+            "name": "住民票の写しの請求・閲覧",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1852,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 5,
+            "role": "tab",
+            "name": "印鑑登録",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 1988,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 6,
+            "role": "link",
+            "name": "印鑑登録の手続き",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 2061,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 7,
+            "role": "link",
+            "name": "印鑑登録証明書の請求",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 2061,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 8,
+            "role": "tab",
+            "name": "戸籍",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 2196,
+              "w": 905,
+              "h": 63
+            }
+          },
+          {
+            "index": 9,
+            "role": "link",
+            "name": "戸籍の届出",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 2270,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 10,
+            "role": "link",
+            "name": "戸籍の証明",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 2270,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 11,
+            "role": "link",
+            "name": "よくあるご質問 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1701,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 12,
+            "role": "link",
+            "name": "申請・各種申し込み一覧",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1776,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 13,
+            "role": "link",
+            "name": "住民戸籍窓口等 混雑状況 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1851,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 14,
+            "role": "link",
+            "name": "施設案内",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 1925,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 15,
+            "role": "link",
+            "name": "ページトップ",
+            "in_viewport": true,
+            "box": {
+              "x": 1179,
+              "y": 2301,
+              "w": 70,
+              "h": 50
+            }
+          }
+        ],
+        "scroll": {
+          "y": 1551,
+          "height": 9382
+        },
+        "screenshot_key": "shibuya-tennyu__control__v0__1786508508418/step-02.png"
+      },
+      "constraint": {
+        "profile": "control",
+        "profile_version": "1.0",
+        "masked": [],
+        "masked_in_controls": 0,
+        "dom_text_withheld": false,
+        "elements_total": 155,
+        "elements_in_viewport": 16,
+        "chars_before": 123,
+        "chars_after": 123
+      },
+      "threats": [],
+      "action": {
+        "kind": "click",
+        "reason_ja": "転入時の手続き内容と当日に必要な持ち物を確認したいので「住所の異動」を開くために押します。",
+        "index": 2
+      },
+      "action_ok": true,
+      "action_error": null,
+      "llm_calls": [
+        {
+          "step_type": "decide",
+          "model": "gpt-5-mini-2025-08-07",
+          "prompt_tokens": 957,
+          "completion_tokens": 261,
+          "cached_tokens": 0,
+          "cost_usd": 0.00076125,
+          "cost_source": "api",
+          "latency_ms": 3678,
+          "route": null,
+          "mode": "balanced",
+          "retries": 0
+        }
+      ],
+      "patience": {
+        "clicks": 2,
+        "clicks_left": 28,
+        "seconds": 16,
+        "seconds_left": 884
+      }
+    },
+    {
+      "n": 3,
+      "ts": "2026-08-12T04:22:11.840Z",
+      "raw": {
+        "url": "https://www.city.shibuya.tokyo.jp/kurashi/jumin/ido/",
+        "title": "住所の異動 | 住民票 | 渋谷区ポータル",
+        "text": "渋谷区議会\n渋谷区教育委員会\nTOP\nくらし\n住民票\n現在のページ\n住所の異動\nカテゴリ一覧\n転入届（区外から渋谷区へ）\n国外転入届（国外から渋谷区へ）\n転居届（渋谷区内の引っ越し）\n転出届（渋谷区から区外へ）\n国外転出届（渋谷区から国外へ）\n郵送による転出届\nくらし\n住民票\n他のページを見る\nよくあるご質問\n申請・各種申し込み一覧\n住民戸籍窓口等 混雑状況\nページトップ",
+        "elements": [
+          {
+            "index": 0,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": true,
+            "box": {
+              "x": 1028,
+              "y": 3,
+              "w": 81,
+              "h": 28
+            }
+          },
+          {
+            "index": 1,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": true,
+            "box": {
+              "x": 1128,
+              "y": 3,
+              "w": 120,
+              "h": 28
+            }
+          },
+          {
+            "index": 2,
+            "role": "link",
+            "name": "TOP",
+            "in_viewport": true,
+            "box": {
+              "x": 1028,
+              "y": 226,
+              "w": 26,
+              "h": 12
+            }
+          },
+          {
+            "index": 3,
+            "role": "link",
+            "name": "くらし",
+            "in_viewport": true,
+            "box": {
+              "x": 1073,
+              "y": 226,
+              "w": 34,
+              "h": 12
+            }
+          },
+          {
+            "index": 4,
+            "role": "link",
+            "name": "住民票",
+            "in_viewport": true,
+            "box": {
+              "x": 1127,
+              "y": 226,
+              "w": 34,
+              "h": 12
+            }
+          },
+          {
+            "index": 5,
+            "role": "link",
+            "name": "転入届（区外から渋谷区へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 566,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 6,
+            "role": "link",
+            "name": "国外転入届（国外から渋谷区へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 566,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 7,
+            "role": "link",
+            "name": "転居届（渋谷区内の引っ越し）",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 649,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 8,
+            "role": "link",
+            "name": "転出届（渋谷区から区外へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 649,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 9,
+            "role": "link",
+            "name": "国外転出届（渋谷区から国外へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 731,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 10,
+            "role": "link",
+            "name": "郵送による転出届",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 731,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 11,
+            "role": "link",
+            "name": "転入届の特例による転入届・転出届",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 814,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 12,
+            "role": "link",
+            "name": "世帯変更届（世帯合併・世帯分離・世帯主変更など）",
+            "in_viewport": false,
+            "box": {
+              "x": 502,
+              "y": 814,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 13,
+            "role": "link",
+            "name": "マイナポータルによる転出届",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 897,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 14,
+            "role": "link",
+            "name": "住居表示の届出（新建築物の住所の申請）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1168,
+              "w": 905,
+              "h": 83
+            }
+          },
+          {
+            "index": 15,
+            "role": "tab",
+            "name": "他のページを見る",
+            "in_viewport": true,
+            "box": {
+              "x": 968,
+              "y": 517,
+              "w": 312,
+              "h": 54
+            }
+          },
+          {
+            "index": 16,
+            "role": "link",
+            "name": "よくあるご質問 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 601,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 17,
+            "role": "link",
+            "name": "申請・各種申し込み一覧",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 676,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 18,
+            "role": "link",
+            "name": "住民戸籍窓口等 混雑状況 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 751,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 19,
+            "role": "link",
+            "name": "施設案内",
+            "in_viewport": false,
+            "box": {
+              "x": 999,
+              "y": 825,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 20,
+            "role": "link",
+            "name": "ページトップ",
+            "in_viewport": true,
+            "box": {
+              "x": 1179,
+              "y": 750,
+              "w": 70,
+              "h": 50
+            }
+          },
+          {
+            "index": 21,
+            "role": "link",
+            "name": "9000020131130",
+            "in_viewport": false,
+            "box": {
+              "x": 111,
+              "y": 1737,
+              "w": 149,
+              "h": 16
+            }
+          },
+          {
+            "index": 22,
+            "role": "link",
+            "name": "マイポータルへログイン（別ウィンドウで開きます）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1804,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 23,
+            "role": "link",
+            "name": "区役所へのアクセス",
+            "in_viewport": false,
+            "box": {
+              "x": 447,
+              "y": 1804,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 24,
+            "role": "link",
+            "name": "各種お問い合わせ",
+            "in_viewport": false,
+            "box": {
+              "x": 864,
+              "y": 1804,
+              "w": 385,
+              "h": 60
+            }
+          },
+          {
+            "index": 25,
+            "role": "link",
+            "name": "サイトマップ",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1902,
+              "w": 80,
+              "h": 24
+            }
+          },
+          {
+            "index": 26,
+            "role": "link",
+            "name": "サイトポリシー",
+            "in_viewport": false,
+            "box": {
+              "x": 131,
+              "y": 1902,
+              "w": 90,
+              "h": 24
+            }
+          },
+          {
+            "index": 27,
+            "role": "link",
+            "name": "アクセシビリティ方針",
+            "in_viewport": false,
+            "box": {
+              "x": 241,
+              "y": 1902,
+              "w": 123,
+              "h": 24
+            }
+          },
+          {
+            "index": 28,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 1965,
+              "w": 81,
+              "h": 28
+            }
+          },
+          {
+            "index": 29,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": false,
+            "box": {
+              "x": 132,
+              "y": 1965,
+              "w": 120,
+              "h": 28
+            }
+          },
+          {
+            "index": 30,
+            "role": "link",
+            "name": "渋谷区LINE公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 31,
+              "y": 2011,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 31,
+            "role": "link",
+            "name": "渋谷区X公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 90,
+              "y": 2011,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 32,
+            "role": "link",
+            "name": "渋谷区Facebook公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 149,
+              "y": 2011,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 33,
+            "role": "link",
+            "name": "渋谷区Instagram公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 208,
+              "y": 2011,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 34,
+            "role": "link",
+            "name": "渋谷区TikTok公式アカウント",
+            "in_viewport": false,
+            "box": {
+              "x": 266,
+              "y": 2011,
+              "w": 30,
+              "h": 30
+            }
+          },
+          {
+            "index": 35,
+            "role": "link",
+            "name": "渋谷区YouTube公式チャンネル",
+            "in_viewport": false,
+            "box": {
+              "x": 325,
+              "y": 2011,
+              "w": 30,
+              "h": 30
+            }
+          }
+        ],
+        "scroll": {
+          "y": 0,
+          "height": 2093
+        },
+        "screenshot_key": "shibuya-tennyu__control__v0__1786508508418/step-03.png"
+      },
+      "seen": {
+        "url": "https://www.city.shibuya.tokyo.jp/kurashi/jumin/ido/",
+        "title": "住所の異動 | 住民票 | 渋谷区ポータル",
+        "text": "渋谷区議会\n渋谷区教育委員会\nTOP\nくらし\n住民票\n現在のページ\n住所の異動\nカテゴリ一覧\n転入届（区外から渋谷区へ）\n国外転入届（国外から渋谷区へ）\n転居届（渋谷区内の引っ越し）\n転出届（渋谷区から区外へ）\n国外転出届（渋谷区から国外へ）\n郵送による転出届\nくらし\n住民票\n他のページを見る\nよくあるご質問\n申請・各種申し込み一覧\n住民戸籍窓口等 混雑状況\nページトップ",
+        "elements": [
+          {
+            "index": 0,
+            "role": "link",
+            "name": "渋谷区議会（別ウィンドウで開きます）",
+            "in_viewport": true,
+            "box": {
+              "x": 1028,
+              "y": 3,
+              "w": 81,
+              "h": 28
+            }
+          },
+          {
+            "index": 1,
+            "role": "link",
+            "name": "渋谷区教育委員会",
+            "in_viewport": true,
+            "box": {
+              "x": 1128,
+              "y": 3,
+              "w": 120,
+              "h": 28
+            }
+          },
+          {
+            "index": 2,
+            "role": "link",
+            "name": "TOP",
+            "in_viewport": true,
+            "box": {
+              "x": 1028,
+              "y": 226,
+              "w": 26,
+              "h": 12
+            }
+          },
+          {
+            "index": 3,
+            "role": "link",
+            "name": "くらし",
+            "in_viewport": true,
+            "box": {
+              "x": 1073,
+              "y": 226,
+              "w": 34,
+              "h": 12
+            }
+          },
+          {
+            "index": 4,
+            "role": "link",
+            "name": "住民票",
+            "in_viewport": true,
+            "box": {
+              "x": 1127,
+              "y": 226,
+              "w": 34,
+              "h": 12
+            }
+          },
+          {
+            "index": 5,
+            "role": "link",
+            "name": "転入届（区外から渋谷区へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 566,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 6,
+            "role": "link",
+            "name": "国外転入届（国外から渋谷区へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 566,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 7,
+            "role": "link",
+            "name": "転居届（渋谷区内の引っ越し）",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 649,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 8,
+            "role": "link",
+            "name": "転出届（渋谷区から区外へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 649,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 9,
+            "role": "link",
+            "name": "国外転出届（渋谷区から国外へ）",
+            "in_viewport": true,
+            "box": {
+              "x": 31,
+              "y": 731,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 10,
+            "role": "link",
+            "name": "郵送による転出届",
+            "in_viewport": true,
+            "box": {
+              "x": 502,
+              "y": 731,
+              "w": 435,
+              "h": 83
+            }
+          },
+          {
+            "index": 11,
+            "role": "tab",
+            "name": "他のページを見る",
+            "in_viewport": true,
+            "box": {
+              "x": 968,
+              "y": 517,
+              "w": 312,
+              "h": 54
+            }
+          },
+          {
+            "index": 12,
+            "role": "link",
+            "name": "よくあるご質問 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 601,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 13,
+            "role": "link",
+            "name": "申請・各種申し込み一覧",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 676,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 14,
+            "role": "link",
+            "name": "住民戸籍窓口等 混雑状況 別ウィンドウで開きます",
+            "in_viewport": true,
+            "box": {
+              "x": 999,
+              "y": 751,
+              "w": 250,
+              "h": 53
+            }
+          },
+          {
+            "index": 15,
+            "role": "link",
+            "name": "ページトップ",
+            "in_viewport": true,
+            "box": {
+              "x": 1179,
+              "y": 750,
+              "w": 70,
+              "h": 50
+            }
+          }
+        ],
+        "scroll": {
+          "y": 0,
+          "height": 2093
+        },
+        "screenshot_key": "shibuya-tennyu__control__v0__1786508508418/step-03.png"
+      },
+      "constraint": {
+        "profile": "control",
+        "profile_version": "1.0",
+        "masked": [],
+        "masked_in_controls": 0,
+        "dom_text_withheld": false,
+        "elements_total": 36,
+        "elements_in_viewport": 16,
+        "chars_before": 187,
+        "chars_after": 187
+      },
+      "threats": [],
+      "action": {
+        "kind": "click",
+        "reason_ja": "区外から渋谷区へ引っ越す際の手続き内容と持ち物を確認したいので、該当する「転入届（区外から渋谷区へ）」を開きます。",
+        "index": 5
+      },
+      "action_ok": true,
+      "action_error": null,
+      "llm_calls": [
+        {
+          "step_type": "decide",
+          "model": "gpt-5-mini-2025-08-07",
+          "prompt_tokens": 1050,
+          "completion_tokens": 470,
+          "cached_tokens": 0,
+          "cost_usd": 0.0012025,
+          "cost_source": "api",
+          "latency_ms": 5464,
+          "route": null,
+          "mode": "balanced",
+          "retries": 0
+        }
+      ],
+      "patience": {
+        "clicks": 3,
+        "clicks_left": 27,
+        "seconds": 23,
+        "seconds_left": 877
+      }
+    }
+  ],
+  "verdict": {
+    "outcome": "reached",
+    "reached": true,
+    "key_match": true,
+    "llm_match": true,
+    "disagreed": false,
+    "reason_ja": "本ページには「届出の際に必要なもの」として本人確認書類や転出証明書などが記載され、「届出窓口・受付時間」として暮らしの手続きのフロアや区民サービスセンターなどの情報が明確に記載されています。",
+    "clicks": 3,
+    "seconds": 26
+  },
+  "findings": [],
+  "cost": {
+    "total_usd": 0.0084405,
+    "by_step_type": {
+      "perceive": 0,
+      "decide": 0.0027270000000000003,
+      "judge": 0.0057135,
+      "diagnose": 0
+    },
+    "by_model": {
+      "gpt-5-mini-2025-08-07": 0.0027270000000000003,
+      "gemini-3.6-flash": 0.0057135
+    },
+    "calls": 4,
+    "cached_tokens": 0,
+    "baseline_usd": 0.058660000000000004
+  }
+}

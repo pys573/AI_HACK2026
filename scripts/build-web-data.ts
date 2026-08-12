@@ -294,10 +294,12 @@ function main() {
 
   // 이전 회차에서 뽑혔다가 이번에 안 뽑힌 실행은 지운다. 남겨 두면 저장소에
   // 「화면에 안 나오는 스크린샷 수백 장」이 쌓이고, 어느 것이 지금 쓰이는지 알 수 없게 된다.
+  // 단, 지우는 것은 **이 스크립트가 만든 것**뿐이다. run_id 형태(`__` 포함)가 아닌
+  // 디렉터리는 예전 화면(BeforeAfter·N3Case)이 web/lib/data.ts에서 직접 참조한다.
   const keep = new Set(picks.map((c) => c.run_id));
   if (existsSync(SHOTS_DIR)) {
     for (const d of readdirSync(SHOTS_DIR)) {
-      if (!keep.has(d)) rmSync(join(SHOTS_DIR, d), { recursive: true, force: true });
+      if (d.includes("__") && !keep.has(d)) rmSync(join(SHOTS_DIR, d), { recursive: true, force: true });
     }
   }
 
