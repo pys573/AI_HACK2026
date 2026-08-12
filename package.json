@@ -13,6 +13,8 @@
     "orca:smoke": "node --env-file=.env llm/smoke.ts",
     "fixture:build": "node core/fixtures/build-sample.ts && node core/fixtures/build-sample-n3.ts",
     "run": "node --env-file=.env agent/src/run.ts",
+    "live": "node --env-file=.env agent/src/live.ts",
+    "preflight": "node agent/src/preflight.ts",
     "batch": "node --env-file=.env agent/src/batch.ts",
     "report": "node agent/src/report.ts",
     "diagnose": "node --env-file=.env agent/src/rediagnose.ts",
@@ -22,7 +24,9 @@
     "honeypot": "node security/honeypot.ts",
     "honeypot:live": "node security/honeypot-live.ts",
     "honeypot:serve": "node fixtures/honeypot/serve.ts",
-    "web:data": "node scripts/build-web-data.ts"
+    "web:data": "node scripts/build-web-data.ts",
+    "web:dev": "npm --prefix web run dev",
+    "tunnel": "cloudflared tunnel --url http://localhost:3000"
   },
   "devDependencies": {
     "playwright": "^1.62.1"

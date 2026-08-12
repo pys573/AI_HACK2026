@@ -1,42 +1,29 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 /**
- * URL 입력창 — 목업에 있던 것을 되돌렸다 (2026-08-12).
+ * 랜딩의 URL 입력창.
  *
- * ★ 한때 이 입력창을 통째로 뺐다. 「URL을 받아도 그 자리에서 못 돌리니 페이크다」가 이유였다.
- *   절반만 맞았다. 페이크는 **아무 일도 안 일어나는 버튼**이지, 입력창 자체가 아니다.
- *   그래서 입력창은 되살리되, **실제로 일어나는 일**을 붙였다 —
- *   눌리면 GitHub 이슈가 내용까지 채워진 상태로 새 탭에 열린다.
- *   즉 이 버튼은 「신청을 접수한다」를 진짜로 한다. 접수처가 이슈 트래커일 뿐이다.
- *   (절대규칙 3 — 화면에 나오는 것은 실제로 동작해야 한다)
+ * ★ 이력 (2026-08-12): 한때 이 버튼은 GitHub 이슈를 열었다. 「그 자리에서 못 돌리니
+ *   접수만이라도 진짜로 하자」는 타협이었다. **즉석 실행이 되면서 그 타협은 끝났다.**
+ *   지금은 눌리면 조건 선택 화면으로 가고, 거기서 진짜로 돈다.
  *
- * ★ 그 자리에서 돌지 **않는다는 사실도 화면에 쓴다.** 1회 5분 걸리는 실행이라
- *   「今すぐ結果が出る」처럼 보이게 두면 그건 눌러본 사람이 바로 아는 거짓말이 된다.
+ * ★ 여기서 바로 실행하지 않고 한 화면 더 거치는 이유: 누구의 시점으로 어떤 用事를
+ *   시키는지가 이 제품의 절반이다. URL만 받아서 돌리면 「그냥 사이트 검사」가 되고,
+ *   그건 우리가 이길 수 없는 싸움터다 (CLAUDE.md 「그래도 안 쓰는 말」).
  */
 
-const REPO = "https://github.com/pys573/AI_HACK2026";
-
 export function RequestForm() {
+  const router = useRouter();
   const [url, setUrl] = useState("");
 
-  // 이슈 본문을 미리 채운다. 받는 쪽이 되묻지 않아도 되게 최소 항목만 넣는다
-  const href =
-    `${REPO}/issues/new?labels=request` +
-    `&title=${encodeURIComponent(`試したいサイト: ${url}`)}` +
-    `&body=${encodeURIComponent(
-      [
-        `- 対象URL: ${url}`,
-        "- 用事（例: 転入届の持ち物を調べたい）: ",
-        "- 試したいプロファイル: 高齢者 / 外国人住民 / デジタル初心者 / 時間がない人",
-        "",
-        "※ 公開されているページのみ・読み取り専用で実行します。",
-        "　 ログイン・フォーム送信・電子申請には入りません。",
-      ].join("\n"),
-    )}`;
-
   const ready = url.trim().length > 0;
+  const go = () => {
+    if (!ready) return;
+    router.push(`/request?url=${encodeURIComponent(url.trim())}`);
+  };
 
   return (
     <div className="rounded-2xl bg-white p-6 shadow-2xl">
@@ -51,27 +38,23 @@ export function RequestForm() {
           inputMode="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && go()}
           placeholder="https://www.city.example.lg.jp/"
           className="min-w-0 flex-1 rounded-lg border border-line px-3 py-2.5 text-sm outline-none placeholder:text-fg-dim focus:border-brand"
         />
-        <a
-          href={ready ? href : undefined}
-          target="_blank"
-          rel="noreferrer noopener"
-          aria-disabled={!ready}
-          className={`shrink-0 rounded-lg px-5 py-2.5 text-center text-sm font-bold text-white transition ${
-            ready
-              ? "bg-brand hover:opacity-90"
-              : "pointer-events-none bg-fg-dim/40"
-          }`}
+        <button
+          type="button"
+          onClick={go}
+          disabled={!ready}
+          className="shrink-0 rounded-lg px-5 py-2.5 text-center text-sm font-bold text-white transition enabled:bg-brand enabled:hover:opacity-90 disabled:bg-fg-dim/40"
         >
           依頼する
-        </a>
+        </button>
       </div>
 
-      {/* ★ 이 자리에서 즉시 돌지 않는다는 것을 먼저 쓴다. 1回あたり数分かかる実行である */}
+      {/* ★ 시간이 걸린다는 것을 **누르기 전에** 쓴다. 누른 뒤에 알리면 그건 속인 것이다 */}
       <p className="mt-3 text-xs leading-relaxed text-fg-dim">
-        押すとGitHubの受付フォームが開きます（その場では実行しません。1回の実行に数分かかるためです）。
+        次の画面で「どんなお客様の視点か」「どんな用事か」を選ぶと、その場で実行します（数分かかります）。
         読み取り専用で、ログイン・フォーム送信・電子申請には入りません。
       </p>
     </div>

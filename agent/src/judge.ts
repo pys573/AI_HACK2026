@@ -24,9 +24,23 @@ import { worthReasking } from "./decide.ts";
 import { loadKey } from "./mission.ts";
 import { JUDGE_SCHEMA, JUDGE_SYSTEM, judgeUser } from "./prompts.ts";
 
+/**
+ * 키가 없으면 null. **없는 것과 안 맞은 것은 다르다.**
+ * 즉석 미션(그 자리에서 받은 URL)에는 사람이 만든 키가 없다. 그걸 「불일치」로 접으면
+ * 도달 판정이 영원히 false가 되고, 화면에는 「이 사이트는 도달 불가」라고 뜬다. 거짓말이 된다.
+ */
+function tryKey(missionId: string) {
+  try {
+    return loadKey(missionId);
+  } catch {
+    return null;
+  }
+}
+
 /** LLM을 부르지 않는다. 매 스텝 돌려도 원가가 0이다. */
 export function keyMatch(missionId: string, raw: RawObservation): boolean {
-  const k = loadKey(missionId);
+  const k = tryKey(missionId);
+  if (!k) return false;
   const url = raw.url.toLowerCase();
   const urlHit = k.url_patterns.some((p) => url.includes(p.toLowerCase()));
   // text_patterns는 AND. 「転入」 하나로는 一覧 페이지에서도 맞아버린다.
@@ -40,6 +54,11 @@ export type Judgement = {
   llm_match: boolean;
   reached: boolean;
   disagreed: boolean;
+  /**
+   * 사람이 만든 정답 키가 있었는가. false면 이 판정은 **AI 하나뿐**이다.
+   * 105회 실측과 같은 급이 아니라는 사실을 화면까지 들고 가기 위한 필드다 (절대규칙 4).
+   */
+  key_available: boolean;
   reason_ja: string;
   cost: CostRecord | null;
 };
@@ -49,6 +68,7 @@ export type Judgement = {
  * 도달 여부는 **둘 다 맞을 때만** true다 — 관대한 쪽에 맞추면 到達率이 부풀려진다.
  */
 export async function judge(mission: Mission, raw: RawObservation): Promise<Judgement> {
+  const keyed = tryKey(mission.id) !== null;
   const key = keyMatch(mission.id, raw);
 
   const base = {
@@ -76,11 +96,16 @@ export async function judge(mission: Mission, raw: RawObservation): Promise<Judg
   const p = (r.parsed ?? {}) as { reached?: unknown; reason_ja?: unknown };
   const llm = p.reached === true;
 
+  // ★ 키가 없을 때만 AND를 푼다. 즉석 미션에서 AND를 유지하면 到達이 구조적으로 불가능해지고,
+  //   화면에는 「어느 사이트를 넣어도 도달 실패」가 뜬다. 그건 사이트를 잰 값이 아니라 우리 버그다.
+  //   대신 판정이 한 겹 얇아졌다는 사실을 `key_available: false`로 들고 나가서 화면에 적는다.
+  //   ⚠️ 준비된 미션에서는 지금까지와 완전히 같다 — 105회 실측의 정의는 건드리지 않는다.
   return {
     key_match: key,
     llm_match: llm,
-    reached: key && llm,
-    disagreed: key !== llm,
+    reached: keyed ? key && llm : llm,
+    disagreed: keyed ? key !== llm : false,
+    key_available: keyed,
     reason_ja: String(p.reason_ja ?? ""),
     cost: r.cost,
   };
