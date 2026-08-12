@@ -100,8 +100,11 @@ function mergeDiagnoseCost(t: RunTrace, added: CostRecord[]): void {
   if (prev > 0) {
     c.total_usd -= prev;
     c.by_step_type.diagnose = 0;
-    // diagnose()는 재질문을 하지 않는다 — 과금 호출은 정확히 1회다. 그래서 1을 뺀다
-    c.calls = Math.max(0, c.calls - 1);
+    // ⚠️ diagnose()는 빈손으로 오면 한 번 더 묻는다 (2026-08-13). 「정확히 1회」가 아니다.
+    //    호출 수를 따로 기록해두지는 않지만, **스텝에 달린 호출은 전부 스텝이 갖고 있으므로**
+    //    남는 몫이 곧 진단분이다. 1로 고정하면 재진단할 때마다 calls가 하나씩 어긋난다
+    const inSteps = t.steps.reduce((a, s) => a + (s.llm_calls?.length ?? 0), 0);
+    c.calls = Math.max(0, inSteps);
     const m = added[0]?.model;
     if (m && (c.by_model[m] ?? 0) >= prev - 1e-12) c.by_model[m] -= prev;
     else console.log(`⚠️ 이전 진단분 $${prev.toFixed(6)}을 by_model에서 되감지 못했다 (모델이 바뀌었다). by_model만 과대 계상이다`);
