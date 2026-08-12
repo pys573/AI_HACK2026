@@ -71,6 +71,9 @@ export type FindingRow = {
 
 export type SiteBlock = {
   mission_id: string;
+  /** 用事の種類. `shinjuku-tennyu` → `tennyu`. 사이트 비교는 **같은 用事 안에서만** 성립한다 */
+  task_id: string;
+  task_ja: string;
   site_name: string;
   start_url: string;
   goal_ja: string;
@@ -85,7 +88,10 @@ export type Matrix = {
   generated_at: string;
   /** 이 표에 들어간 프로필 순서 — 제약이 약한 쪽부터 */
   profiles: Array<{ id: string; version: string; label_ja: string; note_ja: string | null }>;
+  /** 사이트끼리 비교할 수 있는 블록 = 가장 많은 사이트를 덮은 用事 하나 */
   sites: SiteBlock[];
+  /** 그 밖의 用事. 사이트 비교에는 못 넣지만 「用事가 바뀌어도 같은가」의 답이다 */
+  other_tasks: SiteBlock[];
   totals: {
     runs: number;
     reached: number;
@@ -120,6 +126,20 @@ const LABELS: Record<string, { label_ja: string; note_ja: string | null }> = {
 };
 
 const ORDER = ["control", "busy-worker", "resident-n3", "senior-70s", "smartphone-novice"];
+
+/**
+ * 用事の短い名前。goal_ja는 화면에 그대로 넣기엔 길다.
+ * ★ 여기 없는 用事는 goal_ja를 그대로 쓴다 — 없는 이름을 지어내지 않는다.
+ *   Mission 타입(core/types.ts)에 필드를 늘리지 않은 이유는, 그게 전 워크트리의
+ *   리베이스를 부르는 계약 변경이기 때문이다. 이건 표시용 이름일 뿐이다.
+ */
+const TASK_JA: Record<string, string> = {
+  tennyu: "転入届の持ち物と窓口を探す",
+  juminhyo: "住民票をコンビニで取る方法を探す",
+  sodaigomi: "粗大ごみの出し方と手数料を探す",
+  kokuho: "国民健康保険の加入手続きを探す",
+  hoikuen: "認可保育園の申込受付期間を探す",
+};
 
 // ─────────────────────────────────────────────────────────────
 
@@ -186,10 +206,14 @@ function main() {
     if (b.run_ids.length <= 1) continue;
 
     const m = missions.find((x) => x.id === b.mission_id);
+    // `shinjuku-tennyu` → `tennyu`. 사이트 이름이 앞, 用事가 뒤라는 규칙이 mission id에 있다.
+    const taskId = b.mission_id.split("-").slice(1).join("-") || b.mission_id;
     const block =
       bySite.get(b.mission_id) ??
       ({
         mission_id: b.mission_id,
+        task_id: taskId,
+        task_ja: TASK_JA[taskId] ?? m?.goal_ja ?? taskId,
         site_name: b.site_name,
         start_url: m?.start_url ?? "",
         goal_ja: m?.goal_ja ?? "",
@@ -219,8 +243,8 @@ function main() {
     bySite.set(b.mission_id, block);
   }
 
-  const sites = [...bySite.values()];
-  for (const s of sites) {
+  const blocks = [...bySite.values()];
+  for (const s of blocks) {
     // 심각한 것부터. 같은 등급 안에서는 먼저 막힌 쪽이 위다 —
     // 앞 스텝에서 막히면 뒤의 문제는 아예 만나지도 못한다.
     const rank = { high: 0, medium: 1, low: 2 } as const;
@@ -237,9 +261,21 @@ function main() {
       ? constrained.filter((c) => !c.reached).length / constrained.length
       : null;
   }
-  sites.sort((a, b) => (a.dropout_rate ?? 0) - (b.dropout_rate ?? 0));
+  blocks.sort((a, b) => (a.dropout_rate ?? 0) - (b.dropout_rate ?? 0));
 
+  // ★ 사이트끼리 비교하려면 用事가 같아야 한다. 「転入届」와 「住民票」를 한 표에 섞으면
+  //   막대의 차이가 사이트 탓인지 用事 탓인지 구별되지 않는다 — 그러면 계측이 아니다.
+  //   기준선을 손으로 정하지 않는다. **가장 많은 사이트를 덮은 用事**가 비교축이 된다.
+  const coverage = new Map<string, number>();
+  for (const s of blocks) coverage.set(s.task_id, (coverage.get(s.task_id) ?? 0) + 1);
+  const primary = [...coverage.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
+  const sites = blocks.filter((s) => s.task_id === primary);
+  const other_tasks = blocks.filter((s) => s.task_id !== primary);
+
+  // 랜딩의 머리기사는 여기서 나온다 — **비교축 안에서만** 센다.
+  // 다른 用事를 섞으면 「同じ用事を44回」가 거짓이 된다.
   const all = sites.flatMap((s) => s.cells);
+  const everything = blocks.flatMap((s) => s.cells);
   const by_profile = ORDER.map((id) => {
     const cs = all.filter((c) => c.profile_id === id);
     return { id, runs: cs.length, reached: cs.filter((c) => c.reached).length, rate: cs.length ? cs.filter((c) => c.reached).length / cs.length : 0 };
@@ -257,19 +293,22 @@ function main() {
 
   const matrix: Matrix = {
     generated_at: new Date().toISOString(),
-    profiles: ORDER.filter((id) => all.some((c) => c.profile_id === id)).map((id) => ({
+    profiles: ORDER.filter((id) => everything.some((c) => c.profile_id === id)).map((id) => ({
       id,
-      version: all.find((c) => c.profile_id === id)?.profile_version ?? "?",
+      version: everything.find((c) => c.profile_id === id)?.profile_version ?? "?",
       ...LABELS[id],
     })),
     sites,
+    other_tasks,
+    // ★ 여기만 **전부**를 센다. 실제로 태운 돈은 비교축 밖의 실행에서도 나갔다 —
+    //   비교축만 세면 원가가 작아 보인다 (절대규칙 4).
     totals: {
-      runs: all.length,
-      reached: all.filter((c) => c.reached).length,
-      cost_usd: all.reduce((a, c) => a + c.cost_usd, 0),
+      runs: everything.length,
+      reached: everything.filter((c) => c.reached).length,
+      cost_usd: everything.reduce((a, c) => a + c.cost_usd, 0),
       baseline_usd: baseline,
-      findings: all.reduce((a, c) => a + c.findings, 0),
-      masked_words: all.reduce((a, c) => a + c.masked_words, 0),
+      findings: everything.reduce((a, c) => a + c.findings, 0),
+      masked_words: everything.reduce((a, c) => a + c.masked_words, 0),
     },
     by_profile,
   };
@@ -280,8 +319,9 @@ function main() {
   // ── 리플레이용 트레이스와 스크린샷을 옮긴다 ────────────────────
   // 전부 옮기면 수백 MB다. 「좌표가 있고 + 막힌」 런만 고른다 — 리플레이의 목적이
   // 「헤매는 모습」이므로 도달한 런은 볼 것이 적다. 대조군은 대비용으로 1건만 남긴다.
+  // 비교축 밖의 用事도 재생할 수 있어야 한다 — 「転入届だけの話ではない」의 증거가 그쪽이다.
   const picks: Cell[] = [];
-  for (const s of sites) {
+  for (const s of blocks) {
     const stuck = s.cells.filter((c) => c.replayable && !c.reached && c.profile_id !== "control");
     const best = stuck.sort((a, b) => b.clicks - a.clicks)[0];
     if (best) picks.push(best);
@@ -289,7 +329,7 @@ function main() {
   // 가장 많이 헤맨 실행을 맨 앞에 둔다 — 리플레이 화면의 기본 표시가 이 순서의 첫 건이다.
   // 사이트 순서대로 두면 「어느 사이트가 먼저냐」라는 무관한 이유로 첫 화면이 정해진다.
   picks.sort((a, b) => b.clicks - a.clicks);
-  const ctrl = all.find((c) => c.replayable && c.profile_id === "control");
+  const ctrl = everything.find((c) => c.replayable && c.profile_id === "control");
   if (ctrl) picks.push(ctrl); // 대조군은 항상 마지막 — 대비용이지 본론이 아니다
 
   // 이전 회차에서 뽑혔다가 이번에 안 뽑힌 실행은 지운다. 남겨 두면 저장소에
@@ -316,8 +356,15 @@ function main() {
   }
   writeFileSync(join(OUT_DIR, "replays.json"), JSON.stringify(picks.map((c) => c.run_id), null, 1));
 
-  console.log(`matrix.json  : ${sites.length}사이트 / ${all.length}런 / 도달 ${matrix.totals.reached}`);
+  console.log(`matrix.json  : 비교축 [${primary}] ${sites.length}사이트 / ${all.length}런`);
   for (const p of by_profile) console.log(`  ${p.id.padEnd(18)} ${p.reached}/${p.runs}  ${(p.rate * 100).toFixed(0)}%`);
+  for (const s of other_tasks) {
+    const c = s.cells.filter((x) => x.profile_id !== "control");
+    console.log(
+      `  [다른 用事] ${s.mission_id.padEnd(20)} ${c.filter((x) => !x.reached).length}/${c.length} 이탈` +
+        (s.control_reached ? "" : "  ⚠️ 대조군 미도달 — 제약 탓이라고 말할 수 없다"),
+    );
+  }
   console.log(`replays.json : ${picks.length}런 (스크린샷 ${copied}장 복사)`);
   const b = matrix.totals.baseline_usd;
   console.log(
