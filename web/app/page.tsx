@@ -1,56 +1,35 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Page } from "@/components/Chrome";
 import { loadMatrix } from "@/lib/matrix";
 import { loadProfileCards } from "@/lib/profiles";
-import { ProfileCards } from "@/components/ProfileCards";
+import { Personas } from "@/components/Personas";
 import { RequestForm } from "@/components/RequestForm";
 
 /**
  * ランディング。
  *
- * ★ 화면에 숫자를 손으로 쓰지 않는다. 전부 matrix.json에서 온다 —
- *   실행을 다시 돌리면 이 페이지도 같이 바뀐다. 어긋날 수 없는 구조가 방어선이다.
- *   데이터가 없으면 숫자 자리를 아예 안 그린다. 「—」로 채우면 0으로 읽힌다.
+ * ★ 2026-08-12. **이 화면에는 계측 숫자를 두지 않는다.**
+ *   원래는 히어로에 matrix.json에서 뽑은 「◯人に試させた / ◯人がたどり着けなかった」가
+ *   있었고, 프로필 카드마다 제약 사양·실측·출처가 붙어 있었다. 전부 뺐다.
+ *   숫자가 먼저 읽히면 **무슨 물건인지가 나중에 읽힌다.** 랜딩에서 그건 손해다
+ *   (③完成度・デモ의 채점 관점이 「触れて数十秒で価値がわかる」이다).
  *
- * ★ 2026-08-12 방침 변경 —「심사위원 예상 반박과 대응.md」§7.
- *   한때 이 화면에서 인물 사진·「人」이라는 단위·URL 입력창을 전부 뺐다.
- *   전부 「오해받을 수 있다」가 이유였는데, 채점표에는 그런 항목이 없다.
- *   대신 ③完成度・デモ의 채점 관점이 **「触れて数十秒で価値がわかる」**이다.
- *   즉 이해를 늦춘 만큼 점수를 잃는다. 그래서 되돌렸다.
+ *   그래서 역할을 나눴다 —
+ *   · **여기(/)**       : 무엇을 하는 물건인지. 사람 4명, 세 줄 카피, URL 접수
+ *   · **`/report`**     : 계측. 숫자·제약 사양·근거·출처·한계 고지가 전부 거기 있다
+ *   두 번째 절 밑의 링크 한 줄이 그 둘을 잇는다. 그 링크는 지우지 않는다.
  *
- *   지금 규칙은 하나다 — **누구를 위한 것인지는 대담하게, 숫자는 정확하게.**
- *   · 「AIユーザーテスター」「10人」「사람 사진」은 쓴다. 이건 카테고리 설명이다
- *   · 숫자와 用事 이름은 손으로 안 쓴다. matrix.json에서 온다
- *   · 「10人」의 정의(5プロファイル × 2)는 **같은 화면 안에** 둔다.
- *     정의가 옆에 있으면 그건 주장이 아니라 단위다
- *   · 「監査」는 여전히 안 쓴다. Lighthouse와 비교당하는 프레임이라 손해만 본다
+ * ★ 남아 있는 유일한 숫자는 CTA의 離脱率이고, 그것도 matrix.json에서 온다.
+ *   **숫자를 손으로 쓰지 않는다**는 규칙은 그대로다 — 실행을 다시 돌리면 같이 바뀐다.
  *
- * 랜딩은 **컨셉과 홍보**의 자리다. 계측 결과를 늘어놓는 곳이 아니다 — 그건 /report에 있다.
+ * ★ 여전히 안 쓰는 말: 「監査」「アクセシビリティ検査」.
+ *   이유는 오해가 아니라 불리한 비교다 (예산 프레임 / Lighthouse). `CLAUDE.md` 참조.
  */
-
-/** 첫 화면에 세우는 사이트. 데이터에 없으면 전체 합계로 떨어진다 */
-const HERO_SITE = "新宿区";
 
 export default function Home() {
   const m = loadMatrix();
   const cards = loadProfileCards(m?.profiles.map((p) => p.id) ?? []);
-
-  // ★ 머리기사도 손으로 쓰지 않는다.
-  //   지정한 사이트가 데이터에 있으면 그 사이트의 실측, 없으면 전체 합계.
-  //   대조군은 「제약이 없으면 되는가」의 대조라서 시행 수에서 뺀다.
-  const hero = m?.sites.find((s) => s.site_name === HERO_SITE) ?? null;
-  const heroCells = hero ? hero.cells.filter((c) => c.profile_id !== "control") : [];
-
-  const byProfile = m ? m.by_profile.filter((p) => p.id !== "control") : [];
-  const tried = hero ? heroCells.length : byProfile.reduce((a, p) => a + p.runs, 0);
-  const stuck = hero
-    ? heroCells.filter((c) => !c.reached).length
-    : byProfile.reduce((a, p) => a + (p.runs - p.reached), 0);
-  const where = hero ? `${hero.site_name}で` : "自治体サイトで";
-  // 「◯人」の内訳。手で書くと、回し直した日にここだけ古い値で残る
-  const profileCount = new Set(heroCells.map((c) => c.profile_id)).size || byProfile.length;
-  const perProfile = profileCount > 0 ? Math.round(tried / profileCount) : 0;
-  const taskJa = hero?.task_ja ?? m?.sites[0]?.task_ja ?? "";
 
   return (
     <Page>
@@ -58,49 +37,24 @@ export default function Home() {
       <section className="brand-wash border-b border-line">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
           <div>
-            {m && tried > 0 ? (
-              <h1 className="font-bold leading-[1.4] tracking-tight">
-                {/* ★ 用事の名前も人数も手で書かない。matrix.json から出す —
-                    別の用事を回した日にここだけ古いまま残ると、それは嘘になる */}
-                <span className="block text-balance text-[1.3rem] leading-snug sm:text-[1.5rem] lg:text-[1.3rem] xl:text-[1.5rem]">
-                  {where}「{taskJa}」を
-                </span>
-                <span className="block text-[1.7rem] sm:text-[2.35rem] lg:text-[1.85rem] xl:text-[2.35rem]">
-                  <span className="tnum text-brand">{tried}</span> 人に試させた。
-                </span>
-                <span className="block text-[1.7rem] sm:text-[2.35rem] lg:text-[1.85rem] xl:text-[2.35rem]">
-                  <span className="tnum text-blocked">{stuck}</span> 人が、たどり着けなかった。
-                </span>
-              </h1>
-            ) : (
-              <h1 className="text-3xl font-bold leading-[1.35] tracking-tight sm:text-[2.6rem]">
-                どこでツマヅくか、
-                <br />
-                10人が先に試す。
-              </h1>
-            )}
-
-            <p className="mt-6 text-lg font-medium leading-relaxed sm:text-xl">
+            {/* ★ 2026-08-12. 여기 있던 「◯人に試させた / ◯人がたどり着けなかった」와
+                그 정의 각주를 뺐다. 실측 숫자를 첫 화면에 세우면 무슨 물건인지보다
+                숫자가 먼저 읽혀서, 3초 안에 전달되지 않았다.
+                숫자는 사라진 게 아니라 `/report`에 있다 — 거기가 계측의 자리다. */}
+            {/* ★ 줄바꿈 위치를 폭에 따라 바꾼다. 글자 크기만 줄이는 방식으로는 안 됐다 —
+                가장 긴 줄이 18자라 폰에서 그걸 넣으려면 h1이 18px까지 작아진다.
+                그래서 폰에서는 「見つけ、」를 아래로 내려 가장 긴 줄을 14자로 만들고,
+                대신 글자를 키웠다. 일본어는 어디서든 줄이 끊겨서, 두면 「見つ / け、」가 된다.
+                lg에서 2단 그리드가 걸려 폭이 절반이 되므로 거기서 한 번 줄이고 xl에서 되돌린다 */}
+            <h1 className="text-[1.35rem] font-bold leading-[1.5] tracking-tight sm:text-[2rem] lg:text-[1.5rem] xl:text-[1.8rem]">
               特定ユーザーを再現するAIが
               <br />
-              ウェブサイトの「つまずき」を見つけ、
-              <br />
+              ウェブサイトの「つまずき」を
+              <br className="sm:hidden" />
+              見つけ、
+              <br className="hidden sm:inline" />
               改善策まで提案する
-            </p>
-
-            {/* ★ 「人」の定義を同じ画面に置く。
-                定義が隣にあれば、それは主張ではなく単位になる。
-                ここを別ページに追い出した瞬間「実在の◯人」と読まれる */}
-            {m && tried > 0 && (
-              <p className="mt-4 text-[12px] leading-relaxed text-fg-dim">
-                {tried} 人 ＝ 制約プロファイル {profileCount} 種 ×{" "}
-                {perProfile} 回の実行です。実在の人物ではなく、
-                <strong className="text-fg-muted">
-                  公開された制約仕様の下で動かしたAI
-                </strong>
-                で、仕様は <code className="font-mono">profiles/</code> にあります。
-              </p>
-            )}
+            </h1>
           </div>
 
           {/* 목업의 「분석 진척 68%」 자리. 이건 제품 이미지이지 계측값이 아니다 —
@@ -125,14 +79,17 @@ export default function Home() {
           <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
             さまざまな人の視点で試します
           </h2>
-          {/* ★ 「誰のためか」を先に言い、「演じさせていない」を後ろに置く。
-              順番を逆にすると、まだ何の話か分かっていない人に否定文から入ることになる */}
-          <p className="mx-auto mt-3 max-w-2xl text-center leading-relaxed text-fg-muted">
-            ただし、人物を<strong className="text-fg">演じさせてはいません</strong>。
-            カードに書いてあるのが実際に適用した設定そのもので、
-            ファイルは <code className="font-mono text-[13px]">profiles/</code> にあります。
+          {/* ★ 여기 있던 「ただし、人物を演じさせてはいません…」 단락을 뺐다.
+              아직 무슨 물건인지 모르는 사람에게 부정문부터 들이밀고 있었다.
+              같은 내용은 `profiles/README.md`와 `/report`에 남아 있다 */}
+          <Personas cards={cards} />
+
+          {/* 근거로 가는 길 한 줄. 이게 없으면 랜딩에서 계측으로 갈 방법이 없다 */}
+          <p className="mt-8 text-center text-sm">
+            <Link href="/report" className="text-brand hover:underline">
+              それぞれに何を制限したか・実際にどうなったか →
+            </Link>
           </p>
-          <ProfileCards cards={cards} byProfile={m?.by_profile ?? []} notes={m?.profiles ?? []} />
         </div>
       </section>
 
