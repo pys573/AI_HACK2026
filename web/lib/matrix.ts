@@ -51,6 +51,16 @@ export type SiteBlock = {
   control_reached: boolean;
 };
 
+/** 모델을 못 박고 다시 돌린 결과. 「差는 制約인가 モデル인가」를 가르는 실험 */
+export type FixedModelBlock = {
+  models: string[];
+  runs: number;
+  site_names: string[];
+  by_profile: Array<{ id: string; runs: number; reached: number; rate: number }>;
+  /** 같은 사이트의 라우팅 실행. 이것과 나란히 놓아야 비교가 성립한다 */
+  routed_same_sites: Array<{ id: string; runs: number; reached: number; rate: number }>;
+};
+
 export type Matrix = {
   generated_at: string;
   profiles: Array<{ id: string; version: string; label_ja: string; note_ja: string | null }>;
@@ -67,6 +77,7 @@ export type Matrix = {
     masked_words: number;
   };
   by_profile: Array<{ id: string; runs: number; reached: number; rate: number }>;
+  model_fixed: FixedModelBlock | null;
 };
 
 export function loadMatrix(): Matrix | null {

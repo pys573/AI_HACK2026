@@ -10,6 +10,7 @@ import { Honesty } from "@/components/Honesty";
 import { N3Case } from "@/components/N3Case";
 import { Threats } from "@/components/Threats";
 import { Matrix } from "@/components/Matrix";
+import { ModelFixed } from "@/components/ModelFixed";
 import { StuckList } from "@/components/StuckList";
 
 /**
@@ -125,6 +126,9 @@ export default function Report() {
         </p>
         <Matrix matrix={m} cards={cards} />
 
+        {/* ── モデルの違いではないのか ───────────────── */}
+        <ModelFixed matrix={m} cards={cards} />
+
         {/* ── 用事を変えたら ─────────────────────────── */}
         <OtherTasks matrix={m} />
 
@@ -235,7 +239,11 @@ export default function Report() {
         <ul className="mb-8 space-y-3">
           {[
             "1マスあたりの実行回数が少なく、同じ条件でも結果が変わることを確認しています。この表は傾向であって、確定値ではありません。",
-            "対照群には1つのモデル、制約側には複数のモデルが割り当てられました。差の一部が「モデルの違い」である可能性を、この実行数では否定できません。",
+            // ★ 모델 고정 실험을 돌렸으면 문장이 바뀐다. 안 돌렸는데 「확인했다」고 쓰면 거짓이고,
+            //   돌렸는데 「부정할 수 없다」고 쓰면 우리가 한 일을 우리가 지운다
+            m.model_fixed
+              ? `ふだんの実行は対照群と制約側でモデルが異なります。全員を同じモデルに固定した実行（${m.model_fixed.runs} 回）も別に載せていますが、回数は少なく、差の大きさを確定させるものではありません。`
+              : "対照群には1つのモデル、制約側には複数のモデルが割り当てられました。差の一部が「モデルの違い」である可能性を、この実行数では否定できません。",
             "語彙データは2002–2004年の調査です。当時の60歳以上と、いまの60歳以上は同じ人たちではありません。",
             "調査に載っていない語は伏せていません。したがって実際の壁は、ここで測った値より大きいはずです。",
             "記録できていないLLM呼び出しが2種類あります（再試行で捨てた分、再診断の分）。どちらも原価を実際より小さく見せる方向の誤差です。",
