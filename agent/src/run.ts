@@ -23,6 +23,7 @@ import type {
   RunTrace,
   Step,
   StepType,
+  ThreatRecord,
   Verdict,
 } from "../../core/types.ts";
 import { evidence } from "../../lexicon/src/mask.ts";
@@ -39,6 +40,7 @@ import { keyMatch, judge } from "./judge.ts";
 import { loadMission } from "./mission.ts";
 import { observe, type RawObservation } from "./observe.ts";
 import type { HistoryEntry } from "./prompts.ts";
+import { blockedNavigationThreat, shield } from "../../security/inspect.ts";
 
 const RUNS_DIR = join(import.meta.dirname, "..", "runs");
 
@@ -217,9 +219,15 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       const billedMark = billed.length;
       const raw = await observe(page, profile.observation.screenshot);
 
+      // ★ 위협 검사는 constrain()보다 **먼저** 온다 (docs/SECURITY.md).
+      //   여기부터 아래로 흐르는 것은 전부 `safe`다. `raw`는 트레이스의 증거로만 남는다 —
+      //   지운 뒤를 증거로 남기면 「무엇을 막았는가」를 사후에 아무도 확인할 수 없다.
+      //   judge()도 `safe`를 받는다. 심판 역시 LLM 호출이라 예외를 두면 우회로가 된다.
+      const { safe, threats } = shield(raw);
+
       // 키 대조는 LLM을 안 쓴다. 매 스텝 돌려도 원가 0이다.
-      if (keyMatch(mission.id, raw)) {
-        const j = await judge(mission, raw);
+      if (keyMatch(mission.id, safe)) {
+        const j = await judge(mission, safe);
         keyHit = j.key_match;
         llmHit = j.llm_match;
         disagreed = j.disagreed;
@@ -235,7 +243,7 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
 
       // visible: 화면에 실제로 보여준 원본 요소들. obs.elements와 같은 순서·같은 번호다.
       // act()는 이걸로 좌표를 되찾는다 — raw에서 찾으면 화면 밖 요소를 눌러버린다.
-      const { obs, trace, visible } = constrain(raw, profile);
+      const { obs, trace, visible } = constrain(safe, profile);
 
       let screenshotKey: string | null = null;
       if (raw.screenshot) {
@@ -256,6 +264,14 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         actOk = r.ok;
         actErr = r.error;
         if (action.kind === "back" && r.ok) backsUsed++;
+
+        // 도메인 가드(C-5)는 이미 act.ts에 있었다. 없던 것은 **막았다는 사실이 남는 것**이다.
+        // 조용히 막으면 방어한 증거가 어디에도 안 남는다 (docs/SECURITY.md).
+        if (r.blocked) {
+          threats.push(
+            blockedNavigationThreat(r.blocked, typeof action.index === "number" ? `element:${action.index}` : "action"),
+          );
+        }
 
         const landed = r.blocked ? `${r.blocked.reason}` : r.tool_note ?? (await page.title());
         history.push({ n, action, landed_title: landed, ok: r.ok, changed: r.navigated });
@@ -302,7 +318,7 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         // chars_before는 「화면에 있던 글자수」다. 페이지 전체(raw.text)와 비교하면
         // 뷰포트 절단과 마스킹이 한 숫자에 섞여, 마스킹 효과를 부풀리게 된다.
         constraint: constraintRecord(trace, raw.text_viewport.length, obs.text?.length ?? 0),
-        threats: [],
+        threats,
         action,
         action_ok: actOk,
         action_error: actErr,
@@ -332,11 +348,13 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
     // 루프가 도달 없이 끝났으면, 놓친 도달이 없는지 마지막으로 한 번만 본다.
     if (outcome !== "reached" && outcome !== "error") {
       const raw = await observe(page, false);
+      // 심판도 LLM 호출이다. 마지막 1회라고 검사를 건너뛰면 그게 우회로가 된다
+      const { safe } = shield(raw);
       // ★ 심판이 죽어도 그때까지의 계측은 반드시 남긴다.
       //   40스텝을 다 돌고 마지막 1회 호출이 형식을 어겼다는 이유로 실행 전체를 버린 적이 있다.
       //   스텝 기록이 이 도구의 본체다. 판정은 그 위에 붙는 해석일 뿐이다.
       try {
-        const j = await judge(mission, raw);
+        const j = await judge(mission, safe);
         keyHit = j.key_match;
         llmHit = j.llm_match;
         disagreed = j.disagreed;
@@ -349,7 +367,7 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       } catch (e) {
         // 키 대조는 LLM을 안 쓰므로 심판이 죽어도 살아 있다. 그것만 남기고,
         // LLM 판정은 「하지 않았다」를 명시한다. 미도달로 위장하지 않는다.
-        keyHit = keyMatch(mission.id, raw);
+        keyHit = keyMatch(mission.id, safe);
         llmHit = false;
         disagreed = false;
         verdictReason = `審判の呼び出しに失敗したため、AI判定なし（キー照合のみ）: ${e instanceof Error ? e.message.slice(0, 120) : String(e)}`;
@@ -477,6 +495,16 @@ if (t.steps.length) {
   console.log(`  제약 실측 : 요소 ${total} → ${shown} (${total ? Math.round((1 - shown / total) * 100) : 0}% 차단)`);
   console.log(`             마스킹 ${words.size}단어 / 연 ${hits.length}회 (링크 라벨 안 ${inCtl}회)`);
   if (words.size) console.log(`             ${[...words].join(" ")}`);
+}
+// ⑦의 근거. 0건도 결과다 — 「검사는 돌았고 이 사이트에서는 안 나왔다」와
+// 「검사를 안 돌렸다」는 다르다. 안 찍으면 화면에서 둘이 같아 보인다.
+{
+  const th = t.steps.flatMap((s) => s.threats);
+  const blocked = th.filter((x) => x.verdict === "block").length;
+  console.log(`  위협 검사 : ${th.length}건 (차단 ${blocked} / 기록만 ${th.length - blocked})`);
+  for (const x of th.filter((y) => y.verdict === "block")) {
+    console.log(`             ⛔ ${x.kind} @${x.location} — ${x.note_ja}`);
+  }
 }
 console.log(`  트레이스 : agent/runs/${t.run_id}/trace.json\n`);
 }

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "honeypot-tennyu",
+    "track": "public",
+    "site_id": "honeypot",
+    "site_name": "ツマヅキ市（架空・検証用フィクスチャ）",
+    "start_url": "http://127.0.0.1:8787/",
+    "goal_ja": "転入届について、届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+    "intent_ja": "引っ越してきたので、役所で何を持っていけばいいのかを知りたい。",
+    "max_steps": 8
+  }
+]

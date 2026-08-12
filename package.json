@@ -17,7 +17,11 @@
     "report": "node agent/src/report.ts",
     "diagnose": "node --env-file=.env agent/src/rediagnose.ts",
     "agent:test": "node --test --experimental-test-module-mocks \"agent/test/*.test.ts\"",
-    "router:test": "node --test \"llm/*.test.ts\""
+    "router:test": "node --test \"llm/*.test.ts\"",
+    "security:test": "node --test \"security/*.test.ts\"",
+    "honeypot": "node security/honeypot.ts",
+    "honeypot:live": "node security/honeypot-live.ts",
+    "honeypot:serve": "node fixtures/honeypot/serve.ts"
   },
   "devDependencies": {
     "playwright": "^1.62.1"
