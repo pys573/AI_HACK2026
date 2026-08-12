@@ -48,5 +48,46 @@
     "goal_ja": "認可保育園の入園申込みの受付期間が書かれたページにたどり着く。",
     "intent_ja": "来年の春から子どもを保育園に預けたい。申し込みの締め切りがいつなのかを知りたい。",
     "max_steps": 20
+  },
+
+  {
+    "id": "minato-tennyu",
+    "track": "public",
+    "site_id": "minato",
+    "site_name": "港区",
+    "start_url": "https://www.city.minato.tokyo.jp/",
+    "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+    "intent_ja": "来月この区に引っ越します。役所で何をすればいいのか、当日何を持っていけばいいのかを知りたい。",
+    "max_steps": 20
+  },
+  {
+    "id": "hamamatsu-tennyu",
+    "track": "public",
+    "site_id": "hamamatsu",
+    "site_name": "浜松市",
+    "start_url": "https://www.city.hamamatsu.shizuoka.jp/",
+    "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+    "intent_ja": "来月この市に引っ越します。役所で何をすればいいのか、当日何を持っていけばいいのかを知りたい。",
+    "max_steps": 20
+  },
+  {
+    "id": "oizumi-tennyu",
+    "track": "public",
+    "site_id": "oizumi",
+    "site_name": "群馬県大泉町",
+    "start_url": "https://www.town.oizumi.gunma.jp/",
+    "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+    "intent_ja": "来月この町に引っ越します。役場で何をすればいいのか、当日何を持っていけばいいのかを知りたい。",
+    "max_steps": 20
+  },
+  {
+    "id": "shibuya-tennyu",
+    "track": "public",
+    "site_id": "shibuya",
+    "site_name": "渋谷区",
+    "start_url": "https://www.city.shibuya.tokyo.jp/",
+    "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
+    "intent_ja": "来月この区に引っ越します。役所で何をすればいいのか、当日何を持っていけばいいのかを知りたい。",
+    "max_steps": 20
   }
 ]

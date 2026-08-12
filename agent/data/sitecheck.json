@@ -11,18 +11,14 @@
       "url": "https://www.city.shinjuku.lg.jp/",
       "ok": true,
       "status": 200,
-      "ms": 3175,
+      "ms": 4301,
       "title": "新宿区",
       "elements": 270,
       "elements_in_viewport": 9,
-      "text_chars": 874,
-      "masked": 5,
-      "masked_in_controls": 2,
-      "masked_words": [
-        "パブリック・コメント",
-        "アクセシビリティ",
-        "リリース"
-      ]
+      "text_chars": 858,
+      "masked": 0,
+      "masked_in_controls": 0,
+      "masked_words": []
     },
     {
       "id": "minato",
@@ -30,17 +26,14 @@
       "url": "https://www.city.minato.tokyo.jp/",
       "ok": true,
       "status": 200,
-      "ms": 2395,
+      "ms": 2507,
       "title": "港区ホームページ／トップページ",
       "elements": 78,
       "elements_in_viewport": 9,
-      "text_chars": 3043,
-      "masked": 7,
-      "masked_in_controls": 3,
-      "masked_words": [
-        "リンク",
-        "サイト"
-      ]
+      "text_chars": 2992,
+      "masked": 0,
+      "masked_in_controls": 0,
+      "masked_words": []
     },
     {
       "id": "hamamatsu",
@@ -48,20 +41,16 @@
       "url": "https://www.city.hamamatsu.shizuoka.jp/",
       "ok": true,
       "status": 200,
-      "ms": 2464,
+      "ms": 3580,
       "title": "浜松市公式ホームページ",
       "elements": 222,
       "elements_in_viewport": 67,
       "text_chars": 1838,
-      "masked": 18,
-      "masked_in_controls": 10,
+      "masked": 3,
+      "masked_in_controls": 1,
       "masked_words": [
         "ネット",
-        "ユニバーサルデザイン",
-        "ハザードマップ",
-        "サイト",
-        "タスク",
-        "アクセシビリティ"
+        "サイト"
       ]
     },
     {
@@ -70,19 +59,14 @@
       "url": "https://www.town.oizumi.gunma.jp/",
       "ok": true,
       "status": 200,
-      "ms": 1955,
+      "ms": 1933,
       "title": "大泉町公式トップページ",
       "elements": 93,
       "elements_in_viewport": 15,
-      "text_chars": 2858,
-      "masked": 12,
-      "masked_in_controls": 6,
-      "masked_words": [
-        "サイト",
-        "ダウンロード",
-        "アクセシビリティ",
-        "コンテンツ"
-      ]
+      "text_chars": 2865,
+      "masked": 0,
+      "masked_in_controls": 0,
+      "masked_words": []
     },
     {
       "id": "shibuya",
@@ -90,19 +74,15 @@
       "url": "https://www.city.shibuya.tokyo.jp/",
       "ok": true,
       "status": 200,
-      "ms": 2663,
+      "ms": 1929,
       "title": "渋谷区公式サイト | 渋谷区ポータル",
       "elements": 69,
       "elements_in_viewport": 23,
-      "text_chars": 967,
-      "masked": 13,
-      "masked_in_controls": 6,
+      "text_chars": 985,
+      "masked": 1,
+      "masked_in_controls": 0,
       "masked_words": [
-        "リアルタイム",
-        "ツール",
-        "ログイン",
-        "サイト",
-        "アクセシビリティ"
+        "サイト"
       ]
     }
   ]

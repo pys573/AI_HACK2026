@@ -33,5 +33,34 @@
     "text_patterns": ["保育園", "申込"],
     "human_baseline_clicks": null,
     "note": "v0 미검증. 受付期間은 PDF 안에만 있는 경우가 있다. 그 경우 PDF 링크가 있는 안내 페이지를 도달로 본다 — PDF 안까지 읽는 것은 이번 범위 밖이다."
+  },
+
+  {
+    "mission_id": "minato-tennyu",
+    "url_patterns": ["tennyu", "hikkoshi", "todokede"],
+    "text_patterns": ["転入", "本人確認"],
+    "human_baseline_clicks": null,
+    "note": "✅ 대상 페이지 관찰 (2026-08-12). 「転入届（港区外から港区へ引越しするとき）」 /shibamadosa/kurashi/todokede/hikkoshi/tennyu.html 에 「転入」「本人確認」이 모두 있음을 직접 확인했다. text_patterns는 AND — 新宿区와 같은 이유로 「転入」 단독은 一覧에서도 맞는다."
+  },
+  {
+    "mission_id": "hamamatsu-tennyu",
+    "url_patterns": ["tennyu", "hikkoshi", "jyumin"],
+    "text_patterns": ["転入", "本人確認"],
+    "human_baseline_clicks": null,
+    "note": "✅ 대상 페이지 관찰 (2026-08-12). /kurashi-tetsuzuki/koseki/hikkoshi/ 와 /siminkj/sinsei/jyumin/tennyu.html 양쪽에 「転入」「本人確認」이 있다. 浜松市는 転入 안내가 여러 페이지로 갈라져 있어 url_patterns를 셋 다 남긴다."
+  },
+  {
+    "mission_id": "oizumi-tennyu",
+    "url_patterns": ["020/050/030", "020/050", "theme/040"],
+    "text_patterns": ["転入", "本人確認"],
+    "human_baseline_clicks": null,
+    "note": "⚠️ 대상 페이지는 관찰로 확인했다 (2026-08-12, 「転入、転出、転居｜大泉町」 /s017/kurashi/020/050/030/20200804203647.html — 「転入」「本人確認」「必要なもの」 모두 있음). 다만 **이 사이트의 URL에는 말이 들어 있지 않다**(전부 숫자 경로). 따라서 키의 URL 쪽은 다른 사이트보다 약하고, 판정의 무게는 text_patterns와 LLM 심판에 실린다. 도달률을 읽을 때 이 점을 먼저 말한다."
+  },
+  {
+    "mission_id": "shibuya-tennyu",
+    "url_patterns": ["tennyu", "hikkoshi", "jumin/ido"],
+    "text_patterns": ["転入", "本人確認"],
+    "human_baseline_clicks": null,
+    "note": "✅ 대상 페이지 관찰 (2026-08-12). 「転入届（区外から渋谷区へ）」 /kurashi/jumin/ido/t_tennyu.html 에 「転入」「本人確認」이 모두 있다. /contents/case/hikkoshi.html 는 그 위의 안내 허브라 hikkoshi도 남긴다."
   }
 ]
