@@ -251,6 +251,11 @@ function main() {
     for (const rid of b.run_ids) {
       const t = loadTrace(rid);
       if (!t) continue;
+      // ★ 실험용 프로필(`-exp`)은 공표 집계에 넣지 않는다. 아래 dropout_rate가
+      //   「control이 아닌 것 = 제약을 받은 것」으로 세기 때문에, 여기를 통과시키면
+      //   control-mobile(=제약 없음) 같은 것이 제약측으로 계산되어 이탈률이 오염된다.
+      //   senior-70s-patient도 같은 이유로 이미 `-exp`다. 실험 결과는 FINDINGS.md에 쓴다.
+      if (t.profile_version?.endsWith("-exp")) continue;
       block.cells.push(cellOf(t, rid));
       for (const f of t.findings ?? []) {
         block.findings.push({
@@ -268,7 +273,9 @@ function main() {
     bySite.set(b.mission_id, block);
   }
 
-  const blocks = [...bySite.values()];
+  // 실험 배치만 있는 사이트는 칸이 0개로 남는다. 빈 막대가 표에 서면
+  // 「0%였다」로 읽히므로 아예 내보내지 않는다 — 재지 않은 것과 0%는 다르다.
+  const blocks = [...bySite.values()].filter((s) => s.cells.length > 0);
   for (const s of blocks) {
     // 심각한 것부터. 같은 등급 안에서는 먼저 막힌 쪽이 위다 —
     // 앞 스텝에서 막히면 뒤의 문제는 아예 만나지도 못한다.
