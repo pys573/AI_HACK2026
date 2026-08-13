@@ -41,6 +41,16 @@ export type BatchOptions = {
   headless?: boolean;
   delayMs?: number;
   maxSteps?: number;
+  /**
+   * ★ 이 배치를 공표 집계에서 떼어 놓는다. 붙이면 디렉터리가 `batch<tag>__…`가 되고,
+   * `scripts/build-web-data.ts`는 `batch__`로 시작하는 것만 읽으므로 자동으로 빠진다.
+   *
+   * 왜 필요한가: 프로필 **버전이 올라간** 실행은 옛 실행과 조건이 다르다. 예컨대
+   * `resident-n3` v1.2는 v1.1에 없던 한 줄(영어로 끝내고 싶다)이 붙는다. 같은 이름으로
+   * 저장하면 집계가 둘을 한 칸에 뭉개고, 그 순간 「무엇을 잰 값인가」에 답할 수 없게 된다.
+   * `batchfixed__`(모델 못 박음)가 이미 같은 이유로 이름을 달리했다.
+   */
+  tag?: string;
 };
 
 /** 계측이 아예 실패한 런. run_id가 없으므로 Batch에 담을 수 없다 — 그래서 따로 돌려준다 */
@@ -69,7 +79,9 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
   //   아니고, 도달률도 평소의 라우팅 조건에서 나온 값이 아니다. 같은 `batch__` 이름을
   //   쓰면 집계 스크립트가 조용히 섞어 넣고, 그 순간 두 실험이 하나로 뭉개진다.
   const pin = pinnedModel();
-  const batchId = `${pin ? "batchfixed" : "batch"}__${mission.id}__${Date.now()}`;
+  // 디렉터리 이름이 되므로 영숫자만 남긴다. `..`나 `/`가 들어오면 저장 경로가 새어 나간다
+  const tag = (opts.tag ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+  const batchId = `${pin ? "batchfixed" : tag ? `batch${tag}` : "batch"}__${mission.id}__${Date.now()}`;
   const batchDir = join(RUNS_DIR, batchId);
   mkdirSync(batchDir, { recursive: true });
 
@@ -177,7 +189,8 @@ if (import.meta.main) {
   const argv = process.argv.slice(2);
   const missionId = argv.find((a) => !a.startsWith("--"));
   if (!missionId) {
-    console.error("사용법: npm run batch -- <mission-id> [--variants N] [--profiles a,b,c] [--max-steps N]");
+    console.error("사용법: npm run batch -- <mission-id> [--variants N] [--profiles a,b,c] [--max-steps N] [--tag 이름]");
+    console.error("  --tag 를 붙이면 공표 집계(batch__)에서 빠진다. 조건이 다른 실험은 반드시 붙인다");
     console.error(`기본 명단: ${DEFAULT_ROSTER.join(", ")}`);
     process.exit(1);
   }
@@ -195,6 +208,7 @@ if (import.meta.main) {
       profileIds: flag("profiles")?.split(",").map((s) => s.trim()).filter(Boolean),
       variants: flag("variants") ? Number(flag("variants")) : undefined,
       maxSteps: flag("max-steps") ? Number(flag("max-steps")) : undefined,
+      tag: flag("tag"),
       headless: process.env.HEADED !== "1",
     }));
   } catch (e) {
