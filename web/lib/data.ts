@@ -164,8 +164,10 @@ export type RunView = {
    * 진단(리포트를 쓰게 한 호출)의 원가. **0의 뜻이 두 가지라 그냥 쓰면 안 된다:**
    *   - findings가 0건인데 0 → 진짜 0이다. 신호가 없으면 모델을 아예 안 부른다
    *     (`agent/src/diagnose.ts` — `if (!signals.length) return`).
-   *   - findings가 있는데 0 → **기록 누락**이다. `agent/src/rediagnose.ts`가 findings만
-   *     써넣고 원가는 콘솔에만 찍는다. 그 호출은 실제로 과금됐다.
+   *   - findings가 있는데 0 → **기록 누락**이다. 그 호출은 실제로 과금됐다.
+   *     원인은 `agent/src/run.ts` — 원가를 모으는 전역 구독을 브라우저 닫을 때 끊는데
+   *     (`offBilled()`) 진단은 그 뒤에 돈다. 2026-08-13에 고쳤다(`d.costs`를 직접 넣는다).
+   *     ⚠️ 그 이전에 저장된 트레이스는 다시 돌리지 않는 한 금액이 빠진 채로 남는다.
    * 즉 리포트가 있는 실행에서는 화면의 합계가 리포트 제작비를 포함하지 않는다 (절대규칙 4).
    */
   diagnoseUsd: number;

@@ -114,9 +114,15 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
         )}
 
         {/*
-          결손이 하나 더 있다. 리포트(findings)를 쓰게 한 호출은 과금됐는데 trace의 원가에 없다 —
-          rediagnose.ts가 결과만 써넣고 원가는 콘솔에만 찍는다. 리포트가 상품인 이상 이건 크다.
-          「0円で報告書が出る」로 읽히면 그게 가장 위험한 거짓말이다.
+          결손이 하나 더 있다. 리포트(findings)를 쓰게 한 호출은 과금됐는데 trace의 원가에 없다.
+          리포트가 상품인 이상 이건 크다 — 「0円で報告書が出る」로 읽히면 그게 가장 위험한 거짓말이다.
+
+          ★ 2026-08-13. 여기 적혀 있던 원인이 **틀렸었다.** `rediagnose.ts` 탓이라고 썼는데
+            그 파일은 8/11(9a35839)부터 `mergeDiagnoseCost()`로 원가를 되써넣고 있다.
+            즉 저장소를 grep 한 심사위원이 화면과 반대되는 코드를 보게 된다.
+            진짜 원인은 `run.ts`였다 — 원가를 모으는 전역 구독을 브라우저 닫을 때 끊는데
+            (`offBilled()`), 진단은 그 뒤에 돈다. 지금은 `d.costs`를 직접 넣어 고쳤다.
+            다만 이 화면이 읽는 트레이스는 그 이전 기록이라 금액이 여전히 빠져 있다.
         */}
         {undiagnosed.length > 0 && (
           <div className="mt-4 rounded-lg border border-blocked/30 bg-blocked/5 p-4">
@@ -131,8 +137,15 @@ export function CostPanel({ runs }: { runs: RunView[] }) {
               の{undiagnosed.reduce((a, r) => a + r.findings.length, 0)}件は、記録から検出した信号を
               モデルに渡して書かせたものです。その呼び出しにも費用がかかっていますが、
               <code className="font-mono">cost.by_step_type.diagnose</code> は 0 のままです。
-              診断だけをやり直す <code className="font-mono">agent/src/rediagnose.ts</code>{" "}
-              が結果だけをファイルに書き戻し、費用を書き戻さないためです。
+              原価を集める購読を<strong className="text-fg">ブラウザを閉じる時点で切っており</strong>、
+              診断はその後に走るため、診断分だけが台帳の外に漏れていました（
+              <code className="font-mono">agent/src/run.ts</code> の{" "}
+              <code className="font-mono">offBilled()</code>）。
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-fg-muted">
+              これは <strong className="text-fg">2026-08-13 に直しました</strong>。
+              ただしこの画面が読んでいる記録はそれ以前に保存したもので、
+              測り直さないかぎり金額は欠けたままです。
             </p>
             <p className="mt-2 text-xs leading-relaxed text-fg-muted">
               つまり上の金額は

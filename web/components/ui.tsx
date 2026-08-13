@@ -268,15 +268,19 @@ export function RunReport({ run }: { run: RunView }) {
           <div className="mt-4">
             <FindingsList findings={run.findings} />
           </div>
-          {/* 리포트를 만든 호출은 과금됐는데 trace의 원가에 안 들어갔다. 먼저 적는다 (절대규칙 4) */}
+          {/*
+            리포트를 만든 호출은 과금됐는데 trace의 원가에 안 들어갔다. 먼저 적는다 (절대규칙 4).
+            ★ 2026-08-13: 원인을 `rediagnose.ts`라고 적어 뒀던 것이 틀렸다. 진짜 원인은 `run.ts`다.
+              상세는 `web/components/CostPanel.tsx`의 같은 자리 주석.
+          */}
           {run.diagnoseUsd === 0 && (
             <p className="mt-4 border-t border-line-soft pt-3 text-[11px] leading-relaxed text-fg-dim">
               ⚠️ この{run.findings.length}件を書かせた呼び出しの費用は、
               <strong className="text-fg-muted">下の金額に入っていません</strong>（
               <code className="font-mono">by_step_type.diagnose</code> が 0 のまま）。
-              診断だけをやり直す
-              <code className="font-mono">agent/src/rediagnose.ts</code>
-              が結果だけを書き戻して費用を書き戻さないためで、既知の不具合として把握しています。
+              原価を集める購読を診断より先に切っていたためで（
+              <code className="font-mono">agent/src/run.ts</code>）、2026-08-13 に直しました。
+              ただしこの記録はそれ以前のものなので、欠けたままです。
             </p>
           )}
         </>
