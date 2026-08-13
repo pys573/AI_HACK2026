@@ -108,7 +108,7 @@ export default function Home() {
               できないと言っているだけでは」다. 우리는 그 답을 이미 갖고 있는데
               (制約なしは全部到達する) 랜딩에 없었다. 記録は3枚目に畳んだ。
               ⚠️ 여기에 実測値는 쓰지 않는다 — 랜딩은 「무엇인가」의 자리다 (CLAUDE.md).
-              19/19도 0%↔94%도 /report에 있다 */}
+              대조군 도달률도 사이트별 이탈률도 /report에 있다 */}
           <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {[
               {

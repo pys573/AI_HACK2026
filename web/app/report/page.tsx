@@ -16,7 +16,7 @@ import { RunDots } from "@/components/RunDots";
  *
  * ★ 그래서 이 화면에는 **결론과 그림 2장만** 둔다:
  *     ① 큰 숫자 3개  — 제약 없으면 끝난다 / 제약 걸면 안 끝난다 / 1회 얼마
- *     ② サイト別 横棒 — 0% と 94% が並ぶ。「AIの限界」ではなく**サイトを測った値**である証拠
+ *     ② サイト別 横棒 — 端と端が大きく開く。「AIの限界」ではなく**サイトを測った値**である証拠
  *     ③ プロファイル別 点  — 点1つ = 1回。これで「n はいくつ」が質問にならない
  *     ④ findings 1件だけ — 「改善策まで出る」を1件で見せる。残り全部はリンクの先
  *   나머지는 전부 `/report/detail`이다. **지운 게 아니라 옮긴 것이다.**
@@ -49,6 +49,11 @@ export default function Report() {
   const conReached = con.filter((c) => c.reached).length;
   const stuck = con.length - conReached;
 
+  // ★ 「制約なしなら終わる」는 손으로 쓰지 않는다. 대조군이 한 번도 못 간 사이트가
+  //   하나라도 생기면 그 문장은 거짓이 되고, 바로 아래 큰 숫자와 모순된다.
+  //   실제로 2026-08-13 재측정에서 渋谷区 대조군이 4/6이 되면서 이게 걸렸다.
+  const everySiteControlReached = m.sites.every((s) => s.control_reached);
+
   // 「改善策まで出る」を1件で見せる。手で書いた例文は置かない — 実行が残した文だけ (절대규칙 3)
   const sample = m.sites
     .flatMap((s) => s.findings.map((f) => ({ ...f, site_name: s.site_name })))
@@ -61,7 +66,9 @@ export default function Report() {
         {/* ── 結論 ─────────────────────────────────────── */}
         <p className="text-center text-xs font-medium tracking-widest text-fg-dim">RESULT</p>
         <h1 className="mt-3 text-center text-xl font-bold leading-relaxed tracking-tight sm:text-3xl sm:leading-relaxed">
-          制約がなければ、{m.sites.length}サイトすべてで用事は終わりました。
+          {everySiteControlReached
+            ? `どのサイトも、制約がなければ用事は終わりました。`
+            : `制約がなくても終わらなかったサイトがあります。`}
           <br />
           制約をかけると、{con.length}回のうち
           <span className="text-blocked">{stuck}回</span>が終わりませんでした。
@@ -95,6 +102,23 @@ export default function Report() {
             sub={`${m.totals.runs} 回で $${m.totals.cost_usd.toFixed(2)}（APIの実費）`}
           />
         </div>
+
+        {/* ★ 대조군이 100%가 아니면 **먼저** 말한다. 여기서 감추면 아래 표를 보다가 발견된다.
+            사이트 이름도 손으로 쓰지 않는다 — 다시 돌리면 이 문장도 따라 바뀐다 */}
+        {ctrlReached < ctrl.length && (
+          <p className="mt-4 text-center text-xs leading-relaxed text-fg-muted">
+            ⚠ 対照群も 100% ではありません。終わらなかった
+            {ctrl.length - ctrlReached}回は
+            {[
+              ...new Set(
+                m.sites
+                  .filter((s) => s.cells.some((c) => c.profile_id === "control" && !c.reached))
+                  .map((s) => s.site_name),
+              ),
+            ].join("・")}
+            で、内訳は<a className="underline" href="/report/detail">詳細ページ</a>に全部出しています。
+          </p>
+        )}
 
         {/* ── ① サイト差 ──────────────────────────────── */}
         <section className="card mt-14 p-6 sm:p-8">

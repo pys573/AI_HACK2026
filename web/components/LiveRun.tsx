@@ -181,7 +181,7 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
       {start && !start.key_available && (
         <p className="mt-3 rounded-xl bg-[#fdf6e9] px-5 py-3 text-xs leading-relaxed text-stumble ring-1 ring-stumble/25">
           このURLには、人が用意した正解ページの一覧がありません。そのため到達判定は
-          <strong className="font-bold">AIのみ</strong>で行います（公開している105回の計測は、人が作ったキーとAIの2段判定です）。
+          <strong className="font-bold">AIのみ</strong>で行います（公開している125ランの計測は、人が作ったキーとAIの2段判定です）。
         </p>
       )}
 
@@ -343,7 +343,7 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
           </p>
           <p className="mt-2 text-xs text-fg-dim">
             記録は <code className="font-mono">{done.run_id}</code> として保存しました。
-            この実行は、公開している105回の集計には含めません（条件が違うためです）。
+            この実行は、公開している125ランの集計には含めません（条件が違うためです）。
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/request" className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white">
@@ -353,7 +353,7 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
               href="/report"
               className="rounded-full border border-brand/40 px-6 py-2.5 text-sm font-bold text-brand"
             >
-              105回の計測結果を見る
+              125ランの計測結果を見る
             </Link>
           </div>
         </div>

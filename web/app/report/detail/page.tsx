@@ -68,6 +68,25 @@ export default function ReportDetail() {
     ? (allCells.reduce((a, c) => a + c.clicks, 0) / allCells.length).toFixed(1)
     : null;
 
+  // ★ 「같은 조건인데 결과가 갈린다」의 실례를 **손으로 쓰지 않는다.**
+  //   2026-08-13에 여기 「新宿区・高齢者が15클릭으로 포기, 5클릭으로 도달」이라고 박혀 있었는데,
+  //   재측정 뒤 그 칸의 실제 값은 11클릭·3클릭이었다. 화면이 조용히 거짓말을 하고 있었다.
+  //   그래서 매번 실측에서 **가장 크게 갈린 칸**을 찾아 쓴다.
+  let split: { site: string; profile: string; gaveUp: number; reached: number } | null = null;
+  for (const s of m.sites) {
+    for (const p of m.profiles) {
+      const cs = s.cells.filter((c) => c.profile_id === p.id);
+      const ok = cs.filter((c) => c.reached);
+      const ng = cs.filter((c) => !c.reached);
+      if (!ok.length || !ng.length) continue;
+      const gaveUp = Math.max(...ng.map((c) => c.clicks));
+      const reached = Math.min(...ok.map((c) => c.clicks));
+      if (!split || gaveUp - reached > split.gaveUp - split.reached) {
+        split = { site: s.site_name, profile: p.label_ja, gaveUp, reached };
+      }
+    }
+  }
+
   return (
     <Page back={{ href: "/report", label: "← 結果のまとめへ" }}>
       <div className="mx-auto w-full max-w-6xl px-6 py-14">
@@ -132,8 +151,13 @@ export default function ReportDetail() {
         {/* ── 全マス ─────────────────────────────────── */}
         <h2 className="mt-14 text-xl font-bold">サイト × 制約プロファイル</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-fg-muted">
-          1マスが1回の実行です。<strong className="text-fg">実行ごとに結果は変わります</strong> —
-          同じ条件で新宿区・高齢者プロファイルが、ある回は 15 クリックで諦め、別の回は 5 クリックで到達しました。
+          1マスが1回の実行です。<strong className="text-fg">実行ごとに結果は変わります</strong>
+          {split && (
+            <>
+              {" "}— 同じ条件で{split.site}・{split.profile}が、ある回は {split.gaveUp}{" "}
+              クリック使っても終わらず、別の回は {split.reached} クリックで到達しました。
+            </>
+          )}
           マス単体ではなく、縦（プロファイル）と横（サイト）の合計を読んでください。
         </p>
         <Matrix matrix={m} cards={cards} />
