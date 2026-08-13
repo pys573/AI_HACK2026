@@ -23,32 +23,41 @@ set -u
 cd "$(dirname "$0")/.."
 mkdir -p agent/runs/_log
 
+# 종료 코드 2 = OrcaRouter 잔액 소진. 그때는 이 사이트의 남은 배치도 돌리지 않는다.
+# 빈 지갑으로 브라우저만 더 띄우면 error 런이 쌓이고, 그걸 나중에 가려내는 게 더 비싸다.
 run() {  # run <mission> <profiles> <variant-list>
   npm run batch -- "$1" --profiles "$2" --variant-list "$3" --tag v2 >> "agent/runs/_log/$1.log" 2>&1
+  local code=$?
+  if [ "$code" -eq 2 ]; then
+    echo "⛔ $1 — OrcaRouter 잔액 소진. 이 사이트의 남은 배치를 건너뛴다"
+    return 2
+  fi
+  return 0
 }
 
 ALL="control,senior-70s,resident-n3,smartphone-novice,busy-worker,control-mobile,resident-n3-en"
 
 fill_hamamatsu() {   # 9런
-  run hamamatsu-tennyu "control,senior-70s" 2
-  run hamamatsu-tennyu "$ALL" 3
+  run hamamatsu-tennyu "control,senior-70s" 2 || return 2
+  run hamamatsu-tennyu "$ALL" 3 || return 2
 }
 fill_minato() {      # 14런
-  run minato-tennyu "$ALL" 2
-  run minato-tennyu "$ALL" 3
+  run minato-tennyu "$ALL" 2 || return 2
+  run minato-tennyu "$ALL" 3 || return 2
 }
 fill_oizumi() {      # 11런
-  run oizumi-tennyu "smartphone-novice,busy-worker,control-mobile,resident-n3-en" 2
-  run oizumi-tennyu "$ALL" 3
+  run oizumi-tennyu "smartphone-novice,busy-worker,control-mobile,resident-n3-en" 2 || return 2
+  run oizumi-tennyu "$ALL" 3 || return 2
 }
 fill_shibuya() {     # 13런
-  run shibuya-tennyu "senior-70s,resident-n3,smartphone-novice,busy-worker,control-mobile,resident-n3-en" 2
-  run shibuya-tennyu "$ALL" 3
+  run shibuya-tennyu "senior-70s,resident-n3,smartphone-novice,busy-worker,control-mobile,resident-n3-en" 2 || return 2
+  run shibuya-tennyu "$ALL" 3 || return 2
 }
 fill_shinjuku() {    # 13런
-  run shinjuku-tennyu "smartphone-novice" 1,3          # 1런짜리 배치를 피하려고 묶었다
-  run shinjuku-tennyu "control,senior-70s,busy-worker,control-mobile,resident-n3-en" 2
-  run shinjuku-tennyu "control,senior-70s,resident-n3,busy-worker,control-mobile,resident-n3-en" 3
+  # v1만 채우면 1런짜리 배치가 되어 집계가 통째로 버린다. 그래서 v3와 묶는다
+  run shinjuku-tennyu "smartphone-novice" 1,3 || return 2
+  run shinjuku-tennyu "control,senior-70s,busy-worker,control-mobile,resident-n3-en" 2 || return 2
+  run shinjuku-tennyu "control,senior-70s,resident-n3,busy-worker,control-mobile,resident-n3-en" 3 || return 2
 }
 
 echo "=== 3차 보충 시작 $(date '+%F %T') — 60런 ==="

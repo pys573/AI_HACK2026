@@ -82,6 +82,18 @@ export type SiteBlock = {
   /** 대조군을 뺀 이탈률. 대조군은 「사이트가 정상이다」의 확인용이지 이용자가 아니다 */
   dropout_rate: number | null;
   control_reached: boolean;
+  /**
+   * ★ **계측 자체가 실패해서 뺀 런 수.** 화면에 반드시 적는다 — 감추면 質疑에서 무너진다.
+   *
+   * 왜 빼는가: `outcome: "error"`는 `reached: false`라서 그냥 두면 **이탈로 세어진다.**
+   * 그런데 실제로 기록된 error 34건은 전부 우리 쪽 사정이었다 —
+   * OrcaRouter 잔액 소진 20 / 화면이미지 입력 미지원 5 / 미션에 정답 키 없음 8 / 브라우저 닫힘 1.
+   * 사이트 때문에 실패한 것은 **한 건도 없었다.** 그걸 이탈로 세면 「사이트가 어려워서」와
+   * 「우리 사정으로 못 쟀다」가 다시 섞인다 — 港区 94%를 만든 것과 같은 종류의 오염이다.
+   *
+   * 오차 방향: 빼면 이탈률이 **내려간다** = 과소. 이 프로젝트의 규율과 같은 방향이다.
+   */
+  excluded_errors: number;
 };
 
 /**
@@ -256,6 +268,7 @@ function main() {
         findings: [],
         dropout_rate: null,
         control_reached: false,
+        excluded_errors: 0,
       } satisfies SiteBlock);
 
     for (const rid of b.run_ids) {
@@ -266,6 +279,12 @@ function main() {
       //   control-mobile(=제약 없음) 같은 것이 제약측으로 계산되어 이탈률이 오염된다.
       //   senior-70s-patient도 같은 이유로 이미 `-exp`다. 실험 결과는 FINDINGS.md에 쓴다.
       if (t.profile_version?.endsWith("-exp")) continue;
+      // ★ 계측이 끝나지 못한 런은 칸으로 세지 않는다. 여기가 유일한 관문이라
+      //   이탈률·프로필별·전체 집계가 한꺼번에 깨끗해진다. 근거는 excluded_errors 주석.
+      if (t.verdict?.outcome === "error") {
+        block.excluded_errors++;
+        continue;
+      }
       block.cells.push(cellOf(t, rid));
       for (const f of t.findings ?? []) {
         block.findings.push({
@@ -452,6 +471,14 @@ function main() {
 
   console.log(`matrix.json  : 비교축 [${primary}] ${sites.length}사이트 / ${all.length}런`);
   for (const p of by_profile) console.log(`  ${p.id.padEnd(18)} ${p.reached}/${p.runs}  ${(p.rate * 100).toFixed(0)}%`);
+  // 뺀 런은 **매번 눈에 보이게** 찍는다. 조용히 빠지면 어느 날 그 사실을 우리도 잊는다
+  const dropped = blocks.reduce((a, s) => a + s.excluded_errors, 0);
+  if (dropped > 0) {
+    console.log(`  ⚠️ 계측 실패로 제외: ${dropped}런 — 이탈이 아니라 「재지 못한 것」이다`);
+    for (const s of blocks.filter((s) => s.excluded_errors > 0)) {
+      console.log(`       ${s.site_name.padEnd(10)} ${s.excluded_errors}런`);
+    }
+  }
   for (const s of other_tasks) {
     const c = s.cells.filter((x) => x.profile_id !== "control");
     console.log(

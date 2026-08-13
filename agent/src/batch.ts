@@ -67,7 +67,24 @@ export type BatchOptions = {
 /** 계측이 아예 실패한 런. run_id가 없으므로 Batch에 담을 수 없다 — 그래서 따로 돌려준다 */
 export type BatchFailure = { profile_id: string; variant: number; error: string };
 
-export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; failures: BatchFailure[] }> {
+/**
+ * ★ 지갑이 비면 **그 자리에서 멈춘다.**
+ *
+ * 2026-08-13, 재측정 도중 OrcaRouter 잔액이 바닥났는데 배치가 계속 돌았다.
+ * 남은 19런은 전부 `outcome: "error"`로 저장됐다 — 그건 사이트를 잰 값이 아니라
+ * **우리 지갑을 잰 값**이다. 계측기가 자기 사정으로 만든 숫자를 계측값 옆에 쌓아 두면,
+ * 나중에 그 둘을 가려내는 데 드는 시간이 다시 돌리는 시간보다 길다.
+ * 게다가 남은 런만큼 브라우저를 더 띄우는 값도 그대로 낭비다.
+ *
+ * `runOnce`는 403을 안에서 삼키고 error 트레이스를 돌려주므로 예외로는 잡히지 않는다.
+ * 그래서 트레이스 본문에서 직접 찾는다.
+ */
+const OUT_OF_CREDIT = /insufficient credits/i;
+export const CREDIT_EXIT_CODE = 2;
+
+export async function runBatch(
+  opts: BatchOptions,
+): Promise<{ batch: Batch; failures: BatchFailure[]; outOfCredit: boolean }> {
   const mission = loadMission(opts.missionId);
   const roster = opts.profileIds?.length ? opts.profileIds : DEFAULT_ROSTER;
   const variants = opts.variants ?? 2;
@@ -106,6 +123,7 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
   const traces: RunTrace[] = [];
   const failures: BatchFailure[] = [];
   let controlRunId: string | null = null;
+  let outOfCredit = false;
 
   console.log(`\n▶ 배치 ${batchId}`);
   console.log(`  대상   : ${mission.site_name} / ${mission.id}`);
@@ -149,10 +167,23 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
       if (item.profileId === "control" && !t.verdict.reached) {
         console.log(`  ⚠️ 대조군이 도달하지 못했다. 이 배치로는 「제약이 원인」이라고 말할 수 없다`);
       }
+
+      if (OUT_OF_CREDIT.test(JSON.stringify(t.steps)) || OUT_OF_CREDIT.test(t.verdict.reason_ja ?? "")) {
+        outOfCredit = true;
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       failures.push({ profile_id: item.profileId, variant: item.variant, error: msg });
       console.log(`  ✗ 계측 실패 — ${msg}`);
+      if (OUT_OF_CREDIT.test(msg)) outOfCredit = true;
+    }
+
+    if (outOfCredit) {
+      writeFileSync(join(batchDir, "batch.json"), JSON.stringify(build(), null, 2));
+      console.log(`\n  ⛔ OrcaRouter 잔액 소진 — 배치를 여기서 멈춘다.`);
+      console.log(`     돌지 않은 런: ${plan.length - i - 1}개. 충전한 뒤 --variant-list 로 빠진 회차만 채운다`);
+      console.log(`     https://www.orcarouter.ai/console/billing#add-credits`);
+      break;
     }
 
     // 매 런마다 다시 쓴다. 40분 돌다 죽었을 때 앞의 결과까지 같이 잃지 않도록
@@ -173,7 +204,7 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
 
   const batch = build();
   writeFileSync(join(batchDir, "batch.json"), JSON.stringify(batch, null, 2));
-  return { batch, failures };
+  return { batch, failures, outOfCredit };
 }
 
 /**
@@ -220,8 +251,9 @@ if (import.meta.main) {
   // 설정 실수(오타난 미션·프로필)는 스택 트레이스가 아니라 고칠 수 있는 한 줄로 보여준다
   let batch: Batch;
   let failures: BatchFailure[];
+  let outOfCredit = false;
   try {
-    ({ batch, failures } = await runBatch({
+    ({ batch, failures, outOfCredit } = await runBatch({
       missionId,
       profileIds: flag("profiles")?.split(",").map((s) => s.trim()).filter(Boolean),
       variants: flag("variants") ? Number(flag("variants")) : undefined,
@@ -261,4 +293,8 @@ if (import.meta.main) {
     console.log(`      → total_runs ${s.total_runs}은 「성공한 계측의 수」다. 시도는 ${s.total_runs + failures.length}회였다`);
   }
   console.log(`\n  배치     : agent/runs/${batch.batch_id}/batch.json\n`);
+
+  // 잔액 소진은 **다른 종료 코드로 알린다.** 여러 사이트를 동시에 돌리는 스크립트가
+  // 이걸 보고 나머지도 멈춘다 — 안 그러면 빈 지갑으로 브라우저만 60번 더 띄운다
+  if (outOfCredit) process.exit(CREDIT_EXIT_CODE);
 }
