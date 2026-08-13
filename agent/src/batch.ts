@@ -38,6 +38,17 @@ export type BatchOptions = {
   profileIds?: string[];
   /** 같은 프로필을 몇 번 돌릴 것인가. R9(실행 간 분산)를 보려면 2 이상 */
   variants?: number;
+  /**
+   * ★ 돌릴 **회차 번호를 직접** 고른다 (`--variant-list 2,3`). `variants`보다 우선한다.
+   *
+   * 왜 필요한가: 회차 번호는 단순한 반복 횟수가 아니라 **조건**이다.
+   * `senior-70s`는 v0=12클릭·톱에서 시작, v1=18클릭·검색에서 유입, v2·v3=15클릭(기본).
+   * 배치가 중간에 죽어서 이어 붙이면 `--variants N`은 언제나 0번부터 다시 세므로
+   * 한 칸에 v0가 두 개 쌓이고 v2·v3가 비는 일이 생긴다. 그러면 사이트마다 조건이
+   * 달라지고, 「다른 것은 사이트뿐」이라는 이 프로젝트의 유일한 주장이 무너진다.
+   * 빠진 번호만 정확히 채우기 위한 문이다.
+   */
+  variantList?: number[];
   headless?: boolean;
   delayMs?: number;
   maxSteps?: number;
@@ -85,8 +96,12 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
   const batchDir = join(RUNS_DIR, batchId);
   mkdirSync(batchDir, { recursive: true });
 
+  const variantIds = opts.variantList?.length
+    ? opts.variantList
+    : Array.from({ length: variants }, (_, i) => i);
+
   const plan: Array<{ profileId: string; variant: number }> = [];
-  for (let v = 0; v < variants; v++) for (const p of roster) plan.push({ profileId: p, variant: v });
+  for (const v of variantIds) for (const p of roster) plan.push({ profileId: p, variant: v });
 
   const traces: RunTrace[] = [];
   const failures: BatchFailure[] = [];
@@ -95,7 +110,9 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
   console.log(`\n▶ 배치 ${batchId}`);
   console.log(`  대상   : ${mission.site_name} / ${mission.id}`);
   console.log(`  명단   : ${roster.join(", ")}`);
-  console.log(`  구성   : ${roster.length}프로필 × ${variants}회 = ${plan.length}런 (순차 — 절대규칙 6)`);
+  console.log(
+    `  구성   : ${roster.length}프로필 × ${opts.variantList?.length ? `회차 v${variantIds.join(",v")}` : `${variants}회`} = ${plan.length}런 (순차 — 절대규칙 6)`,
+  );
   console.log(
     `  라우팅  : ${pin ? `못 박음 — 전원 ${pin} (ORCA_FORCE_MODEL). 이 배치의 원가는 절감의 증거가 아니다` : routingOff() ? "OFF — 대조군 (ORCA_NO_ROUTING=1)" : "llm/routing.ts 표"}`,
   );
@@ -189,8 +206,9 @@ if (import.meta.main) {
   const argv = process.argv.slice(2);
   const missionId = argv.find((a) => !a.startsWith("--"));
   if (!missionId) {
-    console.error("사용법: npm run batch -- <mission-id> [--variants N] [--profiles a,b,c] [--max-steps N] [--tag 이름]");
+    console.error("사용법: npm run batch -- <mission-id> [--variants N | --variant-list 2,3] [--profiles a,b,c] [--max-steps N] [--tag 이름]");
     console.error("  --tag 를 붙이면 공표 집계(batch__)에서 빠진다. 조건이 다른 실험은 반드시 붙인다");
+    console.error("  --variant-list 는 끊긴 배치의 **빠진 회차만** 채울 때 쓴다. 회차 번호는 조건이다");
     console.error(`기본 명단: ${DEFAULT_ROSTER.join(", ")}`);
     process.exit(1);
   }
@@ -207,6 +225,10 @@ if (import.meta.main) {
       missionId,
       profileIds: flag("profiles")?.split(",").map((s) => s.trim()).filter(Boolean),
       variants: flag("variants") ? Number(flag("variants")) : undefined,
+      variantList: flag("variant-list")
+        ?.split(",")
+        .map((s) => Number(s.trim()))
+        .filter((n) => Number.isInteger(n) && n >= 0),
       maxSteps: flag("max-steps") ? Number(flag("max-steps")) : undefined,
       tag: flag("tag"),
       headless: process.env.HEADED !== "1",
