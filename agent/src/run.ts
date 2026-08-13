@@ -59,7 +59,7 @@ function viewportFor(p: Profile) {
  * 「뷰포트 절단」과 「마스킹」이 한 화면에 섞여 제약 효과가 부풀려진다.
  */
 function snapshot(o: RawObservation | Observation, screenshotKey: string | null): ObservationSnapshot {
-  return {
+  const s: ObservationSnapshot = {
     url: o.url,
     title: o.title,
     text: "text_viewport" in o ? o.text_viewport : o.text,
@@ -75,6 +75,10 @@ function snapshot(o: RawObservation | Observation, screenshotKey: string | null)
     scroll: o.scroll,
     screenshot_key: screenshotKey,
   };
+  // ★ 언어는 raw에만 붙인다. Observation(=LLM이 받는 것)에는 lang이라는 필드 자체가 없어서,
+  //   여기서 넣고 싶어도 넣을 수가 없다 — 그게 「모델은 이걸 본 적이 없다」의 보증이다.
+  if ("lang" in o) s.lang = o.lang;
+  return s;
 }
 
 function constraintRecord(t: ConstraintTrace, charsBefore: number, charsAfter: number): ConstraintRecord {

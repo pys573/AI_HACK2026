@@ -124,6 +124,17 @@ export type ObservationSnapshot = {
    * 이 세 필드가 없다. 없으면 「가로로 잘린 적 없다」가 아니라 **「재지 않았다」**로 읽는다.
    */
   scroll: { y: number; height: number; x?: number; width?: number; overflow_x?: boolean };
+  /**
+   * ★ 페이지가 **스스로 선언한** 언어(`<html lang>`). 영/일 패리티 계측 전용.
+   *
+   * `raw`에만 붙는다. `seen`(=LLM이 본 것)에는 없다 — 모델에게 언어를 알려준 적이
+   * 한 번도 없으므로, `seen`에 실으면 트레이스가 「모델이 이걸 알고 있었다」고
+   * 거짓말을 하게 된다.
+   *
+   * optional인 이유는 `scroll.x`와 같다: 2026-08-13 이전 트레이스에는 이 필드가 없다.
+   * 없으면 「일본어였다」가 아니라 **「재지 않았다」**로 읽는다.
+   */
+  lang?: string;
   /** Supabase Storage 키. 이미지 자체는 트레이스에 넣지 않는다 */
   screenshot_key: string | null;
 };
