@@ -32,7 +32,7 @@ import { BASELINE_MODEL, estimateCost } from "../../llm/pricing.ts";
 import { ensureLivePrices, onBilledCost, prices } from "../../llm/orca.ts";
 import { routingTable } from "../../llm/routing.ts";
 import { act, RateLimiter } from "./act.ts";
-import { constrain, loadProfile, Patience, type ConstraintTrace, type Observation, type Profile } from "./constrain.ts";
+import { constrain, loadProfile, Patience, variantOf, type ConstraintTrace, type Observation, type Profile } from "./constrain.ts";
 import { decide } from "./decide.ts";
 import { diagnose } from "./diagnose.ts";
 import { MAX_SIGNALS } from "./signals.ts";
@@ -231,6 +231,9 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
   if (opts.maxSteps) mission.max_steps = opts.maxSteps;
   const profile = loadProfile(opts.profileId);
   const variant = opts.variant ?? 0;
+  // ★ variant를 처음으로 **실제 조건**으로 쓴다. 꺼내는 것은 language_preference 하나뿐이고,
+  //   없으면 undefined다 = 프롬프트가 105회와 한 글자도 다르지 않다 (constrain.ts variantOf)
+  const langPref = variantOf(profile, variant).language_preference;
   const runId = `${mission.id}__${profile.id}__v${variant}__${Date.now()}`;
   const runDir = join(opts.outDir ?? RUNS_DIR, runId);
   mkdirSync(runDir, { recursive: true });
@@ -366,7 +369,7 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
       let actDetail = "";
 
       try {
-        const d = await decide(mission, obs, profile, history);
+        const d = await decide(mission, obs, profile, history, langPref);
         action = d.action;
         failStreak = 0;
 

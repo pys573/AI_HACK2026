@@ -71,6 +71,8 @@ export async function decide(
   obs: Observation,
   profile: Profile,
   history: HistoryEntry[],
+  /** variant의 language_preference. "en"일 때만 用事에 한 줄 붙는다 (prompts.ts) */
+  langPref?: string,
 ): Promise<Decision> {
   // 본문도 없고 라벨도 전부 비어 있으면, 이 모델에게는 판단 재료가 하나도 없다.
   // 스크린샷만으로 도는 프로필(smartphone-novice)은 vision 지원이 필요하다 → B-1.
@@ -85,7 +87,7 @@ export async function decide(
   const base = {
     step_type: "decide" as const,
     system: DECIDE_SYSTEM,
-    user: decideUser(mission, obs, history),
+    user: decideUser(mission, obs, history, langPref),
     // ★ obs를 넘긴다. 좌우 스크롤은 「지금 이 화면이 옆으로 잘려 있는가」로만 열린다 —
     //   프로필로 정하는 것이 아니다 (prompts.ts allowedKinds).
     schema: actionSchema(profile, obs),

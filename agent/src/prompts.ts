@@ -143,10 +143,28 @@ function describeAction(a: Action): string {
  * goal_ja는 우리가 채점하려고 쓴 문장이라 「たどり着く」같은 정답 힌트가 들어있다.
  * 사람이 머릿속에 갖고 있는 건 목적(intent)이지 정답 경로가 아니다.
  */
+/**
+ * ★ 「英語で済ませたい」는 **제약이 아니라 用事(볼일)의 일부다.**
+ *
+ *   제약은 뺄셈이다 — 글자를 지운다. 거기에 「너는 이해 못 한 척해라」를 넣는 순간
+ *   연기하는 AI가 되고, 그건 이미 존재하고 이미 비판받는 카테고리다 (절대규칙 1).
+ *   반면 「영어로 끝내고 싶다」는 그 사람이 **원하는 것**이지 행동의 연기가 아니다.
+ *   그래서 `intent_ja`와 같은 블록, 같은 층에 놓는다.
+ *
+ * ⚠️ 「영어가 더 읽기 쉽다」고는 쓰지 않는다. 일본에 사는 외국인 주민은 영어권보다
+ *   중국·베트남 등이 많아서, 영어가 편하다는 전제 자체가 근거 없는 주장이 된다.
+ *   쓰는 것은 **경로의 희망**뿐이다.
+ *
+ * ⚠️ 영어 안내가 **있는지 없는지는 말하지 않는다.** 말하는 순간 「찾은 것」이 아니라
+ *   「알려준 것」이 되고, 「영어 링크를 못 찾았다」라는 발견이 성립하지 않는다.
+ */
+const LANG_LINE_EN = "英語の案内があれば、そちらで済ませたいと思っています。";
+
 export function decideUser(
   mission: Mission,
   obs: Observation,
   history: HistoryEntry[],
+  langPref?: string,
 ): string {
   const els = obs.elements.length
     ? obs.elements.map((e) => `[${e.index}] ${e.role} 「${e.name || "(名前なし)"}」`).join("\n")
@@ -187,9 +205,12 @@ export function decideUser(
       `（このページは画面の幅に収まっていません。右側が切れていて、横に動かすと続きが見えます）`
     : "";
 
+  // "ja"거나 아예 없으면 한 글자도 안 붙는다 = 지금까지의 105회와 같은 프롬프트가 나간다
+  const errand = langPref === "en" ? `${mission.intent_ja}\n${LANG_LINE_EN}` : mission.intent_ja;
+
   return [
     `## あなたの用事`,
-    mission.intent_ja,
+    errand,
     ``,
     `## これまでにしたこと`,
     hist,

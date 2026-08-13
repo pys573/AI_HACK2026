@@ -35,6 +35,27 @@ export type Profile = {
   variants: Array<Record<string, unknown>>;
 };
 
+/**
+ * ★ variant에서 꺼내는 것은 `language_preference` **하나뿐이다.**
+ *
+ * 프로필 파일의 `variants`에는 patience·entry도 적혀 있지만, 코드가 그것을 읽은 적이
+ * 한 번도 없다 (2026-08-13 확인 — `batch.ts`는 `variants`를 「몇 번 반복할까」라는
+ * 횟수로만 썼다). 즉 105회의 a와 b는 **다른 조건이 아니라 같은 조건의 반복**이었다.
+ *
+ * 지금 그것들을 같이 살리면 senior-70s·busy-worker가 105회와 다른 조건이 되고,
+ * 사이트 간 비교(渋谷区 0% ↔ 港区 94%)가 근거를 잃는다. 그래서 **일부러 잠들려 둔다.**
+ * 살릴 때는 그 프로필을 처음부터 다시 돌려야 한다.
+ */
+export type VariantSpec = { suffix?: string; language_preference?: string };
+
+export function variantOf(p: Profile, i: number): VariantSpec {
+  const v = (p.variants?.[i] ?? {}) as Record<string, unknown>;
+  return {
+    suffix: typeof v.suffix === "string" ? v.suffix : undefined,
+    language_preference: typeof v.language_preference === "string" ? v.language_preference : undefined,
+  };
+}
+
 export function loadProfile(id: string): Profile {
   return JSON.parse(readFileSync(join(PROFILE_DIR, `${id}.json`), "utf8")) as Profile;
 }
