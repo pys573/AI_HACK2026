@@ -80,13 +80,24 @@ test("전자신청 SaaS는 서브도메인을 열어도 계속 막힌다 (절대
   assert.match(hostAllowed("https://shinsei.city.shinjuku.lg.jp/", SHINJUKU).reason, /電子申請/);
 });
 
-test("브라우저 밖으로 나가는 스킴과 프로토콜 강등은 그대로 막는다", () => {
+test("브라우저 밖으로 나가는 스킴은 그대로 막는다", () => {
   for (const u of ["mailto:a@b.jp", "tel:0312345678"]) {
     assert.equal(hostAllowed(u, SHINJUKU).allowed, false, u);
     assert.match(hostAllowed(u, SHINJUKU).reason, /스킴/);
   }
-  // https → http. 서브도메인을 열어 준 김에 강등까지 얹어 주지 않는다
-  assert.equal(hostAllowed("http://www.city.shinjuku.lg.jp/", SHINJUKU).allowed, false);
+});
+
+// ★ F15 (2026-08-13). 여기는 원래 「https → http 강등도 막는다」였고, 그게 실측을 오염시켰다.
+//   新宿区가 자기 사이트 HTML에 외국인용 페이지를 `http://`로 걸어 두었기 때문이다.
+//   같은 기관 안에서만 http↔https를 통과시킨다 — **밖으로는 여전히 못 나간다**가 방어선이다.
+test("★ 같은 자치체 안이면 http↔https는 통과한다 — 여기가 막히면 英語ページの入口が閉じる", () => {
+  assert.equal(hostAllowed("http://www.foreign.city.shinjuku.lg.jp/en/", SHINJUKU).allowed, true);
+  assert.equal(hostAllowed("http://www.city.shinjuku.lg.jp/", SHINJUKU).allowed, true);
+  // 강등을 열어 준 것은 **같은 기관 안에서만**이다. 밖은 프로토콜과 무관하게 막힌다
+  assert.equal(hostAllowed("http://www.city.minato.tokyo.jp/", SHINJUKU).allowed, false);
+  assert.match(hostAllowed("http://www.city.minato.tokyo.jp/", SHINJUKU).reason, /외부 사이트/);
+  // 전자신청 SaaS는 http로 와도 계속 막힌다 (절대규칙 5)
+  assert.equal(hostAllowed("http://shinsei.city.shinjuku.lg.jp/", SHINJUKU).allowed, false);
 });
 
 test("짧은 도메인은 확장하지 않는다 — 공개 접미사를 잘못 잡으면 남의 사이트가 열린다", () => {

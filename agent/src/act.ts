@@ -121,9 +121,21 @@ export function hostAllowed(target: string, allowedOrigin: string): { allowed: b
     return { allowed: false, reason: "電子申請サービス — 읽기 전용 범위 밖" };
   }
   const base = new URL(allowedOrigin);
-  // 프로토콜은 계속 완전일치다. https → http 강등을 서브도메인 허용에 얹어 주지 않는다
-  if (u.protocol !== base.protocol || !sameOrg(u.hostname, base.hostname)) {
+  if (!sameOrg(u.hostname, base.hostname)) {
     return { allowed: false, reason: `외부 사이트 (${u.hostname})` };
+  }
+  // ★ 2026-08-13 (F15). 여기는 원래 `u.protocol !== base.protocol`로 프로토콜까지 완전일치였다.
+  //   그런데 新宿区의 외국인용 페이지 링크가 사이트 HTML에 **`http://`로 쓰여 있었다** —
+  //   `http://www.foreign.city.shinjuku.lg.jp/en/`. 같은 자치체인데 강등이라는 이유로 막혔고,
+  //   로그에는 `외부 사이트 (…)`라고 남았다. **ce4a5ba로 서브도메인을 연 뒤에도 계속 막혀 있었다.**
+  //   그 상태로 잰 「영어로는 도달 못 한다」는 사이트가 아니라 **우리 도구를 잰 값**이다 (F10과 같은 종류).
+  //
+  //   그래서 http↔https는 **같은 기관 안에서만** 서로 통과시킨다. 밖으로는 여전히 한 발도 못 나간다.
+  //   위험이 늘지 않는 이유: 어차피 읽기만 하고(절대규칙 5), 그 링크는 사이트 자신이 걸어 둔 것이며,
+  //   실제로는 서버가 https로 리다이렉트한다. 이동 **후에** 도착지를 이 함수로 다시 검사한다.
+  const WEB = ["http:", "https:"];
+  if (u.protocol !== base.protocol && !(WEB.includes(u.protocol) && WEB.includes(base.protocol))) {
+    return { allowed: false, reason: `허용되지 않는 스킴 (${u.protocol})` };
   }
   return { allowed: true, reason: "" };
 }
