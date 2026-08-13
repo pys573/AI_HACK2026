@@ -55,7 +55,13 @@ const BANNED_HOST_PATTERNS = [
   /(^|\.)elg-front\.jp$/, // 電子申請 共同利用
 ];
 
-const BANNED_SCHEMES = ["mailto:", "tel:", "javascript:"];
+/**
+ * 브라우저 **밖**의 앱을 띄우는 것들. 눌러도 페이지에서는 아무 일이 없고, 계측만 낭비된다.
+ *
+ * `javascript:`는 여기 있었는데 뺐다 — 저건 「가는 곳」이 아니라 「하는 일」이고,
+ * 실제로는 검색·메뉴 버튼이었다. click 케이스의 주석에 실측 근거가 있다.
+ */
+const BANNED_SCHEMES = ["mailto:", "tel:"];
 
 /** 도메인당 4초 이상 간격. 공공 사이트에 부하를 주지 않는다 (절대규칙 6). */
 export class RateLimiter {
@@ -237,7 +243,21 @@ export async function act(
       const el = typeof action.index === "number" ? visible[action.index] : undefined;
       if (!el) return fail(`画面にない番号: ${action.index}`);
 
-      if (el.href) {
+      // ★ `javascript:` href는 **가는 곳이 아니라 하는 일**이다. 사전 검사를 건너뛴다.
+      //
+      // 2026-08-13 실측: 港区에서 78회(22런), 大泉町에서 31회(13런) 막고 있었다. 정체는
+      // 「検索」45회·「メニュー」33회 — 그 사이트의 **검색 버튼과 햄버거 메뉴**다.
+      // 스마트폰 폭에서 메뉴가 접히는데, 그걸 여는 버튼을 우리가 잠그고 있었다.
+      // 그 상태의 港区 이탈률은 사이트가 아니라 **우리 도구를 잰 값**이 섞여 있다.
+      //
+      // 왜 열어도 되는가: 아래 클릭은 `page.mouse.click(x, y)`다. href로 이동하는 게 아니라
+      // **사람이 그 버튼을 누르는 것과 같다.** 도는 것은 그 사이트 자신의 스크립트이고,
+      // 사람이 브라우저로 그 페이지를 볼 때 이미 돌고 있던 것이다. 새 위험이 아니다.
+      // 그리고 클릭 **후에** 도착지를 `hostAllowed`로 다시 검사한다 — 방어는 거기 있다.
+      //
+      // `mailto:`·`tel:`은 계속 막는다. 저건 브라우저 **밖**의 앱을 띄우는 것이라 다르다.
+      const isJs = el.href?.trim().toLowerCase().startsWith("javascript:") ?? false;
+      if (el.href && !isJs) {
         const g = hostAllowed(el.href, allowedOrigin);
         if (!g.allowed) return guard(g.reason, el.href);
       }

@@ -19,7 +19,7 @@
  */
 import test from "node:test";
 import assert from "node:assert/strict";
-import { hostAllowed } from "../src/act.ts";
+import { act, hostAllowed, RateLimiter } from "../src/act.ts";
 
 const SHINJUKU = "https://www.city.shinjuku.lg.jp";
 const MINATO = "https://www.city.minato.tokyo.jp";
@@ -80,9 +80,10 @@ test("전자신청 SaaS는 서브도메인을 열어도 계속 막힌다 (절대
   assert.match(hostAllowed("https://shinsei.city.shinjuku.lg.jp/", SHINJUKU).reason, /電子申請/);
 });
 
-test("스킴 제한과 프로토콜 강등은 그대로다", () => {
-  for (const u of ["mailto:a@b.jp", "tel:0312345678", "javascript:void(0)"]) {
+test("브라우저 밖으로 나가는 스킴과 프로토콜 강등은 그대로 막는다", () => {
+  for (const u of ["mailto:a@b.jp", "tel:0312345678"]) {
     assert.equal(hostAllowed(u, SHINJUKU).allowed, false, u);
+    assert.match(hostAllowed(u, SHINJUKU).reason, /스킴/);
   }
   // https → http. 서브도메인을 열어 준 김에 강등까지 얹어 주지 않는다
   assert.equal(hostAllowed("http://www.city.shinjuku.lg.jp/", SHINJUKU).allowed, false);
@@ -91,4 +92,42 @@ test("스킴 제한과 프로토콜 강등은 그대로다", () => {
 test("짧은 도메인은 확장하지 않는다 — 공개 접미사를 잘못 잡으면 남의 사이트가 열린다", () => {
   assert.equal(hostAllowed("https://blog.example.com/", "https://www.example.com").allowed, false);
   assert.equal(hostAllowed("https://www.example.com/", "https://www.example.com").allowed, true);
+});
+
+// ── `javascript:` 버튼 ────────────────────────────────────────
+//
+// 여긴 `hostAllowed`가 아니라 `act()` 안이라서 따로 잠근다. `javascript:`는
+// **가는 곳이 아니라 하는 일**이므로 URL 검사를 통과시키지 않고 **건너뛴다.**
+// 검사에 넣으면 hostname이 빈 문자열이 되어 「외부 사이트」로 막히기 때문이다.
+
+const PROFILE = { id: "t", version: "1.0", tools: { find_in_page: false, site_search: false, back_limit: 5 } } as never;
+const el = (href: string) => ({
+  url: "https://www.city.minato.tokyo.jp/",
+  title: "港区",
+  text: "本文",
+  elements: [{ index: 0, role: "link", name: "メニュー", href, in_viewport: true, box: { x: 0, y: 0, w: 40, h: 20 } }],
+  scroll: { y: 0, height: 1000, x: 0, width: 375, overflow_x: false },
+});
+// 뷰포트를 없는 것으로 돌려주면 가드를 **지난 뒤** 「뷰포트 없음」으로 멈춘다.
+// 즉 error가 「뷰포트 없음」이라는 것이 곧 「가드를 통과했다」는 증거가 된다.
+const PAGE = { viewportSize: () => null } as never;
+
+const click = async (href: string) => {
+  const raw = el(href) as never;
+  return await act(PAGE, { kind: "click", index: 0, reason_ja: "" } as never, raw, (raw as { elements: unknown[] }).elements as never, PROFILE, "https://www.city.minato.tokyo.jp", new RateLimiter(0), 0);
+};
+
+test("★ javascript: 버튼은 막지 않는다 — 港区의 「検索」「メニュー」가 이것이었다", async () => {
+  for (const href of ["javascript:void(0)", "JavaScript:toggleMenu()", "  javascript:;"]) {
+    const r = await click(href);
+    assert.equal(r.blocked, null, `막혔다: ${href}`);
+    assert.match(r.error ?? "", /뷰포트/, `가드를 지나지 못했다: ${href}`);
+  }
+});
+
+test("javascript:를 열어도 다른 스킴·외부 사이트는 그대로 막힌다", async () => {
+  for (const href of ["mailto:a@b.jp", "tel:0312345678", "https://www.lg-waps.go.jp/", "https://shinsei.city.minato.tokyo.jp/"]) {
+    const r = await click(href);
+    assert.notEqual(r.blocked, null, `통과해 버렸다: ${href}`);
+  }
 });
