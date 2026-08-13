@@ -221,7 +221,17 @@ function main() {
     goal_ja: string;
   }>;
 
-  const dirs = readdirSync(RUNS).filter((d) => d.startsWith("batch__"));
+  // ★ 어느 세대의 실행을 공표하는가. **여기 한 줄이 화면의 모든 숫자를 정한다.**
+  //
+  // 2026-08-13에 가드 버그 두 개(자치체 서브도메인·`javascript:` 버튼)를 고쳤다. 고치기 전
+  // 실행은 「사이트가 어려워서 못 갔다」와 「우리가 막아서 못 갔다」가 섞여 있다. 그래서
+  // 전량 재실행하고, 새 세대는 `batchv2__`에 쌓는다.
+  //
+  // 옛 실행(`batch__`)을 **지우지 않는 이유**는 두 가지다. 재실행이 도중에 죽어도 화면에
+  // 낼 숫자가 남아 있어야 하고, 「고치기 전후로 얼마나 달라졌는가」 자체가 근거이기 때문이다.
+  // 세대를 섞으면 안 된다 — 같은 사이트의 두 세대가 한 막대에 합산되어 버린다.
+  const GENERATION = "batchv2__";
+  const dirs = readdirSync(RUNS).filter((d) => d.startsWith(GENERATION));
   const bySite = new Map<string, SiteBlock>();
 
   for (const d of dirs) {
@@ -276,6 +286,16 @@ function main() {
   // 실험 배치만 있는 사이트는 칸이 0개로 남는다. 빈 막대가 표에 서면
   // 「0%였다」로 읽히므로 아예 내보내지 않는다 — 재지 않은 것과 0%는 다르다.
   const blocks = [...bySite.values()].filter((s) => s.cells.length > 0);
+
+  // ★ 한 칸도 없으면 **쓰지 않고 죽는다.** 여기서 그냥 진행하면 빈 matrix.json이
+  //   기존 파일을 덮어써서 화면의 숫자가 전부 사라진다. 세대(GENERATION)를 바꿔 놓고
+  //   아직 안 돌렸을 때 실제로 그렇게 된다 — 조용히 지우는 것이 가장 나쁜 실패다.
+  if (blocks.length === 0) {
+    console.error(`실행이 하나도 없다: agent/runs/ 에 ${GENERATION}* 가 없다.`);
+    console.error(`재실행이 아직 안 끝났다면 기다린다. 옛 세대를 쓰려면 GENERATION을 되돌린다.`);
+    process.exit(1);
+  }
+
   for (const s of blocks) {
     // 심각한 것부터. 같은 등급 안에서는 먼저 막힌 쪽이 위다 —
     // 앞 스텝에서 막히면 뒤의 문제는 아예 만나지도 못한다.
