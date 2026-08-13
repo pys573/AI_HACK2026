@@ -45,14 +45,22 @@ export type Profile = {
  * 지금 그것들을 같이 살리면 senior-70s·busy-worker가 105회와 다른 조건이 되고,
  * 사이트 간 비교(渋谷区 0% ↔ 港区 94%)가 근거를 잃는다. 그래서 **일부러 잠들려 둔다.**
  * 살릴 때는 그 프로필을 처음부터 다시 돌려야 한다.
+ *
+ * ★ 언어 조건은 **variant가 아니라 프로필 최상위**에서도 읽는다.
+ *   「영어로 끝내고 싶다」는 특정 회차의 설정이 아니라 그 사람의 성질이기 때문이다.
+ *   variant에 넣으면 `--variants 4`로 돌렸을 때 0·1번만 영어가 되고 2·3번은 조용히
+ *   조건이 빠진다 — 같은 배치 안에 다른 조건이 섞이는데 파일 이름으로는 구별이 안 된다.
+ *   최상위에 두면 몇 번을 돌리든 전부 같은 조건이다. variant 쪽이 우선하는 것은
+ *   한 프로필 안에서 a=en / b=ja처럼 대조를 만들 여지를 남겨 두기 위해서다.
  */
 export type VariantSpec = { suffix?: string; language_preference?: string };
 
 export function variantOf(p: Profile, i: number): VariantSpec {
   const v = (p.variants?.[i] ?? {}) as Record<string, unknown>;
+  const str = (x: unknown) => (typeof x === "string" ? x : undefined);
   return {
-    suffix: typeof v.suffix === "string" ? v.suffix : undefined,
-    language_preference: typeof v.language_preference === "string" ? v.language_preference : undefined,
+    suffix: str(v.suffix),
+    language_preference: str(v.language_preference) ?? str((p as { language_preference?: unknown }).language_preference),
   };
 }
 

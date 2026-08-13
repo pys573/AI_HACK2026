@@ -107,18 +107,35 @@ test("★ 페이지가 선언한 언어(`<html lang>`)는 프롬프트에 절대
 
 // ── variant를 조건으로 쓰는 것은 여기가 처음이다 ────────────────
 
-test("resident-n3의 a는 en, b는 ja다", () => {
-  const p = loadProfile("resident-n3");
-  assert.equal(variantOf(p, 0).language_preference, "en");
-  assert.equal(variantOf(p, 1).language_preference, "ja");
+test("★ 영어 희망은 resident-n3-en **하나뿐**이고, 몇 번째 회차든 똑같이 붙는다", () => {
+  const p = loadProfile("resident-n3-en");
+  // 최상위에 있으므로 `--variants 4`로 돌려도 4회 전부 en이다.
+  // variant에 넣었을 때는 0·1번만 en이 되고 2·3번은 조용히 빠졌다 — 그게 이 구조의 이유다
+  for (let i = 0; i < 4; i++) assert.equal(variantOf(p, i).language_preference, "en", `variant ${i}`);
 });
 
-test("★ 다른 프로필은 언어 희망이 없다 = 105회와 같은 프롬프트를 계속 받는다", () => {
+test("★ 나머지 전부는 언어 희망이 없다 = 105회와 같은 프롬프트를 계속 받는다", () => {
   for (const p of allProfiles()) {
-    if (p.id === "resident-n3") continue;
+    if (p.id === "resident-n3-en") continue;
     for (let i = 0; i < Math.max(1, p.variants?.length ?? 0); i++) {
       assert.equal(variantOf(p, i).language_preference, undefined, `${p.id} variant ${i}`);
     }
+  }
+});
+
+test("★ resident-n3 본체는 언어 조건이 없다 — 이게 없으면 -en과 비교할 기준선이 사라진다", () => {
+  // 한때 여기에 a=en / b=ja가 들어 있었다. 그 상태로 본체 배치를 돌리면
+  // 같은 `resident-n3` 안에 영어 회차와 일본어 회차가 섞여 105회와 조건이 달라진다
+  const p = loadProfile("resident-n3");
+  assert.deepEqual(p.variants, []);
+  for (let i = 0; i < 4; i++) assert.equal(variantOf(p, i).language_preference, undefined, `variant ${i}`);
+});
+
+test("★ -en과 본체는 언어 말고 모든 조건이 같다 — 다르면 차이의 원인이 언어가 아니게 된다", () => {
+  const a = loadProfile("resident-n3") as unknown as Record<string, unknown>;
+  const b = loadProfile("resident-n3-en") as unknown as Record<string, unknown>;
+  for (const k of ["lexicon", "viewport", "observation", "tools", "patience"]) {
+    assert.deepEqual(b[k], a[k], `${k}가 다르다`);
   }
 });
 
