@@ -1,8 +1,8 @@
 {
   "id": "resident-n3",
-  "version": "1.1",
+  "version": "1.3",
   "label": { "ja": "日本語N3相当・外国人住民プロファイル", "ko": "외국인 주민 N3 프로필" },
-  "purpose": "행정 漢語 장벽 + 다국어 패리티 측정. 영어 페이지의 '존재'가 아니라 '같은 답에 도달하는가'를 본다.",
+  "purpose": "행정 漢語 장벽 측정. 이 프로필은 언어 조건을 걸지 않는다 — 105회와 같은 조건을 유지해 사이트 간 비교의 기준선이 된다. 영/일 패리티는 resident-n3-en 쪽에서 잰다.",
   "claims": "出入国在留管理庁・文化庁『やさしい日本語 書き換え例』(2020) に収録された行政用語134語を隠した状態での探索結果である。",
   "does_not_claim": "JLPT N3 보유자의 행동을 재현했다고 주장하지 않는다. 이 목록은 개인의 이해도 측정치가 아니라 행정이 「書き換えろ」고 지정한 명단이므로, 이해율 %나 임계값을 말하지 않는다. 미수록 행정용어는 통과시킨다 — 실제 장벽은 여기서 재는 것보다 크다.",
   "lexicon": {
@@ -15,8 +15,5 @@
   "observation": { "dom_text": true, "screenshot": true },
   "tools": { "find_in_page": false, "site_search": true, "site_search_input": "latin_only", "back_limit": 5 },
   "patience": { "clicks": 20, "seconds": 600 },
-  "variants": [
-    { "suffix": "a", "language_preference": "en" },
-    { "suffix": "b", "language_preference": "ja" }
-  ]
+  "variants": []
 }

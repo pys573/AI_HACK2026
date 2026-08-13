@@ -45,6 +45,17 @@ export type RawObservation = {
   elements: Element[];
   screenshot: Buffer | null;
   scroll: ScrollState;
+  /**
+   * ★ 페이지가 **스스로 선언한** 언어 (`<html lang="...">`). 영/일 패리티 측정 전용.
+   *
+   * ⚠️ **에이전트에게는 가지 않는다** (`prompts.ts`의 `decideUser`가 안 엮는다).
+   *   주면 「지금 일본어 페이지에 있다」를 공짜로 알려주는 것이 되어, 영어 안내를
+   *   찾아냈는지를 재는 계측 자체가 무의미해진다.
+   *
+   * ⚠️ 이 값은 **사이트의 자기 신고**다. 영어 페이지인데 `lang="ja"`인 사이트가 흔하다.
+   *   그래서 이것만으로 「영어 페이지에 도달했다」고 단정하지 않는다 — URL과 함께 본다.
+   */
+  lang: string;
 };
 
 /**
@@ -76,7 +87,7 @@ const EXTRACT = `() => {
   //   그대로 createTreeWalker에 넘기면 TypeError로 실행 전체가 죽는다.
   //   실측: 2026-08-11 control 실행이 2스텝에서 이렇게 끊겼다. 사이트 탓이 아니라 우리 쪽 경합이다.
   //   빈 관측을 돌려주면 다음 스텝에서 다시 찍는다 — 죽는 것보다 한 스텝 낭비가 싸다.
-  if (!document.body) return { url: location.href, title: document.title, text: '', text_viewport: '', elements: [], scroll: { y: 0, height: 0, x: 0, width: 0, overflow_x: false } };
+  if (!document.body) return { url: location.href, title: document.title, text: '', text_viewport: '', elements: [], scroll: { y: 0, height: 0, x: 0, width: 0, overflow_x: false }, lang: '' };
   const vw = window.innerWidth, vh = window.innerHeight;
   const out = [];
   let i = 0;
@@ -147,6 +158,8 @@ const EXTRACT = `() => {
       // 우리 도구가 만든 잡음을 측정값에 섞지 않는다.
       overflow_x: document.documentElement.scrollWidth > window.innerWidth + 2,
     },
+    // 사이트의 자기 신고. 앞 2글자만 본다 ('en-US'와 'en'을 같은 것으로 세기 위해)
+    lang: (document.documentElement.getAttribute('lang') || '').trim().toLowerCase(),
   };
 }`;
 
@@ -158,6 +171,7 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
     text_viewport: string;
     elements: Element[];
     scroll: ScrollState;
+    lang: string;
   };
   return {
     url: page.url(),
@@ -166,6 +180,7 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
     text_viewport: r.text_viewport,
     elements: r.elements,
     scroll: r.scroll,
+    lang: r.lang ?? "",
     screenshot: withScreenshot ? await page.screenshot({ type: "png" }) : null,
   };
 }

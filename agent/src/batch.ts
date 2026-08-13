@@ -38,15 +38,53 @@ export type BatchOptions = {
   profileIds?: string[];
   /** 같은 프로필을 몇 번 돌릴 것인가. R9(실행 간 분산)를 보려면 2 이상 */
   variants?: number;
+  /**
+   * ★ 돌릴 **회차 번호를 직접** 고른다 (`--variant-list 2,3`). `variants`보다 우선한다.
+   *
+   * 왜 필요한가: 회차 번호는 단순한 반복 횟수가 아니라 **조건**이다.
+   * `senior-70s`는 v0=12클릭·톱에서 시작, v1=18클릭·검색에서 유입, v2·v3=15클릭(기본).
+   * 배치가 중간에 죽어서 이어 붙이면 `--variants N`은 언제나 0번부터 다시 세므로
+   * 한 칸에 v0가 두 개 쌓이고 v2·v3가 비는 일이 생긴다. 그러면 사이트마다 조건이
+   * 달라지고, 「다른 것은 사이트뿐」이라는 이 프로젝트의 유일한 주장이 무너진다.
+   * 빠진 번호만 정확히 채우기 위한 문이다.
+   */
+  variantList?: number[];
   headless?: boolean;
   delayMs?: number;
   maxSteps?: number;
+  /**
+   * ★ 이 배치를 공표 집계에서 떼어 놓는다. 붙이면 디렉터리가 `batch<tag>__…`가 되고,
+   * `scripts/build-web-data.ts`는 `batch__`로 시작하는 것만 읽으므로 자동으로 빠진다.
+   *
+   * 왜 필요한가: 프로필 **버전이 올라간** 실행은 옛 실행과 조건이 다르다. 예컨대
+   * `resident-n3` v1.2는 v1.1에 없던 한 줄(영어로 끝내고 싶다)이 붙는다. 같은 이름으로
+   * 저장하면 집계가 둘을 한 칸에 뭉개고, 그 순간 「무엇을 잰 값인가」에 답할 수 없게 된다.
+   * `batchfixed__`(모델 못 박음)가 이미 같은 이유로 이름을 달리했다.
+   */
+  tag?: string;
 };
 
 /** 계측이 아예 실패한 런. run_id가 없으므로 Batch에 담을 수 없다 — 그래서 따로 돌려준다 */
 export type BatchFailure = { profile_id: string; variant: number; error: string };
 
-export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; failures: BatchFailure[] }> {
+/**
+ * ★ 지갑이 비면 **그 자리에서 멈춘다.**
+ *
+ * 2026-08-13, 재측정 도중 OrcaRouter 잔액이 바닥났는데 배치가 계속 돌았다.
+ * 남은 19런은 전부 `outcome: "error"`로 저장됐다 — 그건 사이트를 잰 값이 아니라
+ * **우리 지갑을 잰 값**이다. 계측기가 자기 사정으로 만든 숫자를 계측값 옆에 쌓아 두면,
+ * 나중에 그 둘을 가려내는 데 드는 시간이 다시 돌리는 시간보다 길다.
+ * 게다가 남은 런만큼 브라우저를 더 띄우는 값도 그대로 낭비다.
+ *
+ * `runOnce`는 403을 안에서 삼키고 error 트레이스를 돌려주므로 예외로는 잡히지 않는다.
+ * 그래서 트레이스 본문에서 직접 찾는다.
+ */
+const OUT_OF_CREDIT = /insufficient credits/i;
+export const CREDIT_EXIT_CODE = 2;
+
+export async function runBatch(
+  opts: BatchOptions,
+): Promise<{ batch: Batch; failures: BatchFailure[]; outOfCredit: boolean }> {
   const mission = loadMission(opts.missionId);
   const roster = opts.profileIds?.length ? opts.profileIds : DEFAULT_ROSTER;
   const variants = opts.variants ?? 2;
@@ -69,21 +107,30 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
   //   아니고, 도달률도 평소의 라우팅 조건에서 나온 값이 아니다. 같은 `batch__` 이름을
   //   쓰면 집계 스크립트가 조용히 섞어 넣고, 그 순간 두 실험이 하나로 뭉개진다.
   const pin = pinnedModel();
-  const batchId = `${pin ? "batchfixed" : "batch"}__${mission.id}__${Date.now()}`;
+  // 디렉터리 이름이 되므로 영숫자만 남긴다. `..`나 `/`가 들어오면 저장 경로가 새어 나간다
+  const tag = (opts.tag ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+  const batchId = `${pin ? "batchfixed" : tag ? `batch${tag}` : "batch"}__${mission.id}__${Date.now()}`;
   const batchDir = join(RUNS_DIR, batchId);
   mkdirSync(batchDir, { recursive: true });
 
+  const variantIds = opts.variantList?.length
+    ? opts.variantList
+    : Array.from({ length: variants }, (_, i) => i);
+
   const plan: Array<{ profileId: string; variant: number }> = [];
-  for (let v = 0; v < variants; v++) for (const p of roster) plan.push({ profileId: p, variant: v });
+  for (const v of variantIds) for (const p of roster) plan.push({ profileId: p, variant: v });
 
   const traces: RunTrace[] = [];
   const failures: BatchFailure[] = [];
   let controlRunId: string | null = null;
+  let outOfCredit = false;
 
   console.log(`\n▶ 배치 ${batchId}`);
   console.log(`  대상   : ${mission.site_name} / ${mission.id}`);
   console.log(`  명단   : ${roster.join(", ")}`);
-  console.log(`  구성   : ${roster.length}프로필 × ${variants}회 = ${plan.length}런 (순차 — 절대규칙 6)`);
+  console.log(
+    `  구성   : ${roster.length}프로필 × ${opts.variantList?.length ? `회차 v${variantIds.join(",v")}` : `${variants}회`} = ${plan.length}런 (순차 — 절대규칙 6)`,
+  );
   console.log(
     `  라우팅  : ${pin ? `못 박음 — 전원 ${pin} (ORCA_FORCE_MODEL). 이 배치의 원가는 절감의 증거가 아니다` : routingOff() ? "OFF — 대조군 (ORCA_NO_ROUTING=1)" : "llm/routing.ts 표"}`,
   );
@@ -120,10 +167,23 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
       if (item.profileId === "control" && !t.verdict.reached) {
         console.log(`  ⚠️ 대조군이 도달하지 못했다. 이 배치로는 「제약이 원인」이라고 말할 수 없다`);
       }
+
+      if (OUT_OF_CREDIT.test(JSON.stringify(t.steps)) || OUT_OF_CREDIT.test(t.verdict.reason_ja ?? "")) {
+        outOfCredit = true;
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       failures.push({ profile_id: item.profileId, variant: item.variant, error: msg });
       console.log(`  ✗ 계측 실패 — ${msg}`);
+      if (OUT_OF_CREDIT.test(msg)) outOfCredit = true;
+    }
+
+    if (outOfCredit) {
+      writeFileSync(join(batchDir, "batch.json"), JSON.stringify(build(), null, 2));
+      console.log(`\n  ⛔ OrcaRouter 잔액 소진 — 배치를 여기서 멈춘다.`);
+      console.log(`     돌지 않은 런: ${plan.length - i - 1}개. 충전한 뒤 --variant-list 로 빠진 회차만 채운다`);
+      console.log(`     https://www.orcarouter.ai/console/billing#add-credits`);
+      break;
     }
 
     // 매 런마다 다시 쓴다. 40분 돌다 죽었을 때 앞의 결과까지 같이 잃지 않도록
@@ -144,7 +204,7 @@ export async function runBatch(opts: BatchOptions): Promise<{ batch: Batch; fail
 
   const batch = build();
   writeFileSync(join(batchDir, "batch.json"), JSON.stringify(batch, null, 2));
-  return { batch, failures };
+  return { batch, failures, outOfCredit };
 }
 
 /**
@@ -177,7 +237,9 @@ if (import.meta.main) {
   const argv = process.argv.slice(2);
   const missionId = argv.find((a) => !a.startsWith("--"));
   if (!missionId) {
-    console.error("사용법: npm run batch -- <mission-id> [--variants N] [--profiles a,b,c] [--max-steps N]");
+    console.error("사용법: npm run batch -- <mission-id> [--variants N | --variant-list 2,3] [--profiles a,b,c] [--max-steps N] [--tag 이름]");
+    console.error("  --tag 를 붙이면 공표 집계(batch__)에서 빠진다. 조건이 다른 실험은 반드시 붙인다");
+    console.error("  --variant-list 는 끊긴 배치의 **빠진 회차만** 채울 때 쓴다. 회차 번호는 조건이다");
     console.error(`기본 명단: ${DEFAULT_ROSTER.join(", ")}`);
     process.exit(1);
   }
@@ -189,12 +251,18 @@ if (import.meta.main) {
   // 설정 실수(오타난 미션·프로필)는 스택 트레이스가 아니라 고칠 수 있는 한 줄로 보여준다
   let batch: Batch;
   let failures: BatchFailure[];
+  let outOfCredit = false;
   try {
-    ({ batch, failures } = await runBatch({
+    ({ batch, failures, outOfCredit } = await runBatch({
       missionId,
       profileIds: flag("profiles")?.split(",").map((s) => s.trim()).filter(Boolean),
       variants: flag("variants") ? Number(flag("variants")) : undefined,
+      variantList: flag("variant-list")
+        ?.split(",")
+        .map((s) => Number(s.trim()))
+        .filter((n) => Number.isInteger(n) && n >= 0),
       maxSteps: flag("max-steps") ? Number(flag("max-steps")) : undefined,
+      tag: flag("tag"),
       headless: process.env.HEADED !== "1",
     }));
   } catch (e) {
@@ -225,4 +293,8 @@ if (import.meta.main) {
     console.log(`      → total_runs ${s.total_runs}은 「성공한 계측의 수」다. 시도는 ${s.total_runs + failures.length}회였다`);
   }
   console.log(`\n  배치     : agent/runs/${batch.batch_id}/batch.json\n`);
+
+  // 잔액 소진은 **다른 종료 코드로 알린다.** 여러 사이트를 동시에 돌리는 스크립트가
+  // 이걸 보고 나머지도 멈춘다 — 안 그러면 빈 지갑으로 브라우저만 60번 더 띄운다
+  if (outOfCredit) process.exit(CREDIT_EXIT_CODE);
 }
