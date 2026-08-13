@@ -1,0 +1,63 @@
+MIT License
+
+Copyright (c) 2026 Tsumazuki Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+第三者の資料について / Third-party materials
+--------------------------------------------------------------------------------
+
+上記 MIT License は、このリポジトリのうち **私たちが書いたもの** に適用されます。
+以下は私たちの著作物ではなく、それぞれの出典の条件に従います。MIT では再許諾しません。
+
+The MIT License above applies to the code and documents written by this project.
+The materials below are NOT ours and remain under their own terms; they are not
+sublicensed under MIT.
+
+1. lexicon/vendor/ninjal_gairaigo_teichakudo.sjis.csv
+   lexicon/vendor/ninjal_readme.txt
+   および派生物 lexicon/data/gairaigo.jsonl
+     出典: 国立国語研究所「外来語」言い換え提案／外来語定着度調査
+           https://mmsrv.ninjal.ac.jp/gairaigo_yoron/
+     ライセンス: CC BY 4.0  https://creativecommons.org/licenses/by/4.0/
+
+2. lexicon/vendor/bunkacho_yasashii_nihongo_kakikae.pdf
+   lexicon/vendor/bunkacho_yasashii_nihongo_kakikae.bbox.xml
+   lexicon/vendor/bunkacho_yasashii_nihongo_guideline.pdf
+   および派生物 lexicon/data/yasashii.jsonl
+     出典: 文化庁ウェブサイト（https://www.bunka.go.jp/）
+           出入国在留管理庁・文化庁「やさしい日本語」書き換え例（2020-08）
+           https://www.bunka.go.jp/seisaku/kokugo_nihongo/kyoiku/92484001.html
+     ライセンス: 文部科学省ウェブサイト利用規約（政府標準利用規約 第2.0版 準拠・CC BY 4.0 互換）
+
+3. lexicon/vendor/bunkacho_joyokanjihyo_20101130.pdf（常用漢字表・内閣告示 第2号）
+   lexicon/vendor/mext_shougakkou_shidouyouryou_h29.pdf（小学校学習指導要領・文部科学省告示 第63号）
+     著作権法 第13条第2号 により、国の機関が発する告示は著作権の目的となりません。
+     出典: https://www.bunka.go.jp/ / https://www.mext.go.jp/
+
+各ファイルの入手日・原本 URL・判断の経緯は lexicon/vendor/SOURCES.md に記録しています。
+
+--------------------------------------------------------------------------------
+計測対象サイトについて / Sites we measured
+--------------------------------------------------------------------------------
+
+agent/runs/ · agent/demo/ · web/public/demo/ に含まれるスクリーンショットと本文抜粋は、
+公開されている自治体ウェブサイトを読み取り専用で観測した記録です。
+それぞれの著作権は各自治体に帰属します。MIT の対象ではありません。

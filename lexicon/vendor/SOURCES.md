@@ -275,7 +275,10 @@ FINDINGS F5의 미확인 항목 — 「文化庁『国語に関する世論調�
 
 ## 표시 의무 체크리스트 (배포 전 확인)
 
-- [ ] `README.md` (일본어) 에 출처 3건 기재 — 国語研 / 文化庁 / 内閣告示 ← **루트 README, W0 담당**
+- [x] `README.md` (일본어) 에 출처 3건 기재 — 国語研 / 文化庁 / 内閣告示 ← **루트 README, W0 담당**
+      → 2026-08-13 완료. 표로 넣고 「書き換え例은 理解率 조사가 아니다」를 같은 절에 붙였다.
+      루트 `LICENSE`(MIT)에도 **MIT 대상 밖**임을 파일 단위로 열거했다 — 코드만 MIT,
+      vendor 원본과 파생 어휘 데이터는 각자의 조건. 재허락(sublicense)하지 않는다고 명시.
 - [ ] 웹 화면 푸터 또는 리포트 말미에 `出典：文化庁ウェブサイト` 표기 ← **D(WEB) 담당**
 - [x] 파생 JSONL 의 manifest 에 `source` / `license` / `license_url` 필드
       → `gairaigo.manifest.json` · `yasashii.manifest.json` 둘 다 완료.

@@ -146,9 +146,23 @@ npm run orca:smoke          # OrcaRouter 疎通確認
 
 ## データ出典
 
-- 国立国語研究所「外来語」言い換え提案／外来語定着度調査（CC BY 4.0）
-  原本を `lexicon/vendor/` にそのまま同梱しています。
+伏せた語には必ず出典が付きます。原本は加工せず `lexicon/vendor/` に同梱しています
+（入手日・原本 URL・採用しなかった候補とその理由は [lexicon/vendor/SOURCES.md](lexicon/vendor/SOURCES.md)）。
+
+| 使っているもの | 出典 | ライセンス |
+|---|---|---|
+| 外来語の理解率（`senior-70s`・398 語） | [国立国語研究所「外来語」言い換え提案／外来語定着度調査](https://mmsrv.ninjal.ac.jp/gairaigo_yoron/)（調査 2002–2004） | CC BY 4.0 |
+| 行政用語の書き換え指定（`resident-n3`・134 語） | 出典：文化庁ウェブサイト（https://www.bunka.go.jp/） ／ [出入国在留管理庁・文化庁「やさしい日本語」書き換え例](https://www.bunka.go.jp/seisaku/kokugo_nihongo/kyoiku/92484001.html)（2020-08） | 文部科学省ウェブサイト利用規約（政府標準利用規約 2.0・CC BY 4.0 互換） |
+| 常用漢字の判定 | [文化庁「常用漢字表」](https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kijun/naikaku/kanji/)（平成22年 内閣告示 第2号） | 著作権法 第13条第2号（告示は著作権の目的とならない） |
+
+「やさしい日本語」書き換え例は**理解率の調査ではなく、行政が書き換えを指定した用語の一覧**です。
+だから画面に % を付けません。この違いは `lexicon/data/yasashii.manifest.json` にも書いてあります。
 
 ## ライセンス
 
-未定（提出までに決めます）。語彙データは上記の CC BY 4.0 に従います。
+コードとドキュメントは **MIT License**（[LICENSE](LICENSE)）。
+
+ただし `lexicon/vendor/` の原本と、そこから作った語彙データは**私たちの著作物ではありません**。
+上表のそれぞれの条件に従います（MIT で再許諾はしません）。
+観測記録に含まれる自治体サイトのスクリーンショット・本文抜粋も同様です。
+内訳は [LICENSE](LICENSE) の後半に列挙しています。
