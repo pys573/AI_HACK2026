@@ -75,7 +75,33 @@ export class RateLimiter {
   }
 }
 
-function hostAllowed(target: string, allowedOrigin: string): { allowed: boolean; reason: string } {
+/**
+ * 같은 기관인가. **자치체 도메인까지만** 서브도메인을 허용한다.
+ *
+ * 왜 origin 완전일치로는 안 되는가 (2026-08-13에 실측으로 드러났다):
+ * 자치체는 다국어·FAQ 페이지를 **별도 서브도메인**에 두는 일이 잦다 —
+ * `www.foreign.city.shinjuku.lg.jp`(외국인용), `dcp.city.shibuya.tokyo.jp`,
+ * `www.multilingualinterpretercallservice.city.minato.tokyo.jp`(다국어 통역).
+ * 완전일치로 막으면 **영어로 가는 문을 우리가 잠근 채** 「영어로는 도달 못 한다」를 재게 되고,
+ * 그 순간 그 숫자는 사이트가 아니라 **우리 도구를 잰 값**이 된다. F10의 J-SERVER 착시와 같은 종류다.
+ *
+ * 왜 전부 열지 않는가: `www.` 하나만 떼고, 남은 것이 **3라벨 이상일 때만** 확장한다.
+ * `www.city.minato.tokyo.jp` → `city.minato.tokyo.jp`까지. **`tokyo.jp`로는 절대 올라가지 않는다** —
+ * 올라가면 도쿄도 전역이 열리고, 그건 「이 사이트를 쟀다」가 아니게 된다.
+ *
+ * 전자신청 SaaS는 이 함수보다 **먼저** `BANNED_HOST_PATTERNS`가 거른다. `shinsei.`·`e-shinsei.`는
+ * 서브도메인을 열어도 계속 막힌다 — 절대규칙 5의 방어선은 그대로다.
+ */
+function sameOrg(host: string, allowedHost: string): boolean {
+  if (host === allowedHost) return true;
+  const base = allowedHost.startsWith("www.") ? allowedHost.slice(4) : allowedHost;
+  // 짧은 도메인(`example.com`)은 확장하지 않는다. 공개 접미사를 잘못 잡으면 남의 사이트가 열린다
+  if (base.split(".").length < 3) return false;
+  return host === base || host.endsWith("." + base);
+}
+
+/** export하는 이유는 테스트 편의가 아니다. **무엇을 막고 무엇을 여는지가 주장의 범위 그 자체**라서, 그 표가 테스트로 고정되어 있어야 한다 */
+export function hostAllowed(target: string, allowedOrigin: string): { allowed: boolean; reason: string } {
   let u: URL;
   try {
     u = new URL(target, allowedOrigin);
@@ -88,7 +114,9 @@ function hostAllowed(target: string, allowedOrigin: string): { allowed: boolean;
   if (BANNED_HOST_PATTERNS.some((re) => re.test(u.hostname))) {
     return { allowed: false, reason: "電子申請サービス — 읽기 전용 범위 밖" };
   }
-  if (u.origin !== new URL(allowedOrigin).origin) {
+  const base = new URL(allowedOrigin);
+  // 프로토콜은 계속 완전일치다. https → http 강등을 서브도메인 허용에 얹어 주지 않는다
+  if (u.protocol !== base.protocol || !sameOrg(u.hostname, base.hostname)) {
     return { allowed: false, reason: `외부 사이트 (${u.hostname})` };
   }
   return { allowed: true, reason: "" };
