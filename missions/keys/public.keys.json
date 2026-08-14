@@ -76,7 +76,7 @@
     "url_patterns": ["service/send/oversea", "/oversea/", "post.japanpost.jp/int"],
     "text_patterns": ["国際郵便", "EMS"],
     "human_baseline_clicks": null,
-    "note": "✅ 대상 페이지 관찰 (2026-08-14). https://www.post.japanpost.jp/service/send/oversea/index.html 「海外に送る」 HTTP 200 · 본문 2093자. 마커 6/7(国際郵便 EMS 送れないもの 禁制品 ラベル 海外). 하위의 「国際郵便として送れないもの」(…/oversea/attention/restriction/)도 같은 절 안이라 도달로 본다 — 用事가 「어떻게 보내는가」이므로 그 절에 들어간 것 자체가 도달이다. 판정은 URL이 강하고 text는 보조다."
+    "note": "✅ 정답 페이지 확정 (2026-08-14 재확인, `agent/live/_probe/intguide.ts`·`judgecheck.ts`). ★ **정답은 https://www.post.japanpost.jp/service/send/oversea/use/howto/ 「国際郵便の送り方ガイド」 하나다** — 본문 4721자, 마커 8/8(EMS 小形包装物 送れないもの スプレー モバイルバッテリー STEP 船便 国際郵便). 用事가 「送り方の種類」과 「送れないもの」 둘 다 요구하는 복합 조건인데, **그 둘이 한 페이지에 같이 있는 곳은 여기뿐**이다. ⚠️ 처음에 정답이라고 적었던 상위 「海外に送る」(/service/send/oversea/)는 **입구 페이지라서 AI 심판이 기각한다**(본문 2004자·마커 4/8, 「案内の入口であり詳細はリンク先」). url_patterns가 넓어서 keyMatch는 통과해 버리므로, 그 페이지에 선 채로 끝나면 키=○·심판=×의 불일치로 남는다(실제로 control v2가 그랬다). ⚠️ 또 한 가지 정정: /int/ 는 별개의 절이 아니라 /service/send/oversea/ 로 **리다이렉트**된다. 처음에 「2계통이 병존한다」고 적었던 것은 틀렸다."
   },
   {
     "mission_id": "tepco-hikkoshi",
