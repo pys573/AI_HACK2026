@@ -26,6 +26,9 @@ for (const d of fs.readdirSync(RUNS)) {
   const gen = d.slice(0, d.indexOf("__") + 2);
   if (gen.includes("_INVALID")) continue;
   const b = JSON.parse(fs.readFileSync(bp, "utf8"));
+  // ★ 분모를 화면과 맞춘다. `scripts/build-web-data.ts`가 빼는 것을 여기서도 뺀다 —
+  //   분모가 다르면 「화면은 125런인데 이 표는 201런」이 되고, 그 순간 두 숫자 다 못 믿게 된다
+  if (b.run_ids.length <= 1) continue; // 시험 삼아 1회만 돌린 배치
   const g = gens.get(gen) ?? { n: 0, reached: 0, rows: [] };
   gens.set(gen, g);
 
@@ -34,6 +37,8 @@ for (const d of fs.readdirSync(RUNS)) {
     if (!fs.existsSync(tp)) continue;
     const t = JSON.parse(fs.readFileSync(tp, "utf8"));
     const v = t.verdict;
+    if (t.profile_version?.endsWith("-exp")) continue; // 실험용 프로필
+    if (v?.outcome === "error") continue; // 크레딧 소진·타임아웃 등 계측 밖의 사고
     g.n++;
     if (v.reached) g.reached++;
     if (v.disagreed) {
