@@ -23,9 +23,9 @@ export function Header({ back }: { back?: { href: string; label: string } }) {
             />
             <circle cx="18" cy="16" r="3" fill="var(--color-stumble)" />
           </svg>
-          <span className="text-sm font-bold tracking-tight">
-            ツマヅキ <span className="font-medium text-fg-dim">/ AI HACK 2026</span>
-          </span>
+          {/* 제품 이름은 한 가지로만 부른다. 대회 이름을 나란히 두면
+              「대회용으로 만든 것」으로 먼저 읽히고, 제품 이름이 뒤로 밀린다 */}
+          <span className="text-sm font-bold tracking-tight">ツマヅキ</span>
         </Link>
         <div className="flex items-center gap-5">
           {back && (
@@ -66,7 +66,7 @@ export function Footer() {
     <footer className="mt-auto border-t border-line bg-surface">
       <div className="mx-auto w-full max-w-6xl px-6 py-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <span className="text-sm font-bold">ツマヅキ / AI HACK 2026</span>
+          <span className="text-sm font-bold">ツマヅキ</span>
           <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-fg-muted">
             <Link href="/report" className="hover:text-fg">結果</Link>
             <Link href="/report/detail" className="hover:text-fg">全データ</Link>
