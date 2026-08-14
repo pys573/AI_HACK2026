@@ -20,6 +20,7 @@
 
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { PERSONA } from "./persona";
 
 const DIR = join(process.cwd(), "..", "profiles");
 
@@ -37,40 +38,6 @@ type Raw = {
   observation: { dom_text: boolean; screenshot: boolean };
   tools: { find_in_page: boolean; site_search: boolean; back_limit: number | null };
   patience: { clicks: number; seconds: number };
-};
-
-/**
- * 표시용 인물 정보. **여기만 손으로 쓴다.**
- *
- * 왜 profiles/*.json이 아니라 여기인가: 이건 계측 사양이 아니라 **화면 문구**다.
- * 프로필 파일은 「무엇을 제한했는가」의 기록이고, 여기는 「누구를 위한 것인가」의 설명이다.
- * 섞으면 사양 파일에 검증 불가능한 문장이 들어간다.
- *
- * ⚠️ busy-worker의 사진은 목업에서 「高校生」으로 준비된 것이다. 우리 프로필은
- *    「시간이 없다(8클릭 / 2분)」를 재는 것이라 표시 이름을 인물 직업이 아니라
- *    **상태**로 두었다. 회사원 사진으로 바꿀 거라면 이름도 같이 바꾼다.
- */
-const PERSONA: Record<string, { name: string; photo: string; tags: string[] }> = {
-  "senior-70s": {
-    name: "高齢者",
-    photo: "/img/persona/senior-70s.jpg",
-    tags: ["カタカナ語が読めない", "小さな文字が苦手"],
-  },
-  "resident-n3": {
-    name: "外国人住民",
-    photo: "/img/persona/resident-n3.jpg",
-    tags: ["日本語に不安", "行政用語が難しい"],
-  },
-  "smartphone-novice": {
-    name: "デジタル初心者",
-    photo: "/img/persona/smartphone-novice.jpg",
-    tags: ["画面しか見ない", "操作に不慣れ"],
-  },
-  "busy-worker": {
-    name: "時間がない人",
-    photo: "/img/persona/busy-worker.jpg",
-    tags: ["すぐ諦める", "探し続けない"],
-  },
 };
 
 export type ProfileCard = {

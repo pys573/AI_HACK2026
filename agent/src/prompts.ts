@@ -57,6 +57,13 @@ export function allowedKinds(p: Profile, obs?: Observation): string[] {
   // 옆으로 잘려 있을 때만. 안 잘린 페이지에서는 목록이 예전과 한 글자도 다르지 않다
   // (= 지금까지의 105회와 같은 조건). 그래서 이전 계측과 비교가 계속 성립한다.
   if (obs?.scroll.overflow_x) kinds.push("scroll_side");
+  // 무언가가 실제로 화면 한가운데를 덮고 있을 때만. 안 덮인 페이지에서는 목록이 예전과
+  // 한 글자도 다르지 않다 (= 지금까지의 125회와 같은 조건).
+  //
+  // ★ 닫는 것을 **못 찾았을 때도 수는 연다.** 사람도 ✕가 어디 있는지 모른 채 일단 찾는다.
+  //   수 자체를 감추면 「닫는 것이 없는 사이트」와 「우리가 못 찾은 사이트」가 트레이스에서
+  //   구별되지 않는다. 열어 두면 눌러 본 기록이 남고, 그 실패가 사이트에 대한 발견이 된다.
+  if (obs?.overlay?.covering) kinds.push("close_overlay");
   kinds.push("give_up");
   if (p.tools.find_in_page) kinds.push("find_in_page");
   if (p.tools.site_search) kinds.push("site_search");
@@ -126,6 +133,8 @@ function describeAction(a: Action): string {
       return `${(a.delta ?? 0) > 0 ? "下" : "上"}にスクロールした`;
     case "scroll_side":
       return `${(a.delta ?? 0) > 0 ? "右" : "左"}にスクロールした`;
+    case "close_overlay":
+      return "画面に重なっていたものを閉じようとした";
     case "back":
       return "前のページに戻った";
     case "site_search":
@@ -205,6 +214,21 @@ export function decideUser(
       `（このページは画面の幅に収まっていません。右側が切れていて、横に動かすと続きが見えます）`
     : "";
 
+  // 덮여 있을 때만 한 줄 붙는다. 안 덮였으면 문자열은 예전과 완전히 같다.
+  //
+  // ★ 왜 이 한 줄이 필요한가: 이때 「押せるもの」 목록은 **덮개 밑에 깔린 것들까지**
+  //   그대로 들고 있다. 우리 목록은 「화면 안에 있는가」만 보지 「위에 뭐가 덮였는가」는
+  //   안 보기 때문이다. 그 상태로 두면 모델은 멀쩡히 보이는 링크를 계속 누르고, 누를 때마다
+  //   덮개가 대신 먹는다 — 실측(2026-08-15) 東京電力에서 같은 링크를 6번 눌렀다.
+  //   사람은 겹친 것을 눈으로 보고 즉시 안다. 그 신호를 안 주면, 「사이트가 어려워서 헤맸다」와
+  //   **「우리 목록이 거짓말을 해서 헤맸다」**가 구별되지 않는다.
+  //
+  // ⚠️ 무엇이 덮고 있는지, 밑에 무엇이 있는지는 말하지 않는다. 사실 하나만 말한다 —
+  //   설명하는 순간 화면을 본 사람만 아는 것을 우리가 알려준 게 된다 (`scroll_side`와 같은 선).
+  const overlayLine = obs.overlay?.covering
+    ? `\n画面に何かが重なっていて、その下のページには触れません`
+    : "";
+
   // "ja"거나 아예 없으면 한 글자도 안 붙는다 = 지금까지의 105회와 같은 프롬프트가 나간다
   const errand = langPref === "en" ? `${mission.intent_ja}\n${LANG_LINE_EN}` : mission.intent_ja;
 
@@ -218,7 +242,7 @@ export function decideUser(
     `## 今見えている画面`,
     `URL: ${obs.url}`,
     `タイトル: ${obs.title}`,
-    `スクロール位置: ${obs.scroll.y}px / 全体 ${obs.scroll.height}px${sideLine}`,
+    `スクロール位置: ${obs.scroll.y}px / 全体 ${obs.scroll.height}px${sideLine}${overlayLine}`,
     ``,
     `### 押せるもの`,
     els,

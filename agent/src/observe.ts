@@ -45,6 +45,8 @@ export type RawObservation = {
   elements: Element[];
   screenshot: Buffer | null;
   scroll: ScrollState;
+  /** 화면 위에 얹힌 것. 닫는 수단을 열지 말지를 이 값이 정한다 */
+  overlay: Overlay;
   /**
    * ★ 페이지가 **스스로 선언한** 언어 (`<html lang="...">`). 영/일 패리티 측정 전용.
    *
@@ -75,6 +77,33 @@ export type ScrollState = {
 };
 
 /**
+ * 화면 위에 **얹힌 것**. 안내 채팅·모달·쿠키 벽처럼 페이지를 덮고 나타나는 것들.
+ *
+ * `covering`은 이 파일에서 `overflow_x` 다음으로 중요한 값이다. **덮개를 닫는 수단을
+ * 열지 말지를 이 값 하나가 정한다** (prompts.ts `allowedKinds`).
+ *
+ * 왜 「요소 목록에 ✕를 넣는다」로 하지 않았는가:
+ *   그 ✕는 링크도 버튼도 아닌 경우가 많다. 東京電力의 열린 채팅에서 우리가 뽑은
+ *   144개 요소 중 닫기 조작은 **0개**였다 (2026-08-15 실측). 목록에 넣으려면 결국
+ *   여기서 찾아내야 하고, 찾아낸 뒤 이름까지 우리가 붙이면 그건 **우리가 알려준 것**이
+ *   된다. 그래서 「무엇인지」는 말하지 않고 **수단만** 연다 — `scroll_side`와 같은 규율이다.
+ */
+export type Overlay = {
+  /** 화면 한가운데가 얹힌 것에 덮여 있는가 */
+  covering: boolean;
+  /**
+   * 덮개 안에서 찾은 닫기 조작의 **뷰포트 좌표**. 못 찾으면 null.
+   * 못 찾았다는 사실 자체가 사이트에 대한 발견이라 트레이스에 남긴다.
+   */
+  close: { x: number; y: number } | null;
+  /** 어느 규칙으로 찾았는가. 나중에 「이 좌표가 정말 ✕였나」를 검증하기 위해 남긴다 */
+  close_by: string | null;
+};
+
+/** 덮개가 없을 때의 값. 이 상수를 쓰면 「안 쟀다」와 「없었다」를 헷갈리지 않는다 */
+export const NO_OVERLAY: Overlay = { covering: false, close: null, close_by: null };
+
+/**
  * 페이지 안에서 실행되는 추출기.
  *
  * 「눈에 보이는 조작 가능한 것」만 모은다. display:none·aria-hidden·크기 0은 제외한다.
@@ -87,7 +116,7 @@ const EXTRACT = `() => {
   //   그대로 createTreeWalker에 넘기면 TypeError로 실행 전체가 죽는다.
   //   실측: 2026-08-11 control 실행이 2스텝에서 이렇게 끊겼다. 사이트 탓이 아니라 우리 쪽 경합이다.
   //   빈 관측을 돌려주면 다음 스텝에서 다시 찍는다 — 죽는 것보다 한 스텝 낭비가 싸다.
-  if (!document.body) return { url: location.href, title: document.title, text: '', text_viewport: '', elements: [], scroll: { y: 0, height: 0, x: 0, width: 0, overflow_x: false }, lang: '' };
+  if (!document.body) return { url: location.href, title: document.title, text: '', text_viewport: '', elements: [], scroll: { y: 0, height: 0, x: 0, width: 0, overflow_x: false }, lang: '', overlay: { covering: false, close: null, close_by: null } };
   const vw = window.innerWidth, vh = window.innerHeight;
   const out = [];
   let i = 0;
@@ -142,10 +171,83 @@ const EXTRACT = `() => {
     seen.push(s);
   }
 
+  // ── 화면 위에 얹힌 것이 있는가 ─────────────────────────────────
+  //
+  // 한가운데 한 점만 짚는다. elementFromPoint는 「지금 그 자리를 누르면 실제로 눌리는 것」을
+  // 돌려주므로, 사람이 화면 가운데를 손가락으로 짚었을 때와 같은 답이 나온다.
+  //
+  // 왜 가운데인가: 고정 헤더·하단 바는 화면을 가리지만 **길을 막지는 않는다.** 가장자리를
+  // 재면 그것들이 전부 「덮개」가 되어, 덮이지도 않은 페이지에서 닫기 수단이 열린다.
+  // 그 헛수가 「제약 때문에 헤맸다」로 집계되면 우리 도구가 만든 잡음이 측정에 섞인다.
+  const overlay = (() => {
+    const cx = Math.round(vw / 2), cy = Math.round(vh / 2);
+    let el = document.elementFromPoint(cx, cy);
+    let panel = null;
+    while (el && el !== document.documentElement && el !== document.body) {
+      const cs = getComputedStyle(el);
+      const z = parseInt(cs.zIndex, 10) || 0;
+      // 「얹혀 있다」 = 문서의 흐름에서 떠 있다. fixed·sticky, 또는 확실히 높이 띄운 것.
+      const lifted = cs.position === 'fixed' || cs.position === 'sticky' || (cs.position !== 'static' && z >= 100);
+      if (lifted) {
+        const r = el.getBoundingClientRect();
+        const w = Math.min(r.right, vw) - Math.max(r.left, 0);
+        const h = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+        // 화면의 절반 이상을 실제로 가릴 때만. 작은 배지·툴팁은 길을 막지 않는다.
+        if (w > 0 && h > 0 && w * h >= vw * vh * 0.5) { panel = el; break; }
+      }
+      el = el.parentElement;
+    }
+    if (!panel) return { covering: false, close: null, close_by: null };
+
+    // ── 그 덮개를 닫는 것을 찾는다 ───────────────────────────────
+    //
+    // 순서가 곧 확신의 순서다. 앞의 규칙일수록 「이건 확실히 닫기다」에 가깝다.
+    // 못 찾으면 null을 돌려준다 — **억지로 아무거나 누르지 않는다.** 엉뚱한 것을 누르면
+    // 그 결과가 「사이트가 어려웠다」로 집계되고, 그 순간 계측이 거짓이 된다.
+    // 「닫는 것이 화면에 없었다」는 그 자체로 사이트에 대한 발견이다.
+    const pr = panel.getBoundingClientRect();
+    const NAMED = /(^|[^a-z])close([^a-z]|$)|閉じ|とじる|dismiss|hide/i;
+    const GLYPH = /^[×✕✖╳☓xX]$/;
+    const attrs = (e) => [e.id, e.getAttribute('aria-label'), e.getAttribute('title'),
+                          e.getAttribute('alt'), e.getAttribute('data-testid'),
+                          typeof e.className === 'string' ? e.className : (e.className && e.className.baseVal) || ''].join(' ');
+
+    let best = null;
+    for (const e of panel.querySelectorAll('*')) {
+      const cs = getComputedStyle(e);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') continue;
+      const r = e.getBoundingClientRect();
+      // 손가락으로 누를 수 있는 크기의 작은 것만. ✕는 크지 않다.
+      if (r.width < 8 || r.height < 8 || r.width > 80 || r.height > 80) continue;
+      if (!(r.top < vh && r.bottom > 0 && r.left < vw && r.right > 0)) continue;
+
+      const txt = (e.textContent || '').replace(/\\s+/g, ' ').trim();
+      let rank = 0;
+      if (NAMED.test(attrs(e))) rank = 3;                                  // 이름·클래스가 close라고 말한다
+      else if (GLYPH.test(txt) || txt === '閉じる') rank = 2;               // 글자가 ✕다
+      // 마지막 규칙: 덮개의 **오른쪽 위 구석**에 있는, 글자 없는 누를 수 있는 것.
+      // ✕가 <svg>로 그려져 이름도 글자도 없는 위젯이 흔하다. 구석·작음·무텍스트를
+      // 전부 만족할 때만 인정한다 — 범위를 좁혀 오폭을 막는다.
+      else if (cs.cursor === 'pointer' && !txt && r.top < pr.top + 72 && r.right > pr.right - 72) rank = 1;
+      if (!rank) continue;
+
+      // 같은 등급이면 오른쪽 위에 가까운 쪽. ✕는 거기 있다.
+      const corner = (pr.right - r.right) + (r.top - pr.top);
+      if (!best || rank > best.rank || (rank === best.rank && corner < best.corner)) {
+        best = { rank, corner, x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) };
+      }
+    }
+    const BY = { 3: 'named', 2: 'glyph', 1: 'corner' };
+    return best
+      ? { covering: true, close: { x: best.x, y: best.y }, close_by: BY[best.rank] }
+      : { covering: true, close: null, close_by: null };
+  })();
+
   return {
     text: (document.body.innerText || '').replace(/\\n{3,}/g, '\\n\\n').trim(),
     text_viewport: seen.join('\\n'),
     elements: out,
+    overlay: overlay,
     scroll: {
       y: Math.round(window.scrollY),
       height: Math.round(document.body.scrollHeight),
@@ -172,6 +274,7 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
     elements: Element[];
     scroll: ScrollState;
     lang: string;
+    overlay?: Overlay;
   };
   return {
     url: page.url(),
@@ -181,6 +284,9 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
     elements: r.elements,
     scroll: r.scroll,
     lang: r.lang ?? "",
+    // 추출기가 어떤 이유로든 이 필드를 못 채웠으면 「덮개 없음」으로 읽는다.
+    // 없는 수단을 여는 것보다 안 여는 쪽이 항상 안전하다 (오차는 과소 방향).
+    overlay: r.overlay ?? NO_OVERLAY,
     screenshot: withScreenshot ? await page.screenshot({ type: "png" }) : null,
   };
 }

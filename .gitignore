@@ -25,7 +25,12 @@ web/node_modules/
 # 以下は作業用のメモであり、公開しない。
 # 既に追跡されているものは `git rm --cached <file>` で外すこと。
 AI User testing.md
+ツマヅキ .md
 FINDINGS.md
 CLAUDE.md
 개발계획.md
+심사위원 예상 반박과 대응.md
 agent/runs/
+
+# デザイナーの作業用の画像。コードからは参照していない
+design/

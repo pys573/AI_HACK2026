@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Page } from "@/components/Chrome";
 import { LiveRun } from "@/components/LiveRun";
+import { loadTasks } from "@/lib/tasks";
 
 /**
  * 즉석 실행 진행 화면.
@@ -29,13 +30,16 @@ export default async function LivePage({
   const url = (q.url ?? "").trim();
   const task = q.task ?? "tennyu";
   const profile = PROFILES.includes(q.profile ?? "") ? (q.profile as string) : "senior-70s";
+  // 用事의 짧은 이름은 서버에서만 읽을 수 있다(`missions/tasks.json`). 진행 화면은 브라우저에서
+  // 도는 화면이라 스스로 못 읽는다 → 여기서 건네준다. 화면에 목록을 한 벌 더 적지 않기 위해서다
+  const taskLabelJa = loadTasks().find((x) => x.id === task)?.label_ja ?? task;
 
   return (
     <Page back={{ href: "/request", label: "条件を選び直す" }}>
       <section className="bg-surface-2">
         <div className="mx-auto w-full max-w-6xl px-6 py-10 sm:py-14">
           {url ? (
-            <LiveRun url={url} task={task} profile={profile} />
+            <LiveRun url={url} task={task} profile={profile} taskLabelJa={taskLabelJa} />
           ) : (
             <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface p-8 text-center">
               <p className="text-lg font-bold">URLが指定されていません</p>

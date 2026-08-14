@@ -9,7 +9,7 @@
  * 프롬프트를 고칠 때마다 사이트를 다시 긁으면 레이트 리밋(절대규칙 6)에 걸리고 시간도 없다.
  */
 
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { CostRecord, RunTrace } from "../../core/types.ts";
 import { ensureLivePrices, prices } from "../../llm/orca.ts";
@@ -18,7 +18,19 @@ import { diagnose, diagnoseUser, DIAGNOSE_SYSTEM } from "./diagnose.ts";
 import { detectSignals } from "./signals.ts";
 
 const RUNS = join(import.meta.dirname, "..", "runs");
-const load = (id: string): RunTrace => JSON.parse(readFileSync(join(RUNS, id, "trace.json"), "utf8"));
+const LIVE = join(import.meta.dirname, "..", "live");
+
+/**
+ * 즉석 실행(`agent/live/`)도 다시 진단할 수 있어야 한다.
+ *
+ * ★ 두 디렉터리를 **합치지는 않는다** — 인자 없이 훑을 때는 `runs/`만 본다.
+ *   섞으면 105회 집계가 오염된다(CLAUDE.md). 여기서 하는 건 「이 id가 어느 쪽에 있나」뿐이고,
+ *   써넣는 곳도 찾은 그 디렉터리 하나다.
+ */
+function dirOf(id: string): string {
+  return existsSync(join(LIVE, id, "trace.json")) ? LIVE : RUNS;
+}
+const load = (id: string): RunTrace => JSON.parse(readFileSync(join(dirOf(id), id, "trace.json"), "utf8"));
 
 const [runId, ...flags] = process.argv.slice(2);
 
@@ -67,7 +79,7 @@ if (dropped) console.log(`\n⚠️ 신호 ${dropped}건은 상한을 넘어 뺐�
 
 trace.findings = findings;
 mergeDiagnoseCost(trace, costs);
-writeFileSync(join(RUNS, runId, "trace.json"), JSON.stringify(trace, null, 2));
+writeFileSync(join(dirOf(runId), runId, "trace.json"), JSON.stringify(trace, null, 2));
 console.log(
   `\n원가 진단 $${costs.reduce((a, c) => a + c.cost_usd, 0).toFixed(6)} (${costs.map((c) => c.model).join(", ") || "호출 없음"})` +
     ` · 실행 전체 $${trace.cost.total_usd.toFixed(6)}`,

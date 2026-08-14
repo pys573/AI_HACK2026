@@ -75,6 +75,16 @@ function snapshot(o: RawObservation | Observation, screenshotKey: string | null)
     scroll: o.scroll,
     screenshot_key: screenshotKey,
   };
+  // ★ 덮개는 raw·seen **양쪽에** 남긴다. 언어(lang)와 달리 이 값은 모델의 선택지를
+  //   실제로 바꾸므로(`prompts.ts` allowedKinds), seen에 없으면 트레이스가
+  //   「왜 그때 close_overlay를 낼 수 있었는가」에 답하지 못한다.
+  if (o.overlay) {
+    s.overlay = {
+      covering: o.overlay.covering,
+      close_found: o.overlay.close !== null,
+      close_by: o.overlay.close_by,
+    };
+  }
   // ★ 언어는 raw에만 붙인다. Observation(=LLM이 받는 것)에는 lang이라는 필드 자체가 없어서,
   //   여기서 넣고 싶어도 넣을 수가 없다 — 그게 「모델은 이걸 본 적이 없다」의 보증이다.
   if ("lang" in o) s.lang = o.lang;
@@ -396,8 +406,8 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
         actDetail =
           action.kind === "click"
             ? ` #${action.index}${clicked?.name ? ` 「${clicked.name}」` : ""}`
-            : action.kind === "scroll" || action.kind === "scroll_side"
-              ? ` ${r.tool_note ?? ""}` // 모델이 요청한 값이 아니라 실제로 움직인 양
+            : action.kind === "scroll" || action.kind === "scroll_side" || action.kind === "close_overlay"
+              ? ` ${r.tool_note ?? ""}` // 모델이 요청한 값이 아니라 실제로 일어난 일
               : action.kind === "find_in_page" || action.kind === "site_search"
                 ? ` 「${action.query ?? ""}」`
                 : "";

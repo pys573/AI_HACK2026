@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { PERSONA } from "@/lib/persona";
 
 /**
  * 즉석 실행 진행 화면 (`website design/play_screen.png`의 라이브판).
@@ -13,9 +15,15 @@ import { useEffect, useRef, useState } from "react";
  * ★ 여기 나오는 것은 전부 **그 순간 실제로 일어난 일**이다. 미리 녹화한 것이 아니다.
  *   그림은 그 스텝에서 찍은 스크린샷 파일이고, 이유는 모델이 그 자리에서 쓴 문장이다.
  *
- * ⚠️ 즉석 실행에는 사람이 만든 정답 키가 없다 → 도달 판정이 **AI 하나뿐**이다.
- *   그 사실을 화면 위쪽에 계속 띄워둔다. 결과만 보고 105회 실측과 같은 급으로
- *   읽히면 그건 우리가 속인 것이 된다 (절대규칙 4).
+ * ★ 이 화면이 하는 일은 **「지금 무엇을 하고 있는가」 하나뿐이다** (2026-08-14 정리).
+ *   예전에는 여기에 判定・見つかったツマヅキ까지 다 그렸다. 그런데 그 둘은 바로 다음 화면
+ *   (`/live/result`)에 다시 나온다 — 같은 결론이 두 번 나오면 「分析結果を見る」 버튼이
+ *   누를 이유를 잃고, 심사위원은 어느 쪽이 결론인지 모른다.
+ *   여기는 **과정**, 다음이 **결론**. 판정 이벤트는 계속 받지만 그리지는 않는다.
+ *
+ * ⚠️ 「도달 판정이 AI 하나뿐」이라는 고지는 여기서 뺐다. 사라진 게 아니라 결론이 나오는
+ *   화면(`ResultReport.tsx` 맨 아래)으로 옮겼다 — 판정이 실제로 표시되는 자리에 붙어 있어야
+ *   고지로서 뜻이 있다. 과정 화면에는 아직 판정이 없다.
  */
 
 type Start = {
@@ -57,26 +65,29 @@ const ACTION_JA: Record<string, string> = {
   scroll: "スクロール",
   // 横スクロールは「画面が横に切れている」ときだけ出る。出ていること自体が所見だ
   scroll_side: "横スクロール",
+  close_overlay: "重なりを閉じる",
   back: "前のページへ戻る",
   find_in_page: "ページ内を検索",
   site_search: "サイト内検索",
   give_up: "諦めた",
 };
 
-const OUTCOME_JA: Record<string, string> = {
-  reached: "たどり着けた",
-  gave_up_clicks: "クリック予算を使い切った",
-  gave_up_time: "時間予算を使い切った",
-  gave_up_self: "本人が諦めた",
-  max_steps: "手数の上限に達した",
-  error: "実行が中断した",
-};
-
-export function LiveRun({ url, task, profile }: { url: string; task: string; profile: string }) {
+export function LiveRun({
+  url,
+  task,
+  profile,
+  taskLabelJa,
+}: {
+  url: string;
+  task: string;
+  profile: string;
+  /** 「用事」의 짧은 이름. goal_ja는 한 문장이라 상태 줄에 못 들어간다 */
+  taskLabelJa: string;
+}) {
   const [start, setStart] = useState<Start | null>(null);
   const [steps, setSteps] = useState<StepEv[]>([]);
+  /** 그리지는 않는다. 「끝났는데 판정을 못 받았다」를 구별하는 데만 쓴다 */
   const [verdict, setVerdict] = useState<VerdictEv | null>(null);
-  const [findings, setFindings] = useState<FindingEv[]>([]);
   const [done, setDone] = useState<DoneEv | null>(null);
   const [failed, setFailed] = useState<string | null>(null);
   const [ended, setEnded] = useState(false);
@@ -97,7 +108,7 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
       if (ev.kind === "start") setStart(ev);
       else if (ev.kind === "step") setSteps((s) => [...s, ev]);
       else if (ev.kind === "verdict") setVerdict(ev);
-      else if (ev.kind === "finding") setFindings((f) => [...f, ev]);
+      // finding은 받되 여기서는 그리지 않는다. 결론은 다음 화면의 몫이다 (파일 머리말 참조)
       else if (ev.kind === "done") setDone(ev);
       else if (ev.kind === "failed") setFailed(ev.message);
       else if (ev.kind === "end") {
@@ -133,6 +144,8 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
   const last = shown;
   const running = !ended && !failed;
   const mmss = `${String(Math.floor(elapsed / 60)).padStart(2, "0")}:${String(elapsed % 60).padStart(2, "0")}`;
+  // start 이벤트를 기다리지 않는다. 프로필은 주소에 이미 있으므로 접속 중에도 얼굴이 떠 있다
+  const photo = PERSONA[profile]?.photo ?? null;
 
   if (failed) {
     return (
@@ -151,16 +164,39 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
 
   return (
     <div className="mx-auto w-full max-w-6xl">
-      {/* ── 상태 줄 ──────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-line bg-surface px-6 py-4">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-bold">
-            {start ? start.site_name : "接続中…"}
-            <span className="ml-2 font-normal text-fg-dim">{url}</span>
-          </p>
-          <p className="mt-1 text-xs text-fg-muted">
-            {start ? `${start.profile_label_ja}（${start.profile_id}）` : "準備しています"}
-          </p>
+      {/* ── 상태 줄 ──────────────────────────────────────────────────────
+          ★ 이 박스 하나에 「누가 · 어디를 · 무슨 用事로」가 전부 들어간다.
+            예전에는 밑에 박스를 두 개 더 달았는데, 스크린샷이 시작되기도 전에
+            읽을 것이 세 덩이라 정작 봐야 할 화면이 아래로 밀렸다.
+          ★ 얼굴 옆에 프로필 id가 **반드시 같이** 있어야 한다. 얼굴만 있으면
+            「이 사람을 재현했다」로 읽힌다 — 우리가 하지 않는 주장이다
+            (`web/public/img/persona/README.md`). */}
+      <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 rounded-2xl border border-line bg-surface px-5 py-4 sm:px-6">
+        <div className="flex min-w-0 items-center gap-4">
+          {photo ? (
+            <Image
+              src={photo}
+              alt=""
+              width={120}
+              height={120}
+              className="size-14 shrink-0 rounded-full object-cover ring-1 ring-line"
+            />
+          ) : (
+            // 대조군은 사람이 아니라 기준선이다. 빈 얼굴을 지어내지 않는다
+            <span className="grid size-14 shrink-0 place-items-center rounded-full bg-surface-2 text-[10px] font-bold text-fg-dim ring-1 ring-line">
+              対照
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold sm:text-base">
+              {start ? start.site_name : "接続中…"}
+              <span className="ml-2 text-xs font-normal text-fg-dim">{url}</span>
+            </p>
+            <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-muted">
+              <span>{start ? `${start.profile_label_ja}（${start.profile_id}）` : "準備しています"}</span>
+              <span className="rounded-md bg-surface-2 px-2 py-0.5 ring-1 ring-line">用事：{taskLabelJa}</span>
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           {running && (
@@ -176,21 +212,6 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
           </span>
         </div>
       </div>
-
-      {/* ⚠️ 판정이 한 겹 얇다는 고지. 결과가 나오기 **전부터** 띄워둔다 */}
-      {start && !start.key_available && (
-        <p className="mt-3 rounded-xl bg-[#fdf6e9] px-5 py-3 text-xs leading-relaxed text-stumble ring-1 ring-stumble/25">
-          このURLには、人が用意した正解ページの一覧がありません。そのため到達判定は
-          <strong className="font-bold">AIのみ</strong>で行います（公開している125ランの計測は、人が作ったキーとAIの2段判定です）。
-        </p>
-      )}
-
-      {start && (
-        <p className="mt-3 rounded-xl bg-surface-2 px-5 py-3 text-sm leading-relaxed text-fg-muted ring-1 ring-line">
-          <span className="font-bold text-fg">用事：</span>
-          {start.goal_ja}
-        </p>
-      )}
 
       {/* ── 화면 + 操作ログ ──────────────────────────────── */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
@@ -291,71 +312,20 @@ export function LiveRun({ url, task, profile }: { url: string; task: string; pro
         </div>
       </div>
 
-      {/* ── 判定 ────────────────────────────────────────── */}
-      {verdict && (
-        <div
-          className={`mt-6 rounded-2xl border p-6 ${
-            verdict.reached ? "border-clear/30 bg-clear/5" : "border-stumble/30 bg-stumble/5"
-          }`}
-        >
-          <p className={`text-lg font-bold ${verdict.reached ? "text-clear" : "text-stumble"}`}>
-            {verdict.reached ? "○ " : "× "}
-            {OUTCOME_JA[verdict.outcome] ?? verdict.outcome}
-          </p>
-          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-fg-muted">{verdict.reason_ja}</p>
-        </div>
-      )}
-
-      {/* ── ツマヅキ ────────────────────────────────────── */}
-      {findings.length > 0 && (
-        <div className="mt-6 rounded-2xl border border-line bg-surface p-6">
-          <h2 className="text-base font-bold">見つかったツマヅキ {findings.length}件</h2>
-          <ul className="mt-4 space-y-5">
-            {findings.map((f, i) => (
-              <li key={`${f.step_n}-${i}`} className="border-l-2 border-stumble pl-4">
-                <p className="tnum text-xs text-fg-dim">
-                  {f.step_n}手目・{f.severity}
-                </p>
-                <p className="mt-1 text-sm font-bold">{f.cause_ja}</p>
-                <p className="mt-1 text-sm text-brand">→ {f.fix_ja}</p>
-                {/* 근거 없는 지적은 리포트가 아니라 비난이다. 반드시 같이 낸다 */}
-                {f.evidence.length > 0 && (
-                  <ul className="mt-2 space-y-0.5">
-                    {f.evidence.map((e, j) => (
-                      <li key={j} className="text-xs text-fg-dim">
-                        · {e}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* ── 終わり ──────────────────────────────────────── */}
+      {/* ── 終わり ──────────────────────────────────────────────────────
+          ★ 判定도 원가도 ツマヅキ 목록도 여기서 말하지 않는다. 전부 다음 화면의 몫이다.
+            같은 결론을 두 화면에 흩어 두면 「어느 쪽이 결론인가」를 심사위원이 판단해야 한다.
+            이 판 하나가 하는 일은 **다음 화면으로 넘기는 것**뿐이다.
+            run_id도 뺐다 — 결과 화면 맨 아래에 같은 것이 있고, 거기가 그걸 쓸 자리다 */}
       {done && (
-        <div className="mt-6 rounded-2xl bg-surface-2 p-6 text-sm ring-1 ring-line">
-          <p className="tnum">
-            この1回の実費 <strong className="text-base">${done.cost_usd.toFixed(4)}</strong>
-            <span className="ml-2 text-fg-dim">（捨てた再試行も含む実測値）</span>
-          </p>
-          <p className="mt-2 text-xs text-fg-dim">
-            記録は <code className="font-mono">{done.run_id}</code> として保存しました。
-            この実行は、公開している125ランの集計には含めません（条件が違うためです）。
-          </p>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link href="/request" className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white">
-              別の条件で試す
-            </Link>
-            <Link
-              href="/report"
-              className="rounded-full border border-brand/40 px-6 py-2.5 text-sm font-bold text-brand"
-            >
-              125ランの計測結果を見る
-            </Link>
-          </div>
+        <div className="mt-6 rounded-2xl border border-brand/25 bg-surface p-8 text-center">
+          <p className="text-lg font-bold">操作が終わりました</p>
+          <Link
+            href={`/live/result?run=${encodeURIComponent(done.run_id)}`}
+            className="mt-6 inline-block rounded-full bg-brand px-10 py-3.5 text-base font-bold text-white transition hover:opacity-90"
+          >
+            分析結果を見る
+          </Link>
         </div>
       )}
 

@@ -197,6 +197,11 @@ export async function act(
   if (action.kind === "scroll_side" && !raw.scroll.overflow_x) {
     return fail("이 화면은 옆으로 잘려 있지 않다");
   }
+  // 닫기도 같다. 프로필이 아니라 **화면이** 허락한다. 덮이지도 않은 페이지에서 닫으려 들면
+  // 아무 일도 안 일어나고, 그 빈 수가 「제약 때문에 헤맸다」로 집계된다.
+  if (action.kind === "close_overlay" && !raw.overlay?.covering) {
+    return fail("이 화면은 무엇에도 덮여 있지 않다");
+  }
 
   switch (action.kind) {
     case "give_up":
@@ -253,6 +258,46 @@ export async function act(
           ? `これ以上${screens > 0 ? "右" : "左"}には動かなかった`
           : `${moved > 0 ? "右" : "左"}に${Math.abs(moved)}px動いた`,
       );
+    }
+
+    case "close_overlay": {
+      // 좌표는 observe()가 이미 찾아 두었다. 여기서 다시 찾지 않는 이유는,
+      // 모델이 본 화면과 우리가 누르는 화면이 어긋나면 안 되기 때문이다 —
+      // 그 사이에 덮개가 바뀌면 「보고 결정한 것」과 「누른 것」이 다른 것이 된다.
+      const c = raw.overlay?.close;
+      if (!c) {
+        // ★ 실패가 아니라 **결과**다. 「닫는 것이 화면에 없었다」는 사이트에 대한 발견이고,
+        //   ok:false로 만들면 우리 도구의 오류처럼 집계된다 (`signals.ts`의 action_failed).
+        return ok(false, "閉じるためのものが画面に見つからなかった");
+      }
+      await page.mouse.click(c.x, c.y).catch(() => null);
+      await settle(page, rl);
+
+      // ★ 「닫았다」고 단정하지 않고 **다시 잰다.** 눌렀는데 안 닫혔는데도 닫혔다고 하면
+      //   모델은 밑에 깔린 링크를 계속 누르고, 그 헛수고가 사이트 탓으로 집계된다.
+      //   observe.ts의 판정과 같은 조건이어야 하므로 조건식을 그대로 옮겨 적는다.
+      const still = (await page
+        .evaluate(
+          `(() => {
+            const vw = innerWidth, vh = innerHeight;
+            let el = document.elementFromPoint(Math.round(vw/2), Math.round(vh/2));
+            while (el && el !== document.documentElement && el !== document.body) {
+              const cs = getComputedStyle(el);
+              const z = parseInt(cs.zIndex, 10) || 0;
+              if (cs.position === 'fixed' || cs.position === 'sticky' || (cs.position !== 'static' && z >= 100)) {
+                const r = el.getBoundingClientRect();
+                const w = Math.min(r.right, vw) - Math.max(r.left, 0);
+                const h = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+                if (w > 0 && h > 0 && w * h >= vw * vh * 0.5) return true;
+              }
+              el = el.parentElement;
+            }
+            return false;
+          })()`,
+        )
+        .catch(() => false)) as boolean;
+
+      return ok(false, still ? "閉じてみたが、まだ画面に何かが重なっている" : "画面に重なっていたものを閉じた");
     }
 
     case "back": {
