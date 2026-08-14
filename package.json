@@ -24,6 +24,8 @@
     "honeypot": "node security/honeypot.ts",
     "honeypot:live": "node security/honeypot-live.ts",
     "honeypot:serve": "node fixtures/honeypot/serve.ts",
+    "overlay:test": "node agent/test/overlay-live.ts",
+    "overlay:corpus": "node agent/test/overlay-corpus.ts",
     "web:data": "node scripts/build-web-data.ts",
     "web:dev": "npm --prefix web run dev",
     "tunnel": "cloudflared tunnel --url http://localhost:3000"

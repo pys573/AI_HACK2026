@@ -11,7 +11,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { mask, type MaskHit, type MaskPolicy } from "../../lexicon/src/mask.ts";
-import type { Element, RawObservation, ScrollState } from "./observe.ts";
+import type { Element, Overlay, RawObservation, ScrollState } from "./observe.ts";
 
 const PROFILE_DIR = join(import.meta.dirname, "..", "..", "profiles");
 
@@ -93,6 +93,12 @@ export type Observation = {
    *   `overflow_x`가 좌우 스크롤이라는 수단의 유일한 열쇠다 (observe.ts `ScrollState`).
    */
   scroll: ScrollState;
+  /**
+   * ★ 여기도 마스킹하지 않고 그대로 통과시킨다. 「화면에 무언가 겹쳐 있다」는 사이트가 쓴
+   *   글이 아니라 사람이 눈으로 보는 사실이라, 어려운 낱말로 가려질 대상이 아니다.
+   *   `covering`이 닫기라는 수단의 유일한 열쇠다 (observe.ts `Overlay`).
+   */
+  overlay: Overlay;
 };
 
 /** 무엇을 왜 가렸는지의 기록. 리포트와 화면의 근거가 된다. */
@@ -168,6 +174,7 @@ export function constrain(
       elements,
       screenshot: p.observation.screenshot ? raw.screenshot : null,
       scroll: raw.scroll,
+      overlay: raw.overlay,
     },
     trace: {
       profile: p.id,
