@@ -43,7 +43,13 @@ import type { LlmRequest, StepType } from "../core/types.ts";
  *   perceive  화면이 지금 무엇인가.   뒤의 전 스텝이 이걸 먹는다 → 싸되 프론티어와 일치해야 한다
  *   decide    다음에 무엇을 할까.     선택지가 유한하다 → 중
  *   judge     미션에 도달했는가.      오판하면 실험 결과 자체가 거짓이 된다 → 중상
- *   diagnose  왜 실패했나.            리포트 본문이고 1회만 돈다 → 프론티어(원가 무시 가능)
+ *   diagnose  왜 실패했나.            리포트 본문이다 → 스키마를 지키는 것 중 제일 싼 쪽
+ *
+ * ⚠️ diagnose의 근거는 2026-08-14에 바뀌었다. 이전에는 「1회만 도니까 프론티어(원가 무시 가능)」였다.
+ *    실측해보니 무시 가능이 아니었다 — 실행 전체 $0.072 중 $0.037이 진단 한 번이었다(gpt-5).
+ *    같은 트레이스를 gpt-5-mini로 다시 진단하니 $0.0055에 **문장은 오히려 더 구체적**이었다
+ *    (페이지 이름·배치 위치까지 짚는다). 「비싼 모델이 더 잘 쓴다」가 이 작업에서는 성립하지 않았다.
+ *    입력이 이미 실측 문장으로 정리돼 있어서, 남은 일이 문장 다듬기뿐이기 때문으로 보인다.
  */
 export const MODEL_BY_STEP: Record<StepType, string> = {
   // 최저가대에서 유일하게 프론티어와 판정이 일치했다. 1초·37토큰으로 제일 빠르기도 하다
@@ -52,9 +58,14 @@ export const MODEL_BY_STEP: Record<StepType, string> = {
   decide: "openai/gpt-5-mini",
   // 덱 품질 8.0. sonnet-5와 실원가가 거의 같은데(2354 vs 2384) 더 빠르다
   judge: "google/gemini-3.6-flash",
-  // BASELINE_MODEL과 같은 모델이다 — 「라우팅 안 했으면 전부 이거였다」는 비교 기준을
-  // 리포트를 쓰는 모델 자신이 맡는다. A/B 하네스의 서술이 깔끔해진다
-  diagnose: "anthropic/claude-opus-5",
+  // ⚠️ 2026-08-14까지는 anthropic/claude-opus-5였다. BASELINE_MODEL과 같은 모델이라
+  //    「라우팅 안 했으면 전부 이거였다」를 리포트 작성자 자신이 맡는 구성이 깔끔했다.
+  //    그런데 그 모델이 **조용히 빈손을 준다** — 아래 DENYLIST 참조. 옮긴다.
+  //    후보 4종이 전부 3/3 통과했고(gpt-5 · gpt-5-mini · gemini-3.6-flash · sonnet-5),
+  //    그중 제일 싼 쪽을 골랐다. decide와 같은 모델이 된 건 결과일 뿐 의도가 아니다.
+  //    BASELINE_MODEL은 그대로 opus-5다. 저건 **호출하지 않고 가격만 쓰는** 기준선이라
+  //    이 고장과 무관하고, 여기를 옮겨도 「전량 프론티어였다면」의 비교는 그대로 성립한다.
+  diagnose: "openai/gpt-5-mini",
 };
 
 /**
@@ -69,6 +80,23 @@ export const DENYLIST: Record<string, string> = {
   "qwen/qwen3.7-flash": "response_format json_schema를 무시한다 (2026-08-11 실측)",
   // 프론티어 4종이 index로 일치한 입력을 혼자 form이라 했다
   "google/gemini-2.5-flash-lite": "프론티어와 판정 불일치 (2026-08-11 실측)",
+  /**
+   * ✅ 2026-08-14 실측. json_schema를 붙이면 **필드는 다 갖췄는데 값이 비어서 온다** —
+   *    `{"items":[{"n":0,"cause_ja":"","fix_ja":""}]}`. HTTP 200이고 JSON도 맞고
+   *    최상위 required(`items`)도 있어서 orca.ts의 검사를 **전부 통과한다.**
+   *    그래서 A는 성공을 받고, 화면에는 「説明の生成に失敗」만 남는다. 원가는 물론 나간다.
+   *
+   *    같은 프롬프트·같은 트레이스로 갈라본 결과 (差는 한 번에 한 가지씩):
+   *      opus-5 + json_schema          → 9회 중 성공 2회. **무작위로 빈손이 온다**
+   *      opus-5 + json_schema(strict off) → 빈손      (strict는 범인이 아니다)
+   *      opus-5 + 스키마 없음            → 정상       (모델이 문장을 못 쓰는 것도 아니다)
+   *      gpt-5 / gpt-5-mini / gemini-3.6-flash / **claude-sonnet-5** + 같은 스키마 → 전부 3/3 정상
+   *    → 벤더 문제도 아니고 프롬프트 문제도 아니다. 이 조합 하나가 고장이다.
+   *
+   *    ⚠️ 08-13까지 저장된 트레이스에 「説明の生成に失敗」이 섞여 있는 것도 이것이다
+   *       (findings 947건 중 207건). 그 실행들의 **계측값은 멀쩡하고 설명문만 비었다.**
+   */
+  "anthropic/claude-opus-5": "json_schema를 붙이면 값이 빈 채로 온다 (2026-08-14 실측 · 9회 중 7회)",
 };
 
 /** 라우팅을 끈 상태에서 나가는 곳. OrcaRouter가 알아서 고른다 */

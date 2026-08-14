@@ -158,6 +158,8 @@ export async function diagnose(trace: RunTrace): Promise<{ findings: Finding[]; 
     const m = byN.get(i + 1);
     return {
       step_n: s.step_n,
+      // 종류는 코드가 정한 값이다. 화면이 그림으로 구별하는 데 쓴다 (core/types.ts 참조)
+      kind: s.kind,
       url: s.url,
       cause_ja: m?.cause_ja?.trim() || `${label(s.kind)}（説明の生成に失敗。根拠は下記のとおり実測値である）`,
       fix_ja: m?.fix_ja?.trim() || "",
