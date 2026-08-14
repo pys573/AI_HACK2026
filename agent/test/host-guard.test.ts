@@ -80,6 +80,34 @@ test("전자신청 SaaS는 서브도메인을 열어도 계속 막힌다 (절대
   assert.match(hostAllowed("https://shinsei.city.shinjuku.lg.jp/", SHINJUKU).reason, /電子申請/);
 });
 
+// ★ 2026-08-14. 企業·大学 카테고리를 열면서 새로 걸린 것들.
+//   자치체 SaaS와 달리 **기관 자기 도메인 안에** 있어서 sameOrg를 통과해 버린다.
+//   그래서 여기가 유일한 방어선이다. 뚫리면 에이전트가 로그인·出願 화면에 들어간다 (절대규칙 5).
+test("★ 기관 자기 도메인 안의 로그인·出願 시스템도 막는다 (절대규칙 5)", () => {
+  const cases: [string, string, string][] = [
+    ["https://www.int-mypage.post.japanpost.jp/", "https://www.post.japanpost.jp/", "国際郵便マイページ ログイン"],
+    ["https://mgr.post.japanpost.jp/", "https://www.post.japanpost.jp/", "集荷サービスのお申込み"],
+    ["https://trackings.post.japanpost.jp/", "https://www.post.japanpost.jp/", "再配達などのお申込み"],
+    ["https://www.app.kurashi.tepco.co.jp/", "https://www.tepco.co.jp/ep/", "ご家庭向け会員サイト"],
+    ["https://www.app.biz.tepco.co.jp/", "https://www.tepco.co.jp/ep/", "法人向け会員サイト"],
+    ["https://admission.i.u-tokyo.ac.jp/?course=Mas", "https://www.u-tokyo.ac.jp/", "WEB出願システム"],
+    ["https://web-entry.st.keio.ac.jp/", "https://www.keio.ac.jp/ja/", "Webエントリー"],
+  ];
+  for (const [url, origin, what] of cases) {
+    assert.equal(hostAllowed(url, origin).allowed, false, `${what}가 통과해 버렸다: ${url}`);
+  }
+  // 막은 것이 **너무 넓지 않은지**도 잠근다. 같은 기관의 안내 페이지는 계속 열려야 한다
+  const open: [string, string][] = [
+    ["https://www.post.japanpost.jp/service/tenkyo/index.html", "https://www.post.japanpost.jp/"],
+    ["https://support.tepco.co.jp/faq/", "https://www.tepco.co.jp/ep/"],
+    ["https://www.i.u-tokyo.ac.jp/edu/entra/", "https://www.u-tokyo.ac.jp/"],
+    ["https://www.keio.ac.jp/ja/admissions/grad/master/st/", "https://www.keio.ac.jp/ja/"],
+  ];
+  for (const [url, origin] of open) {
+    assert.equal(hostAllowed(url, origin).allowed, true, `열려 있어야 한다: ${url}`);
+  }
+});
+
 test("브라우저 밖으로 나가는 스킴은 그대로 막는다", () => {
   for (const u of ["mailto:a@b.jp", "tel:0312345678"]) {
     assert.equal(hostAllowed(u, SHINJUKU).allowed, false, u);

@@ -53,6 +53,18 @@ const BANNED_HOST_PATTERNS = [
   /(^|\.)e-shinsei\./,
   /(^|\.)shinsei\./,
   /(^|\.)elg-front\.jp$/, // 電子申請 共同利用
+
+  // ── 企業·大学 카테고리에서 새로 걸린 것 (2026-08-14) ──
+  // 위의 자치체 SaaS와 달리 이것들은 **기관 자기 도메인 안에 있다**. 즉 sameOrg를 통과한다.
+  // 전부 로그인 또는 申込·出願 폼이라 절대규칙 5에 그대로 걸린다. 사이트에서 링크를 읽어
+  // 확인한 것만 적는다 (`agent/live/_probe/apply.ts`) — 짐작으로 넓히면 정상 페이지를 막는다.
+  /(^|\.)int-mypage\.post\.japanpost\.jp$/, // 国際郵便マイページ ログイン
+  /(^|\.)mgr\.post\.japanpost\.jp$/, // 集荷サービスのお申込み
+  /(^|\.)trackings\.post\.japanpost\.jp$/, // 再配達などのお申込み
+  /(^|\.)app\.kurashi\.tepco\.co\.jp$/, // ご家庭向け会員サイト ログイン
+  /(^|\.)app\.biz\.tepco\.co\.jp$/, // 法人向け会員サイト ログイン
+  /(^|\.)admission\.i\.u-tokyo\.ac\.jp$/, // WEB出願システム（修士課程）
+  /(^|\.)web-entry\.st\.keio\.ac\.jp$/, // 理工学研究科 Webエントリー
 ];
 
 /**

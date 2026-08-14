@@ -89,5 +89,67 @@
     "goal_ja": "転入届の届出に必要な持ち物と受付窓口が書かれたページにたどり着く。",
     "intent_ja": "来月この区に引っ越します。役所で何をすればいいのか、当日何を持っていけばいいのかを知りたい。",
     "max_steps": 20
+  },
+
+  {
+    "id": "japanpost-tenkyo",
+    "track": "b2b",
+    "site_id": "japanpost",
+    "site_name": "日本郵便",
+    "start_url": "https://www.post.japanpost.jp/",
+    "goal_ja": "引っ越しで郵便物を新しい住所に転送してもらう「転居届」の出し方が書かれたページにたどり着く。",
+    "intent_ja": "来月引っ越します。前の住所に届く郵便物を新しい家に送ってほしい。何をすればいいのかを知りたい。",
+    "max_steps": 30
+  },
+  {
+    "id": "japanpost-kaigai",
+    "track": "b2b",
+    "site_id": "japanpost",
+    "site_name": "日本郵便",
+    "start_url": "https://www.post.japanpost.jp/",
+    "goal_ja": "海外に荷物を送る方法（送り方の種類と、送れないものの案内）が書かれたページにたどり着く。",
+    "intent_ja": "母国の家族に荷物を送りたい。どうやって送るのか、送れないものがあるのかを知りたい。",
+    "max_steps": 30
+  },
+  {
+    "id": "tepco-hikkoshi",
+    "track": "b2b",
+    "site_id": "tepco",
+    "site_name": "東京電力エナジーパートナー",
+    "start_url": "https://www.tepco.co.jp/ep/",
+    "goal_ja": "引っ越しに伴う電気の使用開始・使用停止の手続き方法が書かれたページにたどり着く。",
+    "intent_ja": "来月引っ越します。今の家の電気を止めて、新しい家で電気を使えるようにしたい。",
+    "max_steps": 30
+  },
+
+  {
+    "id": "utokyo-grad",
+    "track": "b2b",
+    "site_id": "utokyo",
+    "site_name": "東京大学",
+    "start_url": "https://www.u-tokyo.ac.jp/",
+    "goal_ja": "コンピュータ・情報系の大学院（修士課程）について、入学試験の募集要項（出願の案内）が載っているページにたどり着く。",
+    "intent_ja": "来年、コンピュータ関係の大学院に進みたい。募集要項がどこで見られるのか、出願の案内がどこにあるのかを知りたい。",
+    "max_steps": 30
+  },
+  {
+    "id": "keio-grad",
+    "track": "b2b",
+    "site_id": "keio",
+    "site_name": "慶應義塾大学",
+    "start_url": "https://www.keio.ac.jp/ja/",
+    "goal_ja": "コンピュータ・情報系の大学院（修士課程）について、入学試験の募集要項（出願の案内）が載っているページにたどり着く。",
+    "intent_ja": "来年、コンピュータ関係の大学院に進みたい。募集要項がどこで見られるのか、出願の案内がどこにあるのかを知りたい。",
+    "max_steps": 30
+  },
+  {
+    "id": "aoyama-grad",
+    "track": "b2b",
+    "site_id": "aoyama",
+    "site_name": "青山学院大学",
+    "start_url": "https://www.aoyama.ac.jp/",
+    "goal_ja": "コンピュータ・情報系の大学院（修士課程）について、入学試験の募集要項（出願の案内）が載っているページにたどり着く。",
+    "intent_ja": "来年、コンピュータ関係の大学院に進みたい。募集要項がどこで見られるのか、出願の案内がどこにあるのかを知りたい。",
+    "max_steps": 30
   }
 ]
