@@ -53,6 +53,16 @@ export type ProfileCard = {
   personaTags: string[];
   /** 사양을 그대로 옮긴 짧은 줄들. 카드에 태그로 붙는다 */
   specs: string[];
+  /**
+   * 화면 조건 한 줄. **진행 화면에서 이게 없으면 반드시 오해받는다.**
+   *
+   * 실행 중 화면에는 좁은 사진이 흐르는데, 그 좁음의 이유가 두 가지다 —
+   * ① 스마트폰 폭이라서(375px) ② PC를 확대해서 한 번에 보이는 범위가 줄어서(1280px·200%).
+   * 둘은 완전히 다른 조건인데 사진만 보면 똑같이 「모바일 화면」으로 보인다.
+   * 적어 두지 않으면 高齢者 프로필이 「스마트폰을 쓰는 노인」으로 읽히고,
+   * 그건 우리가 재고 있는 것과 다르다.
+   */
+  screenJa: string;
   /** 어휘 근거 한 줄. 출처가 없으면 null이고, 없으면 화면도 안 그린다 */
   evidenceJa: string | null;
   /** 제약이 아예 없는가 — 대조군만 true */
@@ -96,6 +106,22 @@ function evidenceOf(p: Raw): string | null {
   return `60歳以上の理解率が${p.lexicon.mask_below}%未満の語 — ${p.lexicon.source}`;
 }
 
+/**
+ * 「PC인가 스마트폰인가」는 **선언한 폭**으로 가른다(확대 후의 폭이 아니다).
+ *
+ * senior-70s는 1280px을 200%로 본다 → 실효 640px. 이걸 실효 폭으로 가르면
+ * 「스마트폰」으로 분류돼 버리는데, 실제로는 **PC 앞에 앉아 확대한 사람**이다.
+ * 잰 것과 다른 말이 화면에 뜨면 그건 계측이 아니라 창작이 된다.
+ */
+function screenOf(p: Raw): string {
+  const kind = p.viewport.width >= 1024 ? "PC" : "スマートフォン";
+  const base = `${kind}・${p.viewport.width}×${p.viewport.height}`;
+  if (p.viewport.zoom === 1) return base;
+  const w = Math.round(p.viewport.width / p.viewport.zoom);
+  const h = Math.round(p.viewport.height / p.viewport.zoom);
+  return `${base}・表示${p.viewport.zoom * 100}%（実効 ${w}×${h}）`;
+}
+
 export function loadProfileCards(ids: string[]): ProfileCard[] {
   const files = readdirSync(DIR).filter((f) => f.endsWith(".json"));
   const out: ProfileCard[] = [];
@@ -111,6 +137,7 @@ export function loadProfileCards(ids: string[]): ProfileCard[] {
       photo: PERSONA[p.id]?.photo ?? null,
       personaTags: PERSONA[p.id]?.tags ?? [],
       specs: specsOf(p),
+      screenJa: screenOf(p),
       evidenceJa: evidenceOf(p),
       isControl: p.id === "control",
     });

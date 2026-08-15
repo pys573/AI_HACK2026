@@ -77,12 +77,15 @@ export function LiveRun({
   task,
   profile,
   taskLabelJa,
+  screenJa,
 }: {
   url: string;
   task: string;
   profile: string;
   /** 「用事」의 짧은 이름. goal_ja는 한 문장이라 상태 줄에 못 들어간다 */
   taskLabelJa: string;
+  /** 화면 조건 한 줄. 이게 없으면 좁은 사진이 전부 「스마트폰」으로 읽힌다 */
+  screenJa: string;
 }) {
   const [start, setStart] = useState<Start | null>(null);
   const [steps, setSteps] = useState<StepEv[]>([]);
@@ -229,6 +232,11 @@ export function LiveRun({
             <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-muted">
               <span>{start ? `${start.profile_label_ja}（${start.profile_id}）` : "準備しています"}</span>
               <span className="rounded-md bg-surface-2 px-2 py-0.5 ring-1 ring-line">用事：{taskLabelJa}</span>
+              {screenJa && (
+                <span className="rounded-md bg-surface-2 px-2 py-0.5 ring-1 ring-line">
+                  画面：{screenJa}
+                </span>
+              )}
             </p>
           </div>
         </div>
