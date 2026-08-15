@@ -1,0 +1,43 @@
+[
+  {
+    "id": "public",
+    "label_ja": "公共・役所",
+    "hint_ja": "区役所・市役所のサイト",
+    "sites": [
+      { "label_ja": "渋谷区", "url": "https://www.city.shibuya.tokyo.jp/" },
+      { "label_ja": "新宿区", "url": "https://www.city.shinjuku.lg.jp/" },
+      { "label_ja": "港区", "url": "https://www.city.minato.tokyo.jp/" },
+      { "label_ja": "浜松市", "url": "https://www.city.hamamatsu.shizuoka.jp/" },
+      { "label_ja": "大泉町", "url": "https://www.town.oizumi.gunma.jp/" }
+    ]
+  },
+  {
+    "id": "finance",
+    "label_ja": "金融・銀行",
+    "hint_ja": "銀行のサイト",
+    "sites": [
+      { "label_ja": "ゆうちょ銀行", "url": "https://www.jp-bank.japanpost.jp/" },
+      { "label_ja": "三菱UFJ銀行", "url": "https://www.bk.mufg.jp/" },
+      { "label_ja": "三井住友銀行", "url": "https://www.smbc.co.jp/" }
+    ]
+  },
+  {
+    "id": "mobile",
+    "label_ja": "携帯・通信",
+    "hint_ja": "スマホの料金プランのサイト",
+    "sites": [
+      { "label_ja": "LINEMO", "url": "https://www.linemo.jp/" },
+      { "label_ja": "povo", "url": "https://povo.jp/" }
+    ]
+  },
+  {
+    "id": "univ",
+    "label_ja": "大学",
+    "hint_ja": "大学の公式サイト",
+    "sites": [
+      { "label_ja": "慶應義塾大学", "url": "https://www.keio.ac.jp/ja/" },
+      { "label_ja": "青山学院大学", "url": "https://www.aoyama.ac.jp/" },
+      { "label_ja": "早稲田大学", "url": "https://www.waseda.jp/top/" }
+    ]
+  }
+]

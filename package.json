@@ -27,8 +27,10 @@
     "overlay:test": "node agent/test/overlay-live.ts",
     "overlay:corpus": "node agent/test/overlay-corpus.ts",
     "web:data": "node scripts/build-web-data.ts",
-    "web:dev": "npm --prefix web run dev",
-    "tunnel": "cloudflared tunnel --url http://localhost:3000"
+    "web:dev": "npm --prefix web run dev -- --port ${TZ_PORT:-3000}",
+    "web:build": "npm --prefix web run build",
+    "web:start": "npm --prefix web run start -- --port ${TZ_PORT:-3000}",
+    "tunnel": "cloudflared tunnel --url http://localhost:${TZ_PORT:-3000}"
   },
   "devDependencies": {
     "playwright": "^1.62.1"

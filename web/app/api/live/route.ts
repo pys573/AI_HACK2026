@@ -85,6 +85,17 @@ export async function GET(req: Request) {
   });
   slot.__tzLive = { pid: child.pid ?? -1, startedAt: Date.now() };
 
+  /**
+   * 자물쇠는 **내가 건 것일 때만** 푼다.
+   *
+   * dev 서버는 화면을 두 번 올린다(StrictMode). 그때 첫 번째 연결이 곧바로 끊기는데,
+   * 그 끊김이 자물쇠를 무조건 풀어 버리면 **이미 돌고 있는 두 번째 실행의 자물쇠**가
+   * 같이 풀린다. 그러면 새로고침 한 번에 실행이 두 개 겹치고, 그만큼 원가가 두 배로 나간다.
+   */
+  const release = () => {
+    if (slot.__tzLive?.pid === child.pid) slot.__tzLive = null;
+  };
+
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       let buf = "";
@@ -95,7 +106,7 @@ export async function GET(req: Request) {
       const close = () => {
         if (closed) return;
         closed = true;
-        slot.__tzLive = null;
+        release();
         try {
           controller.close();
         } catch {
@@ -152,7 +163,7 @@ export async function GET(req: Request) {
     },
     cancel() {
       child.kill("SIGTERM");
-      slot.__tzLive = null;
+      release();
     },
   });
 
