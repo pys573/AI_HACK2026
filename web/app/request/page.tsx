@@ -1,7 +1,7 @@
 import { Page } from "@/components/Chrome";
 import { LiveForm } from "@/components/LiveForm";
 import { loadProfileCards } from "@/lib/profiles";
-import { loadTasks } from "@/lib/tasks";
+import { loadCategories, loadTasks } from "@/lib/tasks";
 
 /**
  * 즉석 실행 접수 화면 (`website design/mainpage.png`).
@@ -33,6 +33,7 @@ export default async function RequestPage({
     "control",
   ]);
   const tasks = loadTasks();
+  const categories = loadCategories();
   // 랜딩에서 이미 URL을 쳤으면 두 번 치게 하지 않는다
   const initialUrl = (await searchParams).url ?? "";
 
@@ -51,7 +52,12 @@ export default async function RequestPage({
 
       <section className="bg-surface">
         <div className="mx-auto w-full max-w-6xl px-6 py-14 sm:py-20">
-          <LiveForm cards={cards} tasks={tasks} initialUrl={initialUrl} />
+          <LiveForm
+            cards={cards}
+            tasks={tasks}
+            categories={categories}
+            initialUrl={initialUrl}
+          />
         </div>
       </section>
     </Page>
