@@ -287,6 +287,30 @@ export async function observe(page: Page, withScreenshot = true): Promise<RawObs
     // 추출기가 어떤 이유로든 이 필드를 못 채웠으면 「덮개 없음」으로 읽는다.
     // 없는 수단을 여는 것보다 안 여는 쪽이 항상 안전하다 (오차는 과소 방향).
     overlay: r.overlay ?? NO_OVERLAY,
-    screenshot: withScreenshot ? await page.screenshot({ type: "png" }) : null,
+    screenshot: withScreenshot ? await shoot(page) : null,
   };
+}
+
+/**
+ * 화면 사진. **실패해도 실행을 죽이지 않는다.**
+ *
+ * Playwright의 screenshot은 기본으로 글꼴이 다 실릴 때까지 기다린다. 바깥 글꼴 서버가
+ * 느린 사이트에서는 여기서 30초를 넘겨 실행 전체가 `error`로 끝났다(실측 1건, 東京電力).
+ * 그건 사이트의 성적이 아니라 **우리 사진기의 사정**이다.
+ *
+ * 그래서 두 번 시도하고, 두 번째는 애니메이션을 멈춰서 찍는다. 그래도 안 되면 사진만 없이 간다.
+ * ⚠️ `smartphone-novice`는 사진이 유일한 입력이다. 그 프로필에서 사진이 비면
+ *   빈 화면을 본 것과 같아지므로, 실패는 트레이스가 아니라 **로그에 남긴다**.
+ */
+async function shoot(page: Page): Promise<Buffer | null> {
+  try {
+    return await page.screenshot({ type: "png", timeout: 15_000 });
+  } catch {
+    try {
+      return await page.screenshot({ type: "png", timeout: 10_000, animations: "disabled" });
+    } catch (e) {
+      console.log(`  [観測] 画面写真を撮れませんでした — ${e instanceof Error ? e.message.split("\n")[0] : e}`);
+      return null;
+    }
+  }
 }

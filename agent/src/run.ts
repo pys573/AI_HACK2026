@@ -13,7 +13,7 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { chromium, type Browser } from "playwright";
+import { chromium, type Browser, type Page } from "playwright";
 import type {
   ConstraintRecord,
   CostRecord,
@@ -319,14 +319,42 @@ export async function runOnce(opts: RunOptions): Promise<RunTrace> {
   });
 
   try {
-    browser = await chromium.launch({ channel: "chrome", headless: opts.headless ?? true });
-    const ctx = await browser.newContext({
-      viewport: viewportFor(profile),
-      locale: "ja-JP",
-      timeZoneId: "Asia/Tokyo",
-    });
-    const page = await ctx.newPage();
-    await page.goto(mission.start_url, { waitUntil: "domcontentloaded", timeout: 30_000 });
+    /**
+     * ★ 첫 화면을 여는 데까지는 다시 해 본다.
+     *
+     * 실측(agent/live/ 20건 중 6건)에서 0스텝 `error`가 났고, 그 5건이 전부
+     * 브라우저를 띄우자마자 `Target page, context or browser has been closed`였다.
+     * 이건 사이트가 아니라 **우리 쪽 브라우저가 뜨다 만 것**이다. 그대로 두면
+     * 「이 사이트는 어렵다」로 기록되고, 사이트의 성적이 우리 사정으로 나빠진다.
+     *
+     * 다시 하는 범위는 **첫 화면까지**로 좁힌다. 스텝이 한 번이라도 돌기 시작하면
+     * 그 뒤의 실패는 계측값이므로 손대지 않는다. 또 매번 브라우저를 통째로 새로 띄운다 —
+     * 반쯤 죽은 것을 재사용하면 같은 자리에서 다시 넘어진다.
+     */
+    let page: Page | null = null;
+    let openError: unknown = null;
+    for (let attempt = 1; attempt <= 3 && !page; attempt++) {
+      try {
+        browser = await chromium.launch({ channel: "chrome", headless: opts.headless ?? true });
+        const ctx = await browser.newContext({
+          viewport: viewportFor(profile),
+          locale: "ja-JP",
+          timeZoneId: "Asia/Tokyo",
+        });
+        const p = await ctx.newPage();
+        await p.goto(mission.start_url, { waitUntil: "domcontentloaded", timeout: 30_000 });
+        page = p;
+      } catch (e) {
+        openError = e;
+        console.log(`  [起動] ${attempt}回目に失敗 — ${e instanceof Error ? e.message.split("\n")[0] : e}`);
+        await browser?.close().catch(() => null);
+        browser = null;
+        // 앞의 크롬이 완전히 죽기를 기다린다. 곧바로 다시 띄우면 같은 자리에서 또 넘어진다
+        if (attempt < 3) await new Promise((r) => setTimeout(r, 3000));
+      }
+    }
+    if (!page) throw openError instanceof Error ? openError : new Error(String(openError));
+
     await page.waitForTimeout(1500);
     rl.last = Date.now();
 
