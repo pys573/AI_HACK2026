@@ -1,3 +1,6 @@
+
+<img width="5760" height="3628" alt="copie" src="https://github.com/user-attachments/assets/37e8ac01-8fbe-4643-ae03-3d63219b6f4a" />
+
 # ツマヅキ / Tsumazuki
 
 **どこでツマヅくか、10人が先に試す。**
@@ -8,6 +11,7 @@ URL を入れると、それぞれ違う制約を持った AI 利用者が実際
 > 「AA 準拠」のサイトを、72 歳は突破できなかった。
 
 ---
+
 
 ## これは何か
 
