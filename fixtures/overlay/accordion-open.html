@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8"><title>ATMご利用時間・料金</title>
+<link rel="stylesheet" href="_base.css">
+<!--
+  ゆうちょ銀行 ATM 페이지의 구조를 그대로 옮긴 것 (2026-08-15 실측).
+  본문 상자가 position:relative + z-index:600 이고, 아코디언을 펼치면 화면의 절반을 넘는다.
+  ★ 여기서 「덮였다」가 켜지면 안 된다 — relative는 흐름에 남아 있어 남을 덮지 않는다.
+    옛 규칙은 켜졌고, 대조군이 답까지 클릭 2번 남은 자리에서 24手를 탈출에 썼다.
+-->
+<div id="contents" style="position:relative;z-index:600;background:#fff;padding:16px">
+  <h1>ATMご利用時間・料金</h1>
+  <div class="linklist" style="position:relative">
+    <button aria-expanded="true">ゆうちょATM</button>
+    <div style="min-height:80vh">
+      <p>以下の各サービスのご利用時間は、最長営業時間です。</p>
+      <button aria-expanded="false">預入・払戻し</button>
+      <button aria-expanded="false">送金</button>
+      <button aria-expanded="false">残高照会・暗証番号変更</button>
+      <button aria-expanded="false">通帳記入・通帳繰越（対応ATMに限ります）</button>
+    </div>
+    <button aria-expanded="false">コンビニATM</button>
+    <button aria-expanded="false">その他提携金融機関等のATM</button>
+  </div>
+</div>
