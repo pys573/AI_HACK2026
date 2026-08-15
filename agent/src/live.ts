@@ -32,7 +32,22 @@ const ROOT = join(import.meta.dirname, "..", "..");
 /** 즉석 실행은 절대 `agent/runs/`에 쓰지 않는다 — 이유는 run.ts의 outDir 주석 */
 const LIVE_DIR = join(ROOT, "agent", "live");
 
-export type Task = { id: string; label_ja: string; goal_ja: string; intent_ja: string };
+export type Task = {
+  id: string;
+  label_ja: string;
+  goal_ja: string;
+  intent_ja: string;
+  /**
+   * 이 용무가 나오는 사이트가 **몇 수짜리인가.** 없으면 20.
+   *
+   * 자치체 사이트는 20수로 충분하다(`missions/public.json`의 9건 전부 20).
+   * 은행·통신·대학은 원래부터 30이었다 — `japanpost-*`·`keio-grad`·`aoyama-grad`가 그렇다.
+   * 즉석 실행만 전부 20으로 굳어 있어서, 실측으로 **대조군이 목적지 한 칸 앞에서 잘렸다**
+   * (慶應 `/admissions/fee/faculty/`·青学 `/life/expenses/` 도착이 20수째였다).
+   * 그러면 화면에는 「사이트가 어렵다」가 아니라 **「우리 도구가 못 한다」**로 보인다.
+   */
+  max_steps?: number;
+};
 
 export function loadTasks(): Task[] {
   return JSON.parse(readFileSync(join(ROOT, "missions", "tasks.json"), "utf8")) as Task[];
@@ -86,7 +101,7 @@ if (import.meta.main) {
   const url = arg("url");
   const taskId = arg("task") ?? "tennyu";
   const profileId = arg("profile") ?? "senior-70s";
-  const maxSteps = Number(arg("max-steps") ?? 20);
+  const maxStepsArg = arg("max-steps");
 
   // never를 명시해야 아래에서 「여기를 지났으면 값이 있다」로 좁혀진다
   const fail = (message: string): never => {
@@ -109,7 +124,8 @@ if (import.meta.main) {
   console.log(`  ✓ ${pf.status} ${pf.title}  간격 ${pf.crawlDelayMs}ms`);
 
   // ── 2. 즉석 미션 ────────────────────────────────────────
-  const mission = adhocMission(pf.url, task, pf.title, maxSteps);
+  // 손으로 준 값 > 용무에 적힌 값 > 20. 손으로 준 값이 이겨야 검증용으로 짧게 돌릴 수 있다
+  const mission = adhocMission(pf.url, task, pf.title, Number(maxStepsArg ?? task.max_steps ?? 20));
 
   // ── 3. 실행 ────────────────────────────────────────────
   try {
