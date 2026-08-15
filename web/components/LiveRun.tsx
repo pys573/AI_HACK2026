@@ -96,12 +96,36 @@ export function LiveRun({
   const [pinned, setPinned] = useState<number | null>(null);
 
   const logRef = useRef<HTMLOListElement>(null);
+  /**
+   * 열려 있는 연결과 그 조건. **연결을 화면 수명보다 오래 살린다.**
+   *
+   * dev 서버는 같은 화면을 올렸다 내렸다 한 번 더 올린다(StrictMode). 그 가짜 언마운트에
+   * 연결을 끊으면 서버가 「사람이 화면을 닫았다」로 보고 자식 프로세스를 죽인다. 그러면
+   * 브라우저가 뜨다 만 채로 0스텝 `error`가 남는다 — 실측 20건 중 6건이 이 모양이었다.
+   * 사이트가 아니라 우리 사정으로 실패한 것이라 계측값이 오염된다.
+   */
+  const esRef = useRef<EventSource | null>(null);
+  const keyRef = useRef("");
+  /** 「떠난 것 같다」와 「정말 떠났다」를 가르는 유예. 곧 다시 붙으면 취소된다 */
+  const killRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ★ 실행은 이 화면이 열릴 때 시작한다. 접수 화면에서 시작하지 않는 이유는,
   //   주소만 있으면 같은 조건을 그대로 다시 돌릴 수 있게 하기 위해서다.
   useEffect(() => {
-    const q = new URLSearchParams({ url, task, profile });
-    const es = new EventSource(`/api/live?${q}`);
+    const q = new URLSearchParams({ url, task, profile }).toString();
+
+    // 떠나는 줄 알고 예약해 둔 끊기를 취소한다
+    if (killRef.current) {
+      clearTimeout(killRef.current);
+      killRef.current = null;
+    }
+    // 조건이 그대로면 이미 붙어 있는 연결을 계속 쓴다. 새로 열면 실행이 두 번 돈다
+    if (!esRef.current || keyRef.current !== q) {
+      esRef.current?.close();
+      keyRef.current = q;
+      esRef.current = new EventSource(`/api/live?${q}`);
+    }
+    const es = esRef.current;
 
     es.onmessage = (e) => {
       const ev = JSON.parse(e.data) as Ev;
@@ -114,15 +138,25 @@ export function LiveRun({
       else if (ev.kind === "end") {
         setEnded(true);
         es.close();
+        if (esRef.current === es) esRef.current = null;
       }
     };
     // 서버가 끊으면 EventSource는 자동으로 다시 붙는다 → 실행이 두 번 돈다.
     // 그래서 에러가 나면 명시적으로 닫는다.
     es.onerror = () => {
       es.close();
+      if (esRef.current === es) esRef.current = null;
       setEnded(true);
     };
-    return () => es.close();
+
+    // 진짜로 떠났다면 잠시 뒤에도 아무도 다시 붙지 않는다. 그때 끊는다.
+    // 곧바로 끊으면 StrictMode의 두 번째 마운트가 오기 전에 서버가 자식을 죽인다
+    return () => {
+      killRef.current = setTimeout(() => {
+        es.close();
+        if (esRef.current === es) esRef.current = null;
+      }, 500);
+    };
   }, [url, task, profile]);
 
   // 경과 시간. 「멈춘 게 아니라 돌고 있다」를 보여주는 최소한의 신호다
