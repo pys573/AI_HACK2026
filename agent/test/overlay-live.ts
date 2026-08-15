@@ -35,6 +35,7 @@ const CASES: Case[] = [
   { file: "dead-x.html", covering: true, close_by: "named", why: "✕는 있는데 눌러도 안 닫힌다 — 찾는 것과 닫히는 것은 별개다" },
   { file: "sticky-header.html", covering: false, close_by: null, why: "★ 머리띠는 가리지만 막지 않는다. 켜지면 105회가 오염된다" },
   { file: "flow-menu.html", covering: false, close_by: null, why: "★ 東京電力의 실제 메뉴 구조 — 얹힌 게 아니라 페이지가 바뀐 것" },
+  { file: "accordion-open.html", covering: false, close_by: null, why: "★ ゆうちょ銀行의 본문 상자(relative+z600). 접힌 것을 펴면 화면의 절반을 넘지만 덮개가 아니다" },
 ];
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });

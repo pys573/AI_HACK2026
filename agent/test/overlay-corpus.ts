@@ -15,6 +15,8 @@ import { chromium } from "playwright";
 import { observe } from "../src/observe.ts";
 import { allProfiles } from "../src/constrain.ts";
 
+// 계측 105·125회에 쓴 사이트 + 화면(`missions/categories.json`)에서 고를 수 있는 사이트 전부.
+// 화면에 내놓은 것은 그 자리에서 눌릴 수 있으므로, 「눌러도 안 켜진다」를 미리 재둔다.
 const SITES: Array<[string, string]> = [
   ["渋谷区", "https://www.city.shibuya.tokyo.jp/"],
   ["新宿区", "https://www.city.shinjuku.lg.jp/"],
@@ -23,6 +25,17 @@ const SITES: Array<[string, string]> = [
   ["大泉町", "https://www.town.oizumi.gunma.jp/"],
   ["日本郵便", "https://www.post.japanpost.jp/"],
   ["東京電力EP", "https://www.tepco.co.jp/ep/"],
+  ["ゆうちょ銀行", "https://www.jp-bank.japanpost.jp/"],
+  // ★ 실제로 오판이 나온 페이지. 본문 상자가 relative + z-index 600이라
+  //   옛 규칙에서는 접힌 것을 펴는 순간 「덮였다」가 켜졌다 (2026-08-15)
+  ["ゆうちょ ATM料金", "https://www.jp-bank.japanpost.jp/kojin/access/atm/kj_acs_atm_goriyo.html"],
+  ["三菱UFJ銀行", "https://www.bk.mufg.jp/"],
+  ["三井住友銀行", "https://www.smbc.co.jp/"],
+  ["LINEMO", "https://www.linemo.jp/"],
+  ["povo", "https://povo.jp/"],
+  ["慶應義塾大学", "https://www.keio.ac.jp/ja/"],
+  ["青山学院大学", "https://www.aoyama.ac.jp/"],
+  ["早稲田大学", "https://www.waseda.jp/top/"],
 ];
 
 // 프로필들이 실제로 쓰는 화면 크기만 추린다 (중복 제거)

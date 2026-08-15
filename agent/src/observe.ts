@@ -186,8 +186,17 @@ const EXTRACT = `() => {
     while (el && el !== document.documentElement && el !== document.body) {
       const cs = getComputedStyle(el);
       const z = parseInt(cs.zIndex, 10) || 0;
-      // 「얹혀 있다」 = 문서의 흐름에서 떠 있다. fixed·sticky, 또는 확실히 높이 띄운 것.
-      const lifted = cs.position === 'fixed' || cs.position === 'sticky' || (cs.position !== 'static' && z >= 100);
+      // 「얹혀 있다」 = 문서의 흐름에서 **빠져나온** 것. fixed·sticky, 또는 높이 띄운 absolute.
+      //
+      // ⚠️ relative를 넣으면 안 된다. relative는 흐름에 그대로 남아 자기 자리를 차지할 뿐,
+      //   남을 덮지 않는다. z-index는 「겹쳤을 때의 순서」이지 「떠 있다」가 아니다.
+      //   실측(2026-08-15): ゆうちょ銀行 ATM 페이지의 본문 상자 div#contents가
+      //   position: relative + z-index 600이다. 아코디언을 열면 본문이 길어져
+      //   화면의 39% → 53%가 되고, 옛 규칙은 여기서 「덮였다」고 판정했다.
+      //   그 순간 프롬프트에 「画面に何かが重なっていて…」가 붙는데 그건 거짓이고,
+      //   대조군은 답까지 클릭 2번 남은 자리에서 30手 중 24手를 탈출에 썼다.
+      //   즉 **사이트가 자기 본문을 펼쳤다는 이유로 이탈로 집계됐다.**
+      const lifted = cs.position === 'fixed' || cs.position === 'sticky' || (cs.position === 'absolute' && z >= 100);
       if (lifted) {
         const r = el.getBoundingClientRect();
         const w = Math.min(r.right, vw) - Math.max(r.left, 0);
